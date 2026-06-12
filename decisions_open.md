@@ -68,3 +68,6 @@ The last open item — World Map mastery mechanics — is now locked: **80% firs
 - 2026-06-12: **Platform engine scope approved:** all [ENGINE] (subject-agnostic) infrastructure may be fully built now as part of the Math ship — config-driven, zero Avatar references in engine code. Subject plug-in contract added (pending.md P0.4). Scope otherwise stays Math-only.
 - 2026-06-12: **Grade hidden from child UI (locked):** never show 5th vs 6th grade (no Book labels on questions); grade is data-only — tracking, ramp tuning, future parent view. Vision updated (Daily Mission Flow).
 - 2026-06-12: **Doc hygiene:** keep all docs in mint condition — each fact lives in exactly one document; Abhi owns catching content overlap.
+- 2026-06-12: **App name locked: "Summer Camp."**
+- 2026-06-12: **Git workflow locked: preview-first, two gates.** Discuss → finalize → explicit approval → commit to `preview` → "preview looks good / ready for main?" → yes → merge to `main`. pending→completed moves only when on `main`. Repo initialized (`main` = docs baseline, work on `preview`).
+- 2026-06-12: **`wisdom.md` created** — 16-line distilled project soul; added to CLAUDE.md reading order (read before any build work; conflicts resolve toward wisdom, flagged to Abhi). Rich-content mandate captured: the 800 questions cannot be cheap; app may be shared with his son's friends.

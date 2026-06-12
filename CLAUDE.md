@@ -6,7 +6,7 @@
 
 ## What this project is
 
-A summer-project educational **web app for an 11-year-old** (just finished 5th grade, attends RSM accelerated math). It's a **diagnostic-first** learning app — it surfaces skill gaps through fun, themed testing, then teaches to those gaps. The first and only subject being built now is **Math**, themed around **Avatar: The Last Airbender**. Other subjects are designed later, one at a time (depth-first).
+**App name (locked): Summer Camp.** A summer-project educational **web app for an 11-year-old** (just finished 5th grade, attends RSM accelerated math) — and possibly his friends later, so build it rich. It's a **diagnostic-first** learning app — it surfaces skill gaps through fun, themed testing, then teaches to those gaps. The first and only subject being built now is **Math**, themed around **Avatar: The Last Airbender**. Other subjects are designed later, one at a time (depth-first).
 
 **Core philosophy:** diagnose before teaching; pull the kid in with easy early wins, then ramp to flow; reward effort, never raw ability; keep it a clean, positive, no-shame space.
 
@@ -17,11 +17,14 @@ A summer-project educational **web app for an 11-year-old** (just finished 5th g
 ## The documents (read in this order)
 
 1. **`CLAUDE.md`** (this file) — orientation + current status.
-2. **`product_vision.md`** — the **frozen spec**. The complete "what we're building" for Math: themes, Avatar mapping, Mission engine, hints, dashboard, mastery mechanics, rewards, progression, UI, sourcing, style tags. **Treat as locked** — don't redesign; build to it. Changes to vision happen only via explicit decisions with Abhi.
-3. **`pending.md`** — the **build-work backlog** (engineering tasks), pre-populated with the full Math task breakdown across two sessions (S1 = 800-question bank, S2 = app shell + wiring). **Work from here.**
-4. **`completed.md`** — finished build work. **When you finish a task, move it here** with a date + short note + file paths.
-5. **`decisions_open.md`** — **product** decisions still needing Abhi's input. Currently: none — Math is fully decided. (Also holds the running decision log and operating notes.)
-6. **`deferred.md`** — parked subjects (World Awareness, Science, Logic, Basketball) and features (auth, video, photo-upload). Don't build these until Math ships.
+2. **`wisdom.md`** — the **distilled why**: 15 lines of project soul pulled from everything below. Read it before any build work; if a decision conflicts with it, wisdom wins — flag to Abhi.
+3. **`product_vision.md`** — the **frozen spec**. The complete "what we're building" for Math: themes, Avatar mapping, Mission engine, hints, dashboard, mastery mechanics, rewards, progression, UI, sourcing, style tags. **Treat as locked** — don't redesign; build to it. Changes to vision happen only via explicit decisions with Abhi.
+4. **`pending.md`** — the **build-work backlog** (engineering tasks), dependency-ordered phases + parallel content track. **Work from here.**
+5. **`completed.md`** — finished build work. **When you finish a task, move it here** with a date + short note + file paths.
+6. **`decisions_open.md`** — **product** decisions still needing Abhi's input. Currently: none — Math is fully decided. (Also holds the running decision log and operating notes.)
+7. **`deferred.md`** — parked subjects (World Awareness, Science, Logic, Basketball) and features (auth, video, photo-upload). Don't build these until Math ships.
+
+**Any new session:** start here, read 1→7 in order, then continue from "Current status" below. That's the whole onboarding.
 
 **Word discipline:** "**pending**" = build work (`pending.md`). "**open**" = product decisions (`decisions_open.md`). They don't overlap.
 
@@ -35,11 +38,21 @@ A summer-project educational **web app for an 11-year-old** (just finished 5th g
 4. **Move the finished task to `completed.md`** with a date, a one-line note, and the files you touched.
 5. If you hit something the vision doesn't answer, **add it to `decisions_open.md`** and flag it for Abhi — don't guess on product behavior.
 
+**Git workflow (locked): preview-first, two explicit gates.** The repo lives in this folder; `main` = approved state only, never committed to directly.
+
+1. **Discuss → finalize** the work with Abhi.
+2. **Gate 1:** ask for explicit approval → Abhi says "approved" → commit/push to **`preview`**.
+3. **Gate 2:** ask "ready to push to main?" / "does preview look good?" → Abhi says yes → merge `preview` → `main`.
+4. **Only then** move the finished items from `pending.md` to `completed.md` — landing on `main` is what "done" means. If preview has a mistake, roll it back; nothing random ever reaches `main`.
+
+**Doc hygiene (locked): mint condition.** Each fact lives in exactly **one** document; other docs cross-reference it, never restate it. Abhi audits for overlap.
+
 ---
 
 ## Current status (as of 2026-06-12)
 
 - ✅ **Math product vision: fully baked.** No open product decisions.
+- ✅ **Docs hardened:** pending.md gap-fixed vs vision; `wisdom.md` created; git repo initialized (`main` = baseline, work on `preview`).
 - ⬜ **Build: not started.** `pending.md` is fully populated and ready.
 - **Next step:** begin **Phase 0 — Foundation** in `pending.md` (project skeleton → data schema → reusable engine core → sample questions), then Phase 1 vertical slice.
 

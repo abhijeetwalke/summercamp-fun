@@ -8,6 +8,8 @@ This document holds **locked decisions** — the frozen product spec for Math, r
 
 ## Project Overview
 
+**App name (locked): "Summer Camp."** Simple, true to what it is, and roomy enough to hold every future subject as a camp activity.
+
 A summer-project web app for an 11-year-old (just completed 5th grade, attends RSM). The app is organized as **modes** (subjects) presented as themed worlds on an index map. The first deliverable is the **Math mode diagnostic engine** — a fun, testing-first experience that surfaces skill gaps. It is explicitly **not** a tutoring product; diagnosis comes first, learning content is keyed to exposed gaps afterward.
 
 This spec covers the **diagnostic piece**. The post-diagnostic learning session is a placeholder hook (see decisions_pending.md).
