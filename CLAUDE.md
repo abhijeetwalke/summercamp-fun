@@ -18,7 +18,7 @@
 
 1. **`CLAUDE.md`** (this file) — orientation + current status.
 2. **`wisdom.md`** — the **distilled why**: 15 lines of project soul pulled from everything below. Read it before any build work; if a decision conflicts with it, wisdom wins — flag to Abhi.
-3. **`product_vision.md`** — the **frozen spec**. The complete "what we're building" for Math: themes, Avatar mapping, Mission engine, hints, dashboard, mastery mechanics, rewards, progression, UI, sourcing, style tags. **Treat as locked** — don't redesign; build to it. Changes to vision happen only via explicit decisions with Abhi.
+3. **`product_vision.md`** — the **living spec**: the complete "what we're building" for Math (themes, Avatar mapping, Mission engine, hints, dashboard, mastery, rewards, progression, UI, sourcing, style tags). Build to it — but it's not frozen: when Abhi's words carry product-level signal, fold it into the vision directly (and log it in the decision log). Facelifts to its writing are welcome too (Abhi, 2026-06-12).
 4. **`pending.md`** — the **build-work backlog** (engineering tasks), dependency-ordered phases + parallel content track. **Work from here.**
 5. **`completed.md`** — finished build work. **When you finish a task, move it here** with a date + short note + file paths.
 6. **`decisions_open.md`** — **product** decisions still needing Abhi's input. Currently: none — Math is fully decided. (Also holds the running decision log and operating notes.)

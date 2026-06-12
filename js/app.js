@@ -32,6 +32,7 @@
       if (p[1] === "results") return viewResults(+p[2]);
       if (p[1] === "review") return viewReview(+p[2], p[3]);
       if (p[1] === "collection") return viewCollection();
+      if (p[1] === "element") return viewElement(p[2]);
     }
     location.hash = "#/";
   }
@@ -55,6 +56,11 @@
     return m && !m.done ? m : null;
   }
 
+  function dailyRoutes(sub) {
+    const done = sub.missions.filter((m) => m.kind === "daily" && m.done && m.story);
+    return done.map((m, k) => ({ stops: m.story.stops, latest: k === done.length - 1 }));
+  }
+
   function viewMathHome() {
     const sub = SC.State.subject("math");
     const stats = SC.State.domainStats("math", BANK);
@@ -62,36 +68,61 @@
     const live = activeMission(sub);
     const gap = !live && SC.State.checkStreak("math") === "gap";
 
-    const ribbon = sub.missions.map((m, i) => {
+    let ribbon = sub.missions.map((m, i) => {
       const r = SC.Engine.computeRewards(m, BANK);
-      const label = m.kind === "redemption" ? "Redemption" : m.kind === "retake" ? `Mission ${m.retakeOf + 1} · attempt ${m.attemptNumber}` : `Mission ${i + 1}`;
+      const label = m.kind === "redemption" ? "🔥 Redemption" : m.kind === "retake" ? `Mission ${m.retakeOf + 1} · attempt ${m.attemptNumber}` : `Mission ${i + 1}`;
       return `<div class="ribbon-item ${m.done ? "done" : "open"}">
         <div class="ribbon-name">${label}</div>
-        <div class="ribbon-meta">${m.done ? `${r.firstClicks}/${m.qids.length} first-try` : "in progress"}</div>
+        ${m.story ? `<div class="ribbon-route">${m.story.title}</div>` : ""}
+        <div class="ribbon-meta">${m.done ? `${r.firstClicks}/${m.qids.length} first-try · ⬡ ${r.tiles}` : "⚔ in progress"}</div>
         <div class="ribbon-actions">
           ${m.done ? `<a href="#/math/results/${i}">results</a>` : `<a href="#/math/mission">continue</a>`}
           ${m.done && m.kind === "daily" ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
         </div></div>`;
-    }).join("") || `<div class="ribbon-empty">Your first Mission awaits.</div>`;
+    }).join("") || `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
+    // the road ahead: locked future missions
+    const nextNum = sub.missions.length + (live ? 0 : 1);
+    for (let k = 0; k < 3; k++) {
+      ribbon += `<div class="ribbon-item locked">
+        <div class="ribbon-name">🔒 Mission ${nextNum + k + (live ? 1 : 0)}</div>
+        <div class="ribbon-meta">a new journey, sealed until the road reaches it</div></div>`;
+    }
+
+    const levelRows = MATH.elements.filter((e) => !e.capstone).map((el) => {
+      const d = stats[el.id];
+      const lvl = d ? SC.PLATFORM.levels[d.level] : "Apprentice";
+      const pct = d && d.attempts ? Math.round(d.rate * 100) : 0;
+      const att = d ? d.attempts : 0;
+      return `<div class="level-row">
+        ${SC.Art.elementBadge(el.id, 24)}
+        <div class="level-info"><div class="level-name">${lvl} ${el.bender}</div>
+          <div class="level-bar"><div class="level-fill ${pct >= 80 ? "good" : ""}" style="width:${pct}%"></div></div></div>
+        <span class="level-pct">${att ? pct + "%" : "—"}</span>
+      </div>`;
+    }).join("");
 
     app().innerHTML = `
       <div class="subject-home">
         <header class="subj-head">
           <a class="back" href="#/">← Camp</a>
-          <h1>Airbender <span class="muted">(Math)</span></h1>
+          <h1 class="themed-title">Airbender <span class="muted">(Math)</span></h1>
           <div class="head-stats">
             <span class="chip" title="Mon–Fri streak">🔥 ${sub.streak.current}-day streak</span>
             <a class="chip" href="#/math/collection" title="Pai Sho collection">⬡ ${sub.tiles.count} tiles${sub.tiles.whiteLotus ? " · ☸ " + sub.tiles.whiteLotus : ""}</a>
           </div>
         </header>
         <div class="home-grid">
-          <aside class="ribbon"><h2>Missions</h2>${ribbon}</aside>
+          <aside>
+            <div class="ribbon"><h2>Missions</h2>${ribbon}</div>
+            <div class="ribbon levels"><h2>Bending Levels</h2>${levelRows}
+              <p class="muted small">80% first-try in an element = Adept. The map turns green with you.</p></div>
+          </aside>
           <main class="home-main">
             ${gap ? streakGapHtml(sub) : ""}
-            <div class="map-card"><h2>Your World</h2>${SC.Maps.continentMap(MATH, stats, cap)}
-              <p class="map-legend"><span class="lg lg-gray"></span> untouched <span class="lg lg-amber"></span> in progress <span class="lg lg-green"></span> mastered (80% first-try)</p>
+            <div class="map-card">${SC.Maps.continentMap(MATH, stats, cap, dailyRoutes(sub))}
+              <p class="map-legend"><span class="lg lg-gray"></span> unexplored <span class="lg lg-amber"></span> in training <span class="lg lg-green"></span> mastered · dashed trails = your completed journeys</p>
             </div>
-            <button id="start-btn" class="primary big">${live ? "Continue today's Mission" : "Start today's Mission"}</button>
+            <button id="start-btn" class="primary big">${live ? "⚔ Continue today's Mission" : "⚔ Start today's Mission"}</button>
             <p class="muted small">~20 challenges · bring your notebook — the real bending happens on paper.</p>
           </main>
         </div>
@@ -111,6 +142,7 @@
     const keep = $("#streak-keep"), lose = $("#streak-reset");
     if (keep) keep.addEventListener("click", () => { SC.Engine.buildMission(MATH, BANK, { kind: "redemption" }); location.hash = "#/math/mission"; });
     if (lose) lose.addEventListener("click", () => { SC.State.resetStreak("math"); viewMathHome(); });
+    wireMap();
   }
 
   function streakGapHtml(sub) {
@@ -159,8 +191,10 @@
           <p class="prompt">${q.prompt}</p>
           <div class="options">${opts}</div>
           <div id="hint-area" class="hint-area">${hintHtml(q, rec)}</div>
+          <div id="encourage" class="encourage" aria-live="polite"></div>
           <div class="q-foot">
-            <span class="attempts">clicks on this one: <strong id="click-count">${rec.clicks}</strong></span>
+            <span class="el-chip">${SC.Art.elementBadge(q.el, 18)} ${MATH.elements.find((e) => e.id === q.el).name}</span>
+            <span class="attempts">clicks: <strong id="click-count">${rec.clicks}</strong></span>
             <span class="style-tag">${MATH.styleTags[q.style] || q.style}</span>
           </div>
         </div>
@@ -177,13 +211,14 @@
     });
   }
 
-  function hintHtml(q, rec) {
+  function hintHtml(q, rec, fresh) {
     if (rec.clicks === 0) return "";
+    const bulb = (n) => `<span class="bulb ${fresh ? "bulb-pop" : ""}">💡</span>`;
     const h = SC.Engine.hintFor(q, rec);
-    if (h.level === 1) return `<div class="hint"><span class="hint-tag">Hint</span> ${q.hint1}</div>`;
-    if (h.level === 2) return `<div class="hint"><span class="hint-tag">Hint</span> ${q.hint1}</div>
-      <div class="hint"><span class="hint-tag">Hint 2</span> ${q.hint2}</div>`;
-    return `<div class="hint hint-out"><span class="hint-tag">No more hints</span> Use elimination to finish — then the walkthrough after the Mission will break this one all the way down.</div>`;
+    if (h.level === 1) return `<div class="hint ${fresh ? "hint-in" : ""}">${bulb()}<span class="hint-tag">Hint</span> ${q.hint1}</div>`;
+    if (h.level === 2) return `<div class="hint">${bulb()}<span class="hint-tag">Hint</span> ${q.hint1}</div>
+      <div class="hint ${fresh ? "hint-in" : ""}">${bulb()}<span class="hint-tag">Hint 2</span> ${q.hint2}</div>`;
+    return `<div class="hint hint-out ${fresh ? "hint-in" : ""}"><span class="hint-tag">🧭 No more hints</span> Use elimination to finish — then the walkthrough after the Mission will break this one all the way down.</div>`;
   }
 
   function missionTally(m) {
@@ -222,10 +257,16 @@
       if (rec.clicks === 2) rec.hint2 = true;
       const triggers = SC.Engine.senseFrustration(m, q.id, rec, gap);
       SC.State.save();
-      btn.classList.add("wrong");
+      btn.classList.add("wrong", "shake");
       btn.disabled = true; btn.classList.add("tried");
-      $("#hint-area").innerHTML = hintHtml(q, rec);
+      $("#hint-area").innerHTML = hintHtml(q, rec, true);
       $("#click-count").textContent = rec.clicks;
+      const enc = $("#encourage");
+      if (enc) {
+        enc.textContent = rec.clicks === 1 ? "Not that one — take the hint and go again." :
+          rec.clicks === 2 ? "Closer. Slow down, check the first step." : "Eliminate and finish — you'll get the full breakdown after.";
+        enc.classList.remove("enc-in"); void enc.offsetWidth; enc.classList.add("enc-in");
+      }
       if (triggers.length) offerBreak();
     }
   }
@@ -349,9 +390,10 @@
           <div class="card span2"><h2>Worth a second look</h2>${flagged}
             <p class="muted small">Each one links to a full thinking-model walkthrough — mistakes feed the loop.</p></div>
           ${rewardsHtml}
-          <div class="card span2"><h2>Your World</h2>${SC.Maps.continentMap(MATH, stats, cap)}</div>
+          <div class="card span2"><h2>Your World</h2>${SC.Maps.continentMap(MATH, stats, cap, dailyRoutes(sub))}</div>
         </div>
       </div>`;
+    wireMap();
   }
 
   /* ------------------------- walkthrough ------------------------- */
@@ -385,6 +427,91 @@
       if (btn) btn.addEventListener("click", () => { shown += 1; render(); });
     }
     render();
+  }
+
+  /* ------------------------- map exploration ------------------------- */
+  function wireMap() {
+    SC.Maps.wireContinent(app(), {
+      onLoc: showLocation,
+      onElement: (el) => { location.hash = "#/math/element/" + el; },
+    });
+  }
+
+  function showLocation(name) {
+    const l = SC.Journey.LOC_BY_NAME[name];
+    if (!l) return;
+    const sub = SC.State.subject("math");
+    const visits = sub.missions
+      .map((m, i) => ({ m, i }))
+      .filter(({ m }) => m.kind === "daily" && m.story && m.story.stops.includes(name));
+    const visitHtml = visits.length
+      ? visits.map(({ m, i }) =>
+          `<a class="visit" href="#/math/results/${i}" onclick="document.getElementById('loc-modal').remove()">Mission ${i + 1} — ${m.story.title}${m.done ? "" : " (in progress)"}</a>`).join("")
+      : `<p class="muted small">No journey has passed through here yet. The road will come.</p>`;
+    const elName = MATH.elements.find((e) => e.id === l.el).name;
+    const old = document.getElementById("loc-modal");
+    if (old) old.remove();
+    const div = document.createElement("div");
+    div.id = "loc-modal";
+    div.className = "modal-backdrop";
+    div.innerHTML = `<div class="modal">
+      <div class="modal-head"><span class="loc-modal-glyph">${l.glyph}</span>
+        <div><h3>${l.name}</h3><span class="el-chip">${SC.Art.elementBadge(l.el, 16)} ${elName} territory</span></div>
+        <button class="modal-close" aria-label="close">✕</button></div>
+      <p class="lore">${l.lore}</p>
+      <h4>Journeys through here</h4>${visitHtml}
+    </div>`;
+    div.addEventListener("click", (e) => { if (e.target === div || e.target.classList.contains("modal-close")) div.remove(); });
+    document.body.appendChild(div);
+  }
+
+  function viewElement(elId) {
+    const el = MATH.elements.find((e) => e.id === elId);
+    if (!el) { location.hash = "#/math"; return; }
+    const sub = SC.State.subject("math");
+    const stats = SC.State.domainStats("math", BANK);
+    const d = stats[elId];
+    const lvl = d ? SC.PLATFORM.levels[d.level] : "Apprentice";
+    const pct = d && d.attempts ? Math.round(d.rate * 100) : 0;
+    const att = d ? d.attempts : 0;
+    const guard = SC.PLATFORM.minAttemptsGuard;
+
+    // every encounter with this element (daily missions = the record)
+    const history = [];
+    sub.missions.forEach((m, i) => {
+      if (m.kind !== "daily") return;
+      m.qids.forEach((qid) => {
+        const q = qById[qid];
+        if (q && q.el === elId && m.perQ[qid].clicks > 0) history.push({ q, rec: m.perQ[qid], i, done: m.done });
+      });
+    });
+    const histHtml = history.length ? history.map(({ q, rec, i }) =>
+      `<a class="flag" href="#/math/review/${i}/${q.id}">
+        <span class="flag-clicks ${rec.clicks >= 3 ? "hot" : rec.clicks === 1 ? "good-c" : ""}">${rec.clicks}×</span>
+        <span class="flag-prompt">${q.prompt.slice(0, 78)}${q.prompt.length > 78 ? "…" : ""}</span>
+        <span class="flag-el">${MATH.styleTags[q.style].split(" ")[0]}</span></a>`).join("")
+      : `<p class="muted">No challenges faced here yet — they'll come with your Missions.</p>`;
+
+    const places = SC.Journey.LOCATIONS.filter((l) => l.el === elId)
+      .map((l) => `<button class="place-chip" data-loc="${l.name}">${l.glyph} ${l.name}</button>`).join("") || "";
+
+    app().innerHTML = `
+      <div class="element-page">
+        <header class="subj-head"><a class="back" href="#/math">← Camp</a>
+          <h1 class="themed-title">${SC.Art.elementBadge(elId, 30)} ${el.name}${el.capstone ? " — the final trial" : " Nation"}</h1></header>
+        <div class="results-grid">
+          <div class="card">
+            <h2>${el.capstone ? "Avatar State" : lvl + " " + el.bender}</h2>
+            ${el.capstone
+              ? `<p>Cross-domain challenges that draw on everything at once. ${SC.State.capstoneUnlocked(stats) ? "Unlocked — the glow is yours." : "Reach Adept in three elements to unlock its glow."}</p>`
+              : `<div class="level-bar big"><div class="level-fill ${pct >= 80 ? "good" : ""}" style="width:${pct}%"></div></div>
+                 <p class="muted small">${att} challenge${att === 1 ? "" : "s"} faced · ${pct}% first-try${att < guard ? ` · ${guard - att} more to qualify for a level` : ""} · 80% = Adept, 90% = Master</p>`}
+          </div>
+          <div class="card"><h2>Places of this nation</h2><div class="place-wrap">${places || '<p class="muted small">Its places reveal themselves on the map.</p>'}</div></div>
+          <div class="card span2"><h2>Every challenge faced here</h2>${histHtml}</div>
+        </div>
+      </div>`;
+    app().querySelectorAll(".place-chip").forEach((b) => b.addEventListener("click", () => showLocation(b.dataset.loc)));
   }
 
   /* ------------------------- collection ------------------------- */
