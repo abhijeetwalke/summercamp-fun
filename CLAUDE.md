@@ -45,6 +45,8 @@
 3. **Gate 2:** ask "ready to push to main?" / "does preview look good?" → Abhi says yes → merge `preview` → `main`.
 4. **Only then** move the finished items from `pending.md` to `completed.md` — landing on `main` is what "done" means. If preview has a mistake, roll it back; nothing random ever reaches `main`.
 
+**Entry-file naming (locked):** on `preview` the app entry is **`index.preview.html`** (double-click it to review); at the Gate 2 merge it becomes **`index.html`** on `main`.
+
 **Doc hygiene (locked): mint condition.** Each fact lives in exactly **one** document; other docs cross-reference it, never restate it. Abhi audits for overlap.
 
 ---
@@ -53,8 +55,8 @@
 
 - ✅ **Math product vision: fully baked.** No open product decisions.
 - ✅ **Docs hardened:** pending.md gap-fixed vs vision; `wisdom.md` created; git repo initialized (`main` = baseline, work on `preview`).
-- ⬜ **Build: not started.** `pending.md` is fully populated and ready.
-- **Next step:** begin **Phase 0 — Foundation** in `pending.md` (project skeleton → data schema → reusable engine core → sample questions), then Phase 1 vertical slice.
+- 🟡 **Build: first full pass on `preview`, awaiting Gate review.** Playable app at `index.preview.html` (double-click it). Detailed marks in the STATUS block atop `pending.md`'s build order.
+- **Next step:** Abhi reviews preview → Gates → then the two long poles: parameterized variants (P2.4) and the full 800-question bank (Content Track).
 
 ---
 

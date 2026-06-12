@@ -13,7 +13,7 @@
 **Stack: plain HTML / CSS / JavaScript. No framework, no build step, no backend. 100% free.**
 
 - **No server, no database.** Everything runs client-side in the browser.
-- **Question bank = static JSON** files shipped with the site (e.g. `/data/book5.json`, `/data/book6.json`).
+- **Question bank = static JSON** files shipped with the site (e.g. `/data/book5.json`, `/data/book6.json`). **Shipped as `.js` data files** (`window.X = {...}`) rather than fetched `.json`, so the app works opened directly from Finder (`file://` blocks `fetch` of local JSON). Same data, different wrapper.
 - **All progress persists in the browser** via `localStorage` (or `IndexedDB` if data grows) — clicks, attempts, streaks, mastery, rewards, bending levels, territory state.
 - **Hosting: free static host** (GitHub Pages or Cloudflare Pages) — $0/month.
 - **Keep a `role` field (parent/child) in the data shapes now**, even though there's no login yet, so views can be gated later.
@@ -33,6 +33,9 @@
 ---
 
 # BUILD ORDER (dependency-sequenced — do phases in order)
+
+> **STATUS (2026-06-12, on `preview` — moves to completed.md only after Gate 2 / main):**
+> ✅ Phase 0 complete (P0.1–P0.4). ✅ Phase 1 complete (P1.1–P1.4). ✅ P2.1 journeys, P2.2 mastery + continent map, P2.3 streaks/timing/frustration/rewards, P2.5 three modules (fraction bar, number line, area model). ◐ P2.4 partial — bounce-backs re-serve the original question; parameterized variants still to build. ✅ P3.1–P3.3 initial (landing map + tactile click + sound + ambience + subject shell). ⬜ P3.4 deploy. ◐ Content: 30-question starter bank (of 800), schema-complete, NOT yet parent-spot-checked.
 
 ## PHASE 0 — Foundation (build first; everything depends on it)
 
