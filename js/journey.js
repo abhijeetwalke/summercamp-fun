@@ -65,15 +65,46 @@ SC.Journey = (function () {
 
   const BEATS = ["The road continues.", "You press on toward", "The journey bends toward", "Next stop:"];
 
+  /* ---- [MATH] Chapter epithets — missions are episodes, never "Mission 3" ---- */
+  const EPITHETS = [
+    (to) => `The Road to ${to.name}`,
+    (to) => `Winds over ${to.name}`,
+    (to) => `The ${to.name.split(" ")[0]} Trial`,
+    (to) => `Whispers of ${to.name}`,
+    (to) => `The Long Way Round`,
+    (to) => `Lanterns of ${to.name}`,
+    (to) => `Storm on the ${to.name} Road`,
+    (to) => `The White Lotus Errand`,
+    (to) => `Crossing to ${to.name}`,
+    (to) => `The Secret of ${to.name}`,
+  ];
+  function epithetFor(n, to) {
+    return EPITHETS[(n * 3 + to.name.length) % EPITHETS.length](to);
+  }
+
+  /* ---- [ENGINE] Teaser route for a future mission (deterministic, so the
+     ribbon's promise and the eventually-built mission agree) ---- */
+  function teaserFor(n) {
+    const a = LOCATIONS[(n * 5 + 1) % LOCATIONS.length];
+    let b = LOCATIONS[(n * 7 + 4) % LOCATIONS.length];
+    if (b === a) b = LOCATIONS[(n * 7 + 5) % LOCATIONS.length];
+    return { from: a.name, to: b.name, label: `${tag(a)} → ${tag(b)}`, name: epithetFor(n, b) };
+  }
+
   /* ---- [ENGINE] Compose a story for a Mission from the library ---- */
-  function generate(questions, subjectCfg) {
+  function generate(questions, subjectCfg, routeHint) {
     const els = [...new Set(questions.map((q) => q.el))];
-    const stops = [];
+    let stops = [];
     els.forEach((el) => {
       const opts = LOCATIONS.filter((l) => l.el === el && !stops.includes(l));
       if (opts.length) stops.push(opts[Math.floor(Math.random() * opts.length)]);
     });
     while (stops.length < 2) stops.push(LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)]);
+    // honor a promised route: pin the endpoints, keep element stops in between
+    if (routeHint && LOC_BY_NAME[routeHint.from] && LOC_BY_NAME[routeHint.to]) {
+      const f = LOC_BY_NAME[routeHint.from], t = LOC_BY_NAME[routeHint.to];
+      stops = [f, ...stops.filter((s) => s !== f && s !== t), t];
+    }
     const from = stops[0], to = stops[stops.length - 1];
 
     const flavors = {};
@@ -83,6 +114,7 @@ SC.Journey = (function () {
     });
 
     return {
+      name: (routeHint && routeHint.name) || epithetFor(stops.length + to.name.length, to),
       title: `${tag(from)} → ${tag(to)}`,
       opening: `Today's journey: travel from ${tag(from)} to ${tag(to)}. ` +
         `Every challenge you clear is a step down the road — clear the last one and you've arrived.`,
@@ -92,5 +124,5 @@ SC.Journey = (function () {
     };
   }
 
-  return { generate, LOCATIONS, LOC_BY_NAME };
+  return { generate, teaserFor, LOCATIONS, LOC_BY_NAME };
 })();

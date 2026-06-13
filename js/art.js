@@ -112,6 +112,21 @@ SC.Art = (function () {
     </g>`;
   }
 
+  function whale(x, y) {
+    return `<g class="whale" transform="translate(${x} ${y})">
+      <path d="M -24 0 Q -10 -14 10 -10 Q 24 -7 26 2 Q 10 8 -10 6 Q -20 5 -24 0 Z" fill="#37667e" stroke="#1d4357" stroke-width="1.5"/>
+      <path d="M 24 0 q 8 -8 12 -10 q -2 8 2 12 q -8 2 -14 -2" fill="#37667e" stroke="#1d4357" stroke-width="1.5"/>
+      <circle cx="-12" cy="-3" r="1.6" fill="#102b38"/>
+      <path d="M -16 -12 q -1 -7 3 -10 M -13 -12 q 3 -6 0 -10" fill="none" stroke="#9fd0e2" stroke-width="2" stroke-linecap="round" class="spout"/>
+    </g>`;
+  }
+
+  function islet(idp, x, y, withPalms) {
+    return `<g><path filter="url(#${idp}-rough2)" fill="#bfae8a" stroke="#8a7a5a" stroke-width="2"
+      d="M ${x - 22} ${y} C ${x - 14} ${y - 9} ${x + 10} ${y - 10} ${x + 20} ${y - 3} C ${x + 28} ${y + 3} ${x + 24} ${y + 12} ${x + 12} ${y + 15} C ${x - 2} ${y + 18} ${x - 18} ${y + 13} ${x - 22} ${y} Z"/>
+      ${withPalms ? palms(x - 6, y + 6, 1) : ""}</g>`;
+  }
+
   function boat(x, y) {
     return `<g class="boat" transform="translate(${x} ${y})">
       <path d="M -16 0 Q 0 10 16 0 L 10 6 Q 0 12 -10 6 Z" fill="#7a5230" stroke="#4d331e"/>
@@ -228,7 +243,7 @@ SC.Art = (function () {
     return elementGlyph("air", x, y, r);
   }
 
-  return { defs, parchment, banner, compass, waves, serpent, koiPair, cloud, boat,
+  return { defs, parchment, banner, compass, waves, serpent, koiPair, cloud, boat, whale, islet,
     mountains, pines, palms, flames, swirls, gnarledTree, pagoda,
     elementGlyph, elementBadge, subjectGlyph, EL_COLORS };
 })();

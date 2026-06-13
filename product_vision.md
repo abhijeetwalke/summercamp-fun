@@ -102,6 +102,7 @@ Subtle background life that makes the map feel alive without distracting. **Clas
 - **Sequential unlock: only one Mission is unlocked at a time.** All previous Missions remain fully visible — their content, results, everything.
 - **Retakes allowed, and counted:** any previous Mission can be taken again. Every Mission carries a **session count** — which attempt this is — shown right on the ribbon (e.g., "attempt 2"). The **first attempt is the diagnostic of record**; retakes are logged separately as improvement signal (they pair naturally with bounce-back rewards).
 - **Color:** each subject uses its theme-native palette (Avatar world colors for math — and within it, nation palettes can tint their territories: Water Tribe blues, Earth Kingdom greens, Fire Nation reds, Air Nomad oranges). Tweakable.
+- **Laptop-first, full-bleed (locked, 2026-06-12):** the app is custom-cut for MacBook/laptop screens — layouts stretch to fill the viewport, the landing map is a full-screen scene, and no screen ships with large dead margins. Mobile-friendliness is explicitly NOT a requirement.
 - **Visual richness bar (locked, 2026-06-12):** maps and worlds must feel like a hand-illustrated treasure map, not a diagram — amorphous organic landmasses (never plain geometric shapes), parchment texture, per-element iconography and terrain motifs (mountains, waves, flames, swirls, trees), dashed journey routes traced on the map, a compass rose, sea creatures, ambient life. Mystical and abstract beats simple and clean-empty; no large dead whitespace on any screen. All artwork original SVG, franchise-inspired — never copied assets. (Perf guardrails still rule: filters render static, animations stay transform/opacity.)
 - **Typography: clear and simple, never fancy.** An 11-year-old has good eyes — the font just needs to stay out of the way. No decorative typefaces, no fonts that make him think about the font. Attractive **themes**, simple type, everything clearly visible.
 
@@ -160,6 +161,7 @@ Coverage check — **Grade 5 (5 domains):** OA, NBT, NF, MD, G — all mapped. *
 
 - **One Mission per day: ~20 problems, Monday through Friday.** Near twenty is the rule, not exactly twenty — 18 in one Mission and 22 in another is fine if the story or domain coverage calls for it.
 - **Future load balancing:** ~20 holds while Math is the only subject. Once other subjects (world awareness, science, logic, basketball) come online and he's doing several a day, the per-subject Mission size drops — likely to ~15, then ~10 — so total daily load stays sane.
+- **Missions are chapters, never numbers (locked 2026-06-12):** every Mission carries an episode-style name ("The Road to Omashu", "The White Lotus Errand") shown as "Chapter N · {name}" — flat "Mission 3" labels are banned. Future locked Missions appear in the ribbon as **named journey teasers** with real routes (the engine honors them when the Mission starts) — the road ahead pulls him forward.
 - **Every Mission is a journey (locked):** each Mission has its own self-contained story — the Avatar traveling from one place to another in the world (e.g., Southern Air Temple → Omashu). The problems are the **challenges encountered along the way**: crossing a river, bartering in a market, repairing a glider — each challenge *is* a math problem. Completing the final challenge means arriving at the destination.
   - The story is a wrapper, never interference: problems stay rigorous; the narrative supplies context and motivation.
   - Route design can mirror the set's element coverage — the journey passes through the territories whose domains appear in that Mission.
@@ -196,6 +198,19 @@ Coverage check — **Grade 5 (5 domains):** OA, NBT, NF, MD, G — all mapped. *
 - **Pool replenishment (locked direction):** the pool will be replenished as it depletes. A key mechanic: **variant problems** — the same problem regenerated with different numbers — to verify he now truly gets it. This leans on the brain's neuroplasticity: revisiting a missed pattern in a fresh skin converts the mistake into durable skill.
 - **Replenishment pipeline (approved):** every question is stored as a **parameterized template** (numbers as variables, answer computed from them), so variants are generated mechanically, not rewritten. Weekly batch: (1) variants of his missed problems re-enter the pool after ~1–2 weeks; (2) new LLM-drafted questions are validated (answer-checked, domain-tagged, tier-tagged) and parent spot-checked before going live. This is how 400 grows toward 2,000 without quality drift.
 - **Output: soft spots, not summaries.** The **World Map** updates after each Mission: each nation's territory colored by mastery. No motivational fluff. Raw signal, backed by attempt counts.
+
+### Progress Benchmarks — the Training Record (approved 2026-06-12; evolves with Abhi)
+
+How Ayansh's math progress is benchmarked — every metric derived from existing logs, no new instrumentation. Kid-facing surface: the **Training Record** page (streak chip opens it), in effort language. The same numbers feed the future parent view.
+
+- **Mastery coverage** — elements at Adept+ (the 80% bar) out of all elements: the headline number.
+- **Overall first-try rate** — cumulative and per element.
+- **Tier handling** — first-try rate split by tier. Reading: Tier 1 should stay ~green (confidence floor); **Tier 2 ≥80% = grade-solid**; **Tier 3 ≥60% = competition-ready signal** (Kangaroo/AMC-caliber questions make this an external anchor).
+- **Style profile** — first-try rate per pedagogical style tag: which styles click (a diagnostic no classroom surfaces).
+- **Independence** — % solved hint-free, and post-hint success rate (hint efficacy).
+- **Bounce-back conversion** — % of revisited misses beaten: the neuroplasticity loop measured. This is the purest "is he learning from mistakes" number.
+- **Consistency** — streak, missions/week, average session time vs. budget.
+- **Grade frontier** (parent-facing later; computed now, never shown to him) — G5 vs G6 performance split, for the "lean into Book Six" call.
 
 ### Progression Payoffs (approved)
 

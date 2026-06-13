@@ -29,7 +29,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--paper); color: var(--ink); line-height: 1.5;
 }
-#app { max-width: 980px; margin: 0 auto; padding: 16px; }
+/* Laptop-first, full-bleed (locked): no centered narrow column, no dead frame */
+#app { width: 100%; margin: 0; padding: 14px 30px 24px; }
+#app > * { animation: viewfade 0.18s ease-out; }
+@keyframes viewfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 a { color: var(--water); }
 h1 { font-size: 1.5rem; margin: 0; }
 h2 { font-size: 1.05rem; margin: 0 0 10px; }
@@ -58,10 +61,11 @@ button { font: inherit; cursor: pointer; }
   border-radius: 999px; padding: 3px 12px; font-size: 0.85rem; text-decoration: none; color: var(--ink);
 }
 
-/* ---------------- landing ---------------- */
-.landing { text-align: center; }
-.app-title { font-size: 2rem; margin: 18px 0 2px; letter-spacing: 0.5px; }
-.app-sub { color: var(--muted); margin: 0 0 14px; }
+/* ---------------- landing (full-viewport scene) ---------------- */
+.landing { text-align: center; display: flex; flex-direction: column; min-height: calc(100vh - 40px); }
+.landing svg { flex: 1; min-height: 0; max-height: calc(100vh - 120px); }
+.app-title { font-family: Georgia, serif; font-size: 2.2rem; margin: 4px 0 0; letter-spacing: 0.5px; }
+.app-sub { color: var(--muted); margin: 0 0 8px; }
 .ocean { fill: var(--ocean); }
 .ocean-light { fill: var(--ocean-light); }
 .land-shape { stroke: #0d2129; stroke-width: 2.5; }
@@ -83,7 +87,9 @@ button { font: inherit; cursor: pointer; }
 
 .bird { stroke: #cfe6ee; stroke-width: 2; fill: none; opacity: 0.8;
   transform: translate(-30px, var(--birdY, 100px)); animation: fly 13s linear forwards; }
-@keyframes fly { from { transform: translate(-30px, var(--birdY)); } to { transform: translate(780px, calc(var(--birdY) - 40px)); } }
+@keyframes fly { from { transform: translate(-30px, var(--birdY)); } to { transform: translate(1240px, calc(var(--birdY) - 40px)); } }
+.whale { animation: bob 7s ease-in-out infinite; }
+.spout { animation: twinkle 4s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   .tide-ring, .bird, .land-pressed { animation: none; }
@@ -101,10 +107,11 @@ button { font: inherit; cursor: pointer; }
 .subj-head { display: flex; align-items: center; gap: 14px; margin: 10px 0 14px; flex-wrap: wrap; }
 .subj-head .back { text-decoration: none; font-weight: 600; }
 .head-stats { margin-left: auto; display: flex; gap: 8px; }
-.home-grid { display: grid; grid-template-columns: 240px 1fr; gap: 14px; }
-@media (max-width: 720px) { .home-grid { grid-template-columns: 1fr; } }
+.home-grid { display: grid; grid-template-columns: 330px 1fr; gap: 18px; align-items: start; }
 
-.ribbon { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.ribbon { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; max-height: 56vh; overflow-y: auto; }
+.ribbon.levels { max-height: none; }
+.ribbon-chapter { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 .ribbon-item { border-bottom: 1px solid var(--line); padding: 8px 2px; }
 .ribbon-item:last-child { border-bottom: none; }
 .ribbon-name { font-weight: 600; }
@@ -124,6 +131,7 @@ button { font: inherit; cursor: pointer; }
 .terr-meta { fill: #fff; font-size: 11px; paint-order: stroke; stroke: rgba(0,0,0,0.35); stroke-width: 2px; }
 
 /* ---------------- mission ---------------- */
+.mission { max-width: 1020px; margin: 0 auto; }
 .mission-head { display: flex; align-items: flex-start; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
 .journey-title { font-weight: 700; font-size: 1.1rem; }
 .head-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
@@ -283,6 +291,17 @@ button { font: inherit; cursor: pointer; }
 .encourage { min-height: 1.3em; font-size: 0.9rem; color: var(--fire); font-style: italic; margin-top: 6px; }
 .enc-in { animation: hintslide 0.3s ease-out; }
 .flag-clicks.good-c { color: var(--good); }
+
+/* ---------------- inline location links (never boxy) ---------------- */
+.loc-link {
+  background: none; border: none; padding: 0; font: inherit; color: #9c5a1d;
+  border-bottom: 1.5px dotted #c89a62; cursor: pointer; border-radius: 0;
+}
+.loc-link:hover { color: var(--fire); border-bottom-style: solid; }
+.ribbon-route .loc-link { font-size: inherit; }
+.lg-term { cursor: help; margin-right: 10px; border-bottom: 1px dotted var(--line); }
+.stat-big { font-family: Georgia, serif; font-size: 2rem; margin: 6px 0; }
+.stat-unit { font-size: 0.85rem; font-family: inherit; color: var(--muted); margin-left: 8px; }
 
 /* ---------------- location modal + element page ---------------- */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(30, 24, 14, 0.45); display: flex; align-items: center; justify-content: center; z-index: 100; }

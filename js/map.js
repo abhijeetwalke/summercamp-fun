@@ -50,43 +50,52 @@ SC.Maps = (function () {
       deco: (a) => a.palms(560, 420, 2) },
   };
 
+  /* wide laptop canvas: lands repositioned via per-land translate (no distortion) */
+  const LANDING_POS = { math: [250, 30], world: [40, 90], science: [430, 80], logic: [180, 215], basketball: [470, 235] };
+
   function landingMap(subjects) {
     const idp = "lm";
+    const W = 1180, H = 700;
     const lands = subjects.map((s) => {
       const g = LANDING_LANDS[s.id];
       if (!g) return "";
+      const [tx, ty] = LANDING_POS[s.id] || [0, 0];
       return `<g class="land ${s.active ? "land-active" : "land-soon"}" data-subject="${s.id}" tabindex="0" role="button"
-        aria-label="${s.landLabel}${s.comingSoon ? " — coming soon" : ""}">
+        aria-label="${s.landLabel}${s.comingSoon ? " — coming soon" : ""}" transform="translate(${tx} ${ty})">
         <path d="${g.path}" filter="url(#${idp}-rough)" fill="${g.fill}" class="land-shape"></path>
         <g class="land-deco">${g.deco(A)}</g>
-        ${A.subjectGlyph(s.id, g.lx, g.ly - 26, 15)}
-        ${A.banner(idp, g.lx, g.ly + 4, Math.max(110, s.landLabel.length * 8.6), s.landLabel)}
-        ${s.comingSoon ? `<g class="soon-flag" transform="translate(${g.lx + 52} ${g.ly - 44})">
-            <line x1="0" y1="0" x2="0" y2="26" stroke="#4a3a26" stroke-width="2"/>
-            <path d="M 0 0 h 56 l -7 7 l 7 7 h -56 Z" fill="#3f3a33"/>
-            <text x="28" y="11" text-anchor="middle" class="soon-text">COMING SOON</text></g>` : ""}
+        ${A.subjectGlyph(s.id, g.lx, g.ly - 28, 16)}
+        ${A.banner(idp, g.lx, g.ly + 4, Math.max(116, s.landLabel.length * 9), s.landLabel)}
+        ${s.comingSoon ? `<g class="soon-flag" transform="translate(${g.lx + 56} ${g.ly - 50})">
+            <line x1="0" y1="0" x2="0" y2="28" stroke="#4a3a26" stroke-width="2"/>
+            <path d="M 0 0 h 58 l -7 7 l 7 7 h -58 Z" fill="#3f3a33"/>
+            <text x="29" y="11" text-anchor="middle" class="soon-text">COMING SOON</text></g>` : ""}
       </g>`;
     }).join("");
 
     const fissures = `
-      <path d="M 268 200 Q 280 240 296 286" class="fissure"></path>
-      <path d="M 528 232 Q 548 260 540 316" class="fissure"></path>
-      <path d="M 470 286 Q 478 300 488 312" class="fissure"></path>
-      <path d="M 500 386 Q 510 380 518 374" class="fissure"></path>`;
+      <path d="M 392 270 Q 412 310 440 360" class="fissure"></path>
+      <path d="M 856 260 Q 880 300 870 350" class="fissure"></path>
+      <path d="M 700 480 Q 730 500 756 514" class="fissure"></path>
+      <path d="M 560 320 Q 580 360 570 410" class="fissure"></path>`;
 
-    return `<svg id="landing-map" viewBox="0 0 760 500" width="100%" aria-label="Summer Camp world map">
+    return `<svg id="landing-map" viewBox="0 0 ${W} ${H}" width="100%" aria-label="Summer Camp world map" preserveAspectRatio="xMidYMid meet">
       ${A.defs(idp)}
-      <rect x="0" y="0" width="760" height="500" fill="#cdb98a" rx="10"/>
-      ${A.parchment(idp, 760, 500)}
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#cdb98a" rx="10"/>
+      ${A.parchment(idp, W, H)}
       <path filter="url(#${idp}-rough2)" fill="url(#${idp}-oceanG)"
-        d="M 44 56 H 716 Q 728 250 716 452 H 44 Q 30 250 44 56 Z"/>
+        d="M 48 60 H ${W - 48} Q ${W - 34} ${H / 2} ${W - 48} ${H - 56} H 48 Q 32 ${H / 2} 48 60 Z"/>
       <g class="ocean-life">
-        ${A.waves(120, 100, 3)}${A.waves(560, 90, 2)}${A.waves(90, 420, 2)}${A.waves(640, 450, 3)}
-        ${A.serpent(96, 320)}${A.boat(500, 70)}${A.koiPair(700, 320)}
+        ${A.waves(140, 120, 3)}${A.waves(820, 100, 2)}${A.waves(100, 560, 2)}${A.waves(1000, 600, 3)}
+        ${A.waves(520, 640, 2)}${A.waves(940, 140, 2)}${A.waves(320, 100, 2)}
+        ${A.serpent(120, 420)}${A.serpent(900, 560)}
+        ${A.boat(700, 100)}${A.boat(250, 620)}
+        ${A.koiPair(1080, 440)}${A.whale(420, 560)}
+        ${A.islet(idp, 950, 460, true)}${A.islet(idp, 330, 520, false)}
       </g>
       ${fissures}${lands}
-      ${A.compass(92, 430, 30)}
-      ${A.cloud(180, 70, 1, "c1")}${A.cloud(620, 120, 0.8, "c2")}
+      ${A.compass(120, 590, 36)}
+      ${A.cloud(280, 90, 1, "c1")}${A.cloud(760, 130, 0.8, "c2")}${A.cloud(1020, 580, 0.7, "c1")}
       <g id="bird-layer"></g>
     </svg>`;
   }

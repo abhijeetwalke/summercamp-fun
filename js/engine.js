@@ -99,7 +99,7 @@ SC.Engine = (function () {
       startedAt: Date.now(),
       elapsedMs: 0,
       done: false,
-      story: SC.Journey ? SC.Journey.generate(picked, subjectCfg) : null,
+      story: SC.Journey ? SC.Journey.generate(picked, subjectCfg, opts.routeHint) : null,
       frustration: [],
     };
     picked.forEach((q) => {

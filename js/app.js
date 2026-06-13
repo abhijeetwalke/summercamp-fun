@@ -33,6 +33,7 @@
       if (p[1] === "review") return viewReview(+p[2], p[3]);
       if (p[1] === "collection") return viewCollection();
       if (p[1] === "element") return viewElement(p[2]);
+      if (p[1] === "stats") return viewStats();
     }
     location.hash = "#/";
   }
@@ -61,6 +62,20 @@
     return done.map((m, k) => ({ stops: m.story.stops, latest: k === done.length - 1 }));
   }
 
+  /* Make every "glyph Place Name" in a string a clickable lore link */
+  function linkify(text) {
+    if (!text || !SC.Journey) return text;
+    SC.Journey.LOCATIONS.forEach((l) => {
+      const t = `${l.glyph} ${l.name}`;
+      text = text.split(t).join(`<button class="loc-link" data-loc="${l.name}">${t}</button>`);
+    });
+    return text;
+  }
+  function wireLocLinks(root) {
+    (root || app()).querySelectorAll(".loc-link").forEach((b) =>
+      b.addEventListener("click", (e) => { e.stopPropagation(); showLocation(b.dataset.loc); }));
+  }
+
   function viewMathHome() {
     const sub = SC.State.subject("math");
     const stats = SC.State.domainStats("math", BANK);
@@ -70,22 +85,30 @@
 
     let ribbon = sub.missions.map((m, i) => {
       const r = SC.Engine.computeRewards(m, BANK);
-      const label = m.kind === "redemption" ? "🔥 Redemption" : m.kind === "retake" ? `Mission ${m.retakeOf + 1} · attempt ${m.attemptNumber}` : `Mission ${i + 1}`;
+      const label = m.kind === "redemption" ? "🔥 Redemption" : m.kind === "retake" ? `Retake · attempt ${m.attemptNumber}` :
+        (m.story && m.story.name ? m.story.name : `Mission ${i + 1}`);
+      const chapter = m.kind === "daily" ? `Chapter ${sub.missions.slice(0, i + 1).filter((x) => x.kind === "daily").length}` : "";
       return `<div class="ribbon-item ${m.done ? "done" : "open"}">
+        ${chapter ? `<div class="ribbon-chapter">${chapter}</div>` : ""}
         <div class="ribbon-name">${label}</div>
-        ${m.story ? `<div class="ribbon-route">${m.story.title}</div>` : ""}
+        ${m.story ? `<div class="ribbon-route">${linkify(m.story.title)}</div>` : ""}
         <div class="ribbon-meta">${m.done ? `${r.firstClicks}/${m.qids.length} first-try · ⬡ ${r.tiles}` : "⚔ in progress"}</div>
         <div class="ribbon-actions">
           ${m.done ? `<a href="#/math/results/${i}">results</a>` : `<a href="#/math/mission">continue</a>`}
           ${m.done && m.kind === "daily" ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
         </div></div>`;
     }).join("") || `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
-    // the road ahead: locked future missions
-    const nextNum = sub.missions.length + (live ? 0 : 1);
-    for (let k = 0; k < 3; k++) {
+    // the road ahead: real journeys waiting down the road (pull, don't push)
+    const dailiesSoFar = sub.missions.filter((m) => m.kind === "daily").length;
+    const firstLocked = dailiesSoFar + (live ? 1 : 2); // today's mission isn't locked
+    for (let k = 0; k < 5; k++) {
+      const n = firstLocked + k;
+      const tease = SC.Journey.teaserFor(n);
       ribbon += `<div class="ribbon-item locked">
-        <div class="ribbon-name">🔒 Mission ${nextNum + k + (live ? 1 : 0)}</div>
-        <div class="ribbon-meta">a new journey, sealed until the road reaches it</div></div>`;
+        <div class="ribbon-chapter">Chapter ${n} · 🔒</div>
+        <div class="ribbon-name">${tease.name}</div>
+        <div class="ribbon-route">${linkify(tease.label)}</div>
+        <div class="ribbon-meta">${k === 0 ? "opens when today's journey ends" : "the road continues…"}</div></div>`;
     }
 
     const levelRows = MATH.elements.filter((e) => !e.capstone).map((el) => {
@@ -107,7 +130,8 @@
           <a class="back" href="#/">← Camp</a>
           <h1 class="themed-title">Airbender <span class="muted">(Math)</span></h1>
           <div class="head-stats">
-            <span class="chip" title="Mon–Fri streak">🔥 ${sub.streak.current}-day streak</span>
+            <a class="chip" href="#/math/stats" title="Your full training record">🔥 ${sub.streak.current}-day streak</a>
+            <a class="chip" href="#/math/stats" title="Your full training record">📜 Training Record</a>
             <a class="chip" href="#/math/collection" title="Pai Sho collection">⬡ ${sub.tiles.count} tiles${sub.tiles.whiteLotus ? " · ☸ " + sub.tiles.whiteLotus : ""}</a>
           </div>
         </header>
@@ -120,7 +144,11 @@
           <main class="home-main">
             ${gap ? streakGapHtml(sub) : ""}
             <div class="map-card">${SC.Maps.continentMap(MATH, stats, cap, dailyRoutes(sub))}
-              <p class="map-legend"><span class="lg lg-gray"></span> unexplored <span class="lg lg-amber"></span> in training <span class="lg lg-green"></span> mastered · dashed trails = your completed journeys</p>
+              <p class="map-legend">
+                <span class="lg-term" title="No challenges from this nation faced yet — the territory is still gray and waiting."><span class="lg lg-gray"></span> unexplored</span>
+                <span class="lg-term" title="You've trained here, but the first-try rate is still below 80% — amber means in progress."><span class="lg lg-amber"></span> in training</span>
+                <span class="lg-term" title="80%+ first-try across 16+ challenges — the territory turns green and your bending level rises."><span class="lg lg-green"></span> mastered</span>
+                <span class="lg-term" title="Every completed Mission traces its route here, ending in a red X — like any good treasure map.">· dashed trails = your journeys</span></p>
             </div>
             <button id="start-btn" class="primary big">${live ? "⚔ Continue today's Mission" : "⚔ Start today's Mission"}</button>
             <p class="muted small">~20 challenges · bring your notebook — the real bending happens on paper.</p>
@@ -129,9 +157,14 @@
       </div>`;
 
     $("#start-btn").addEventListener("click", () => {
-      if (!activeMission(SC.State.subject("math"))) SC.Engine.buildMission(MATH, BANK, { kind: "daily" });
+      const s = SC.State.subject("math");
+      if (!activeMission(s)) {
+        const dNum = s.missions.filter((m) => m.kind === "daily").length + 1;
+        SC.Engine.buildMission(MATH, BANK, { kind: "daily", routeHint: SC.Journey.teaserFor(dNum) });
+      }
       location.hash = "#/math/mission";
     });
+    wireLocLinks();
     app().querySelectorAll("[data-retake]").forEach((b) => b.addEventListener("click", () => {
       const i = +b.dataset.retake;
       const orig = sub.missions[i];
@@ -177,15 +210,16 @@
     app().innerHTML = `
       <div class="mission">
         <header class="mission-head">
-          <div><div class="journey-title">${m.story ? m.story.title : "Training"}</div>
-          <div class="muted small">Challenge ${m.currentQ + 1} of ${m.qids.length}${rec.bounceback ? " · ⟲ bounce-back" : ""}</div></div>
+          <div><a class="back" href="#/math" title="Back to camp — your journey waits for you">←</a></div>
+          <div><div class="journey-title">${m.story && m.story.name ? m.story.name : "Training"}</div>
+          <div class="muted small">${m.story ? linkify(m.story.title) + " · " : ""}Challenge ${m.currentQ + 1} of ${m.qids.length}${rec.bounceback ? " · ⟲ bounce-back" : ""}</div></div>
           <div class="head-right">
             <span class="tally" title="Mission tally">${tally.first} first-try · ${tally.multi} multi-try</span>
             <span id="clock" class="clock ${showClock ? "" : "hidden"}">0:00</span>
             <button id="clock-toggle" class="linklike" title="Show/hide clock">${showClock ? "hide clock" : "show clock"}</button>
           </div>
         </header>
-        ${m.currentQ === 0 && m.story ? `<p class="story-open">${m.story.opening}</p>` : ""}
+        ${m.currentQ === 0 && m.story ? `<p class="story-open">${linkify(m.story.opening)}</p>` : ""}
         <div class="card q-card">
           ${flavor ? `<p class="flavor">${flavor}</p>` : ""}
           <p class="prompt">${q.prompt}</p>
@@ -202,6 +236,7 @@
       </div>`;
 
     startClock(m);
+    wireLocLinks();
     $("#clock-toggle").addEventListener("click", () => {
       sub.clockOn = sub.clockOn === false ? true : false; SC.State.save(); viewMission();
     });
@@ -381,8 +416,8 @@
     app().innerHTML = `
       <div class="results">
         <header class="subj-head"><a class="back" href="#/math">← Camp</a>
-          <h1>${m.story ? m.story.title : "Mission " + (i + 1)} — Results</h1><span class="chip">${mins} min</span></header>
-        ${m.story ? `<p class="story-open">${m.story.arrival}</p>` : ""}
+          <h1 class="themed-title">${m.story ? linkify(m.story.title) : "Mission " + (i + 1)} — Results</h1><span class="chip">${mins} min</span></header>
+        ${m.story ? `<p class="story-open">${linkify(m.story.arrival)}</p>` : ""}
         <div class="results-grid">
           <div class="card"><h2>Click distribution</h2>${distHtml}
             <p class="muted small">1 click = had it cold. Extra clicks mark exactly where training goes next.</p></div>
@@ -394,6 +429,7 @@
         </div>
       </div>`;
     wireMap();
+    wireLocLinks();
   }
 
   /* ------------------------- walkthrough ------------------------- */
@@ -427,6 +463,86 @@
       if (btn) btn.addEventListener("click", () => { shown += 1; render(); });
     }
     render();
+  }
+
+  /* ------------------------- training record (benchmark v1) -------------------------
+     The benchmark framework (vision → Progress Benchmarks): every number below is
+     derived from the existing logs — no new instrumentation. */
+  function benchmark(sub) {
+    const recs = []; // every first-attempt daily encounter
+    sub.missions.forEach((m) => {
+      if (m.kind !== "daily" || !m.done) return;
+      m.qids.forEach((qid) => {
+        const q = qById[qid], r = m.perQ[qid];
+        if (q && r.clicks > 0) recs.push({ q, r, week: m.week, elapsed: r.timeMs });
+      });
+    });
+    const rate = (list) => (list.length ? list.filter((x) => x.r.clicks === 1).length / list.length : null);
+    const byTier = {}, byStyle = {};
+    [1, 2, 3].forEach((t) => (byTier[t] = rate(recs.filter((x) => x.q.tier === t))));
+    Object.keys(MATH.styleTags).forEach((s) => (byStyle[s] = rate(recs.filter((x) => x.q.style === s))));
+    const hinted = recs.filter((x) => x.r.hint1);
+    const postHintWins = hinted.filter((x) => x.r.postHint === "success").length;
+    const bounces = recs.filter((x) => x.r.bounceback);
+    const missions = sub.missions.filter((m) => m.kind === "daily" && m.done);
+    const totalMs = missions.reduce((a, m) => a + (m.elapsedMs || 0), 0);
+    return {
+      total: recs.length,
+      overall: rate(recs),
+      hintFree: recs.length ? recs.filter((x) => !x.r.hint1).length / recs.length : null,
+      hintEfficacy: hinted.length ? postHintWins / hinted.length : null,
+      bounceConversion: bounces.length ? bounces.filter((x) => x.r.clicks === 1).length / bounces.length : null,
+      bounceCount: bounces.length,
+      byTier, byStyle,
+      missions: missions.length,
+      avgMin: missions.length ? Math.round(totalMs / missions.length / 60000) : 0,
+      totalMin: Math.round(totalMs / 60000),
+    };
+  }
+
+  function viewStats() {
+    const sub = SC.State.subject("math");
+    const stats = SC.State.domainStats("math", BANK);
+    const b = benchmark(sub);
+    const pct = (v) => (v == null ? "—" : Math.round(v * 100) + "%");
+    const bar = (v, tip) => `<div class="level-bar" title="${tip || ""}"><div class="level-fill ${v >= 0.8 ? "good" : ""}" style="width:${v == null ? 0 : Math.round(v * 100)}%"></div></div>`;
+    const adeptCount = Object.values(stats).filter((d) => d.level >= 1).length;
+
+    const tierRows = [["1", "Confidence (Tier 1)", "Easy ground — should stay green"], ["2", "Grade-solid (Tier 2)", "The heart of the grade — 80% here = solid"], ["3", "Stretch (Tier 3)", "Competition-flavored — 60%+ here is strong"]]
+      .map(([t, name, tip]) => `<div class="level-row" title="${tip}">
+        <div class="level-info"><div class="level-name">${name}</div>${bar(b.byTier[t], tip)}</div>
+        <span class="level-pct">${pct(b.byTier[t])}</span></div>`).join("");
+
+    const styleRows = Object.entries(MATH.styleTags).map(([s, label]) =>
+      `<div class="level-row"><div class="level-info"><div class="level-name">${label}</div>${bar(b.byStyle[s])}</div>
+       <span class="level-pct">${pct(b.byStyle[s])}</span></div>`).join("");
+
+    app().innerHTML = `
+      <div class="stats-page">
+        <header class="subj-head"><a class="back" href="#/math">← Camp</a>
+          <h1 class="themed-title">📜 Training Record</h1></header>
+        <div class="results-grid">
+          <div class="card"><h2>Showing up</h2>
+            <div class="stat-big">🔥 ${sub.streak.current}<span class="stat-unit">day streak</span></div>
+            <p class="muted small">Best: ${sub.streak.best} · Missions completed: ${b.missions} · Challenges faced: ${b.total}</p>
+            <p class="muted small">Time trained: ${b.totalMin} min total · ~${b.avgMin} min per Mission (budget ~${SC.PLATFORM.sessionBudgetMin})</p></div>
+          <div class="card"><h2>Mastery</h2>
+            <div class="stat-big">${adeptCount}<span class="stat-unit">of ${MATH.elements.length - 1} elements at Adept+</span></div>
+            <div class="level-row"><div class="level-info"><div class="level-name">Overall first-try rate</div>${bar(b.overall, "Share of challenges solved on the very first click")}</div>
+            <span class="level-pct">${pct(b.overall)}</span></div>
+            <p class="muted small">80% first-try in an element (16+ challenges) = Adept; 90% = Master.</p></div>
+          <div class="card"><h2>How each tier is treating you</h2>${tierRows}</div>
+          <div class="card"><h2>Which styles click</h2>${styleRows}
+            <p class="muted small">Same math, different character — your strong styles are a real diagnostic.</p></div>
+          <div class="card"><h2>Independence</h2>
+            <div class="level-row"><div class="level-info"><div class="level-name">Hint-free solves</div>${bar(b.hintFree)}</div><span class="level-pct">${pct(b.hintFree)}</span></div>
+            <div class="level-row"><div class="level-info"><div class="level-name">Hints that landed (post-hint wins)</div>${bar(b.hintEfficacy)}</div><span class="level-pct">${pct(b.hintEfficacy)}</span></div></div>
+          <div class="card"><h2>Bounce-backs</h2>
+            <div class="stat-big">⟲ ${pct(b.bounceConversion)}<span class="stat-unit">of revisited misses beaten (${b.bounceCount} faced)</span></div>
+            <p class="muted small">Old misses, returned in new skins. Beating them is how mistakes become skill.</p></div>
+        </div>
+        ${b.total === 0 ? '<p class="muted">No record yet — your first Mission writes the first page.</p>' : ""}
+      </div>`;
   }
 
   /* ------------------------- map exploration ------------------------- */
@@ -531,6 +647,9 @@
   }
 
   /* ------------------------- boot ------------------------- */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { const mo = document.getElementById("loc-modal"); if (mo) mo.remove(); }
+  });
   document.addEventListener("DOMContentLoaded", route);
   if (document.readyState !== "loading") route();
 })();
