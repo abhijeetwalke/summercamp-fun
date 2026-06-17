@@ -1,0 +1,5 @@
+# Netlify cache rules. "must-revalidate" makes browsers check for a newer
+# version on every load, so a fresh deploy shows up immediately — no more
+# manual ?v= cache-busting needed, and never a stale page for the kids.
+/*
+  Cache-Control: public, max-age=0, must-revalidate

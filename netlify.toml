@@ -1,0 +1,6 @@
+# Netlify config — for Git-connected continuous deployment.
+# The app is static and lives in code/, so we just publish that folder.
+# (No build step: plain HTML/CSS/JS.)
+[build]
+  publish = "code"
+  command = ""
