@@ -74,6 +74,84 @@ WA.UI = (function () {
   }
 
   /* ============================================================
+     GLOSSARY — hover/tap reveal for terms a kid may not know.
+     Runs over rendered text automatically (all lessons, quizzes,
+     cards). Each term: what it stands for, a kid-friendly meaning,
+     and an example. Accessible (keyboard focus + aria) and touch-
+     friendly (tap focuses the term → tooltip shows).
+     ============================================================ */
+  var GLOSS = {
+    BC:   { full: "Before Christ", def: "years counted backwards before year 1 — the bigger the number, the longer ago", ex: "Rome was founded around 753 BC, over 2,700 years ago." },
+    AD:   { full: "Anno Domini (Latin for “in the year of our Lord”)", def: "years counted forward from year 1 — the system most of the world uses today", ex: "The Western Roman Empire fell in 476 AD." },
+    BCE:  { full: "Before Common Era", def: "exactly the same as BC — just a name that doesn't mention religion", ex: "500 BCE means the same year as 500 BC." },
+    CE:   { full: "Common Era", def: "exactly the same as AD", ex: "1492 CE means the same year as 1492 AD." },
+    WWI:  { full: "World War I (1914–1918)", def: "the first war that pulled in much of the world", ex: "WWI began after an archduke was assassinated in 1914." },
+    WWII: { full: "World War II (1939–1945)", def: "the deadliest war in history", ex: "WWII ended in 1945." },
+    USSR: { full: "the Soviet Union (1922–1991)", def: "a huge communist country led by Russia; the USA's rival in the Cold War", ex: "The USSR launched the first satellite, Sputnik." },
+    UN:   { full: "the United Nations", def: "an organization founded in 1945 where countries meet to try to keep peace", ex: "Almost every country in the world belongs to the UN." },
+    UAE:  { full: "the United Arab Emirates", def: "a country in the Middle East, home to the city of Dubai", ex: "The UAE sent a probe to Mars in 2021." },
+  };
+  // longest-first so "WWII" wins over "WWI", "BCE" over "BC"
+  var GLOSS_PATTERN = "\\b(WWII|WWI|USSR|BCE|UAE|BC|AD|CE|UN)\\b";
+
+  function ensureGlossCSS() {
+    if (document.getElementById("wa-gloss-style")) return;
+    var s = document.createElement("style");
+    s.id = "wa-gloss-style";
+    s.textContent =
+      ".wa-scope .gloss{border-bottom:1.5px dotted var(--gold-deep);cursor:help;position:relative;font-weight:600;}" +
+      ".wa-scope .gloss:focus{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px;}" +
+      ".wa-scope .gloss .gloss-pop{visibility:hidden;opacity:0;position:absolute;left:50%;bottom:140%;transform:translateX(-50%) translateY(6px);width:min(280px,78vw);background:var(--ink);color:var(--paper);padding:10px 13px;border-radius:10px;font-size:.85rem;font-weight:400;line-height:1.45;box-shadow:var(--shadow-lg);z-index:200;transition:opacity .15s,transform .15s;pointer-events:none;text-align:left;white-space:normal;}" +
+      ".wa-scope .gloss .gloss-pop b{color:var(--gold);}" +
+      ".wa-scope .gloss .gloss-pop em{color:var(--paper);opacity:.75;font-style:italic;}" +
+      ".wa-scope .gloss:hover .gloss-pop,.wa-scope .gloss:focus .gloss-pop,.wa-scope .gloss:focus-within .gloss-pop{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0);}" +
+      ".wa-scope .gloss .gloss-pop:after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);}";
+    document.head.appendChild(s);
+  }
+
+  function makeGloss(term) {
+    var g = GLOSS[term];
+    var span = el("span", { class: "gloss", tabindex: "0", role: "note",
+      "aria-label": term + " means " + g.full + ". " + g.def + ". Example: " + g.ex });
+    span.appendChild(document.createTextNode(term));
+    var pop = el("span", { class: "gloss-pop" });
+    pop.innerHTML = "<b>" + term + "</b> — " + g.full + ". " + g.def + ".<br><em>e.g.</em> " + g.ex;
+    span.appendChild(pop);
+    return span;
+  }
+
+  function glossify(root) {
+    if (!root || typeof document.createTreeWalker !== "function") return;
+    ensureGlossCSS();
+    var testRe = new RegExp(GLOSS_PATTERN);
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue || !testRe.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        var p = n.parentNode;
+        while (p && p !== root) {
+          var t = p.nodeName;
+          if (t === "BUTTON" || t === "A" || t === "CODE" || t === "PRE" || t === "SCRIPT" || t === "STYLE" || t === "svg" ||
+              (p.classList && p.classList.contains("gloss"))) return NodeFilter.FILTER_REJECT;
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    var nodes = [], cur;
+    while ((cur = walker.nextNode())) nodes.push(cur);
+    nodes.forEach(function (node) {
+      var text = node.nodeValue, re = new RegExp(GLOSS_PATTERN, "g"), frag = document.createDocumentFragment(), last = 0, m;
+      while ((m = re.exec(text))) {
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        frag.appendChild(makeGloss(m[0]));
+        last = m.index + m[0].length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      if (node.parentNode) node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  /* ============================================================
      SVG ART — a curated, reusable scene library.
      Drawn with currentColor + an accent so they theme nicely.
      ============================================================ */
@@ -362,6 +440,7 @@ WA.UI = (function () {
   return {
     el: el, shuffle: shuffle, toast: toast, confetti: confetti, modal: modal,
     art: art, banner: banner, renderBeat: renderBeat, observeBeats: observeBeats, nodeFromHTML: nodeFromHTML,
+    glossify: glossify,
   };
 
   /* ---------- simplified stylized maps for hotspots ---------- */

@@ -498,6 +498,8 @@ Example — Lesson 2 "Roman Empire Rise & Fall": 5-minute animation (founding �
 #### Accessibility
 Captions/subtitles on all animations; adjustable text size; dark mode for evening learning; playback speed 0.75x–2x for accessibility and re-learning.
 
+**Glossary tooltips (built 2026-06-17).** Unfamiliar terms — **BC, AD, BCE, CE, WWI, WWII, USSR, UN, UAE** — render with a subtle dotted underline; **hovering (or tapping, on tablets)** reveals what the term stands for, a kid-friendly meaning, and a quick example. It runs automatically over all rendered text (lessons, quiz questions, explanations, country cards), is keyboard-focusable with screen-reader labels, and deliberately skips answer buttons so it never interferes with a quiz. Easy to extend — add a term to the `GLOSS` map in `code/js/wa/wa.components.js`.
+
 #### Proposed Roadmap
 
 *Phase 1 (MVP — Launch with ~40 Lessons).* Continent priority order (by content availability & learner interest): (1) **Europe** — 8 lessons, Ancient Greece through Cold War; (2) **Asia** — 8 lessons, China, India, Japan, Ottoman; (3) **Americas** — 7 lessons, Indigenous to modern; (4) **Africa** — 6 lessons; (5) **Middle East** — 6 lessons; (6) **Oceania** — 4 lessons. Launch content: all 40 lessons + 6 section-level quizzes.

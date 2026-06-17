@@ -74,6 +74,7 @@ WA.Engine = (function () {
     scope.appendChild(topbar(crumbs));
     var main = U.el("div", { class: "wrap", role: "main" });
     main.appendChild(bodyNode);
+    U.glossify(main);   // hover/tap reveal for BC, AD, WWII, USSR, etc.
     scope.appendChild(main);
     scope.appendChild(footer());
     // Belt-and-suspenders: force the critical layout props on EVERY button so text
@@ -379,6 +380,7 @@ WA.Engine = (function () {
       card.appendChild(foot);
 
       cardSlot.innerHTML = ""; cardSlot.appendChild(card);
+      U.glossify(card);
       scrollTop();
     }
 
@@ -397,6 +399,7 @@ WA.Engine = (function () {
       var ex = U.el("div", { class: "explain" + (ok ? " ok" : "") });
       ex.innerHTML = "<b>" + (ok ? "Correct! " : "Not quite. ") + "</b>" + (q.explain || "");
       card.appendChild(ex);
+      U.glossify(ex);
       var next = U.el("button", { class: "btn", style: "margin-top:16px",
         text: (i === qs.length - 1 ? "See results →" : "Next question →"),
         onclick: function () { i++; if (i < qs.length) renderQ(); else finish(); } });
@@ -453,6 +456,7 @@ WA.Engine = (function () {
       rev.appendChild(it);
     });
     box.appendChild(rev);
+    U.glossify(box);
     return box;
   }
 
@@ -657,6 +661,7 @@ WA.Engine = (function () {
     b.appendChild(U.el("div", { style: "margin-top:10px;font-weight:700;color:var(--gold-deep)", text: "✨ Fun facts" }));
     b.appendChild(U.el("ul", { class: "funlist" }, c.funFacts.map(function (f) { return U.el("li", { html: f }); })));
     node.appendChild(b);
+    U.glossify(node);
     U.modal(node);
   }
   function factCell(k, v) { return U.el("div", { class: "fact-cell" }, [U.el("div", { class: "k", text: k }), U.el("div", { class: "v", text: v })]); }
