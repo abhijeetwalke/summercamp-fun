@@ -19,9 +19,19 @@
 
   let clockTimer = null, lastClickAt = null, nudged = false;
 
+  /* friendly element → domain blurbs (for Bending Levels hover info) */
+  const ELEMENT_BLURB = {
+    water: "Water · fractions & the number system",
+    earth: "Earth · geometry & measurement",
+    fire: "Fire · operations, expressions & equations",
+    air: "Air · place value & ratios and proportions",
+    spirit: "Spirit · statistics & probability",
+    avatarstate: "Avatar State · cross-domain capstone",
+  };
+
   /* ------------------------- router ------------------------- */
   function route() {
-    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    stopClock();
     SC.Maps.stopAmbience();
     const h = location.hash.replace(/^#\/?/, "");
     const p = h.split("/").filter(Boolean);
@@ -35,6 +45,9 @@
       if (p[1] === "element") return viewElement(p[2]);
       if (p[1] === "stats") return viewStats();
     }
+    // World Awareness plugs in here: it's its own themed world (wa.* files),
+    // rendered into #app. The main router stays the single source of routing.
+    if (p[0] === "world" && window.WA && WA.Engine) return WA.Engine.handle(p.slice(1));
     location.hash = "#/";
   }
   window.addEventListener("hashchange", route);
@@ -83,19 +96,33 @@
     const live = activeMission(sub);
     const gap = !live && SC.State.checkStreak("math") === "gap";
 
+    // retakes fold into their parent mission (one row per chapter, not a row per attempt)
+    const retakesByParent = {};
+    sub.missions.forEach((mm) => {
+      if (mm.kind === "retake" && mm.retakeOf != null) (retakesByParent[mm.retakeOf] = retakesByParent[mm.retakeOf] || []).push(mm);
+    });
     let ribbon = sub.missions.map((m, i) => {
+      if (m.kind === "retake") return ""; // shown under its parent, not as its own chapter
       const r = SC.Engine.computeRewards(m, BANK);
-      const label = m.kind === "redemption" ? "🔥 Redemption" : m.kind === "retake" ? `Retake · attempt ${m.attemptNumber}` :
-        (m.story && m.story.name ? m.story.name : `Mission ${i + 1}`);
-      const chapter = m.kind === "daily" ? `Chapter ${sub.missions.slice(0, i + 1).filter((x) => x.kind === "daily").length}` : "";
+      const isDaily = m.kind === "daily";
+      const label = m.kind === "redemption" ? "🔥 Redemption set" : (m.story && m.story.name ? m.story.name : `Mission ${i + 1}`);
+      const chapter = isDaily ? `Chapter ${sub.missions.slice(0, i + 1).filter((x) => x.kind === "daily").length}` : "";
+      const retakes = retakesByParent[i] || [];
+      const doneRetakes = retakes.filter((x) => x.done).length;
+      const retakeInProgress = retakes.some((x) => !x.done);
+      const retakeNote = (doneRetakes || retakeInProgress)
+        ? `<div class="ribbon-sub">↻ ${doneRetakes ? `retaken ${doneRetakes}×` : ""}${doneRetakes && retakeInProgress ? " · " : ""}${retakeInProgress ? "retake in progress" : ""}</div>`
+        : "";
       return `<div class="ribbon-item ${m.done ? "done" : "open"}">
         ${chapter ? `<div class="ribbon-chapter">${chapter}</div>` : ""}
         <div class="ribbon-name">${label}</div>
         ${m.story ? `<div class="ribbon-route">${linkify(m.story.title)}</div>` : ""}
         <div class="ribbon-meta">${m.done ? `${r.firstClicks}/${m.qids.length} first-try · ⬡ ${r.tiles}` : "⚔ in progress"}</div>
+        ${retakeNote}
         <div class="ribbon-actions">
           ${m.done ? `<a href="#/math/results/${i}">results</a>` : `<a href="#/math/mission">continue</a>`}
-          ${m.done && m.kind === "daily" ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
+          ${m.done && isDaily && !live ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
+          ${retakeInProgress ? `<a href="#/math/mission">continue retake</a>` : ""}
         </div></div>`;
     }).join("") || `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
     // the road ahead: real journeys waiting down the road (pull, don't push)
@@ -111,12 +138,19 @@
         <div class="ribbon-meta">${k === 0 ? "opens when today's journey ends" : "the road continues…"}</div></div>`;
     }
 
+    const guard = SC.PLATFORM.minAttemptsGuard;
     const levelRows = MATH.elements.filter((e) => !e.capstone).map((el) => {
       const d = stats[el.id];
       const lvl = d ? SC.PLATFORM.levels[d.level] : "Apprentice";
       const pct = d && d.attempts ? Math.round(d.rate * 100) : 0;
       const att = d ? d.attempts : 0;
-      return `<div class="level-row">
+      const meaning = pct >= 90 ? "Master — you own this." :
+        pct >= 80 ? "Adept — this territory is green." :
+        att ? `${80 - pct}% of first-tries from Adept (80%) — then the territory turns green.` :
+        "Not trained yet — face challenges here to start your bending level.";
+      const guardNote = att && att < guard ? ` ${guard - att} more challenges needed before a level can be earned.` : "";
+      const tip = `${ELEMENT_BLURB[el.id]}. ${att ? `${pct}% first-try across ${att} challenge${att === 1 ? "" : "s"}. ` : ""}${meaning}${guardNote}`;
+      return `<div class="level-row" title="${tip}">
         ${SC.Art.elementBadge(el.id, 24)}
         <div class="level-info"><div class="level-name">${lvl} ${el.bender}</div>
           <div class="level-bar"><div class="level-fill ${pct >= 80 ? "good" : ""}" style="width:${pct}%"></div></div></div>
@@ -166,10 +200,13 @@
     });
     wireLocLinks();
     app().querySelectorAll("[data-retake]").forEach((b) => b.addEventListener("click", () => {
+      const s = SC.State.subject("math");
+      if (activeMission(s)) { location.hash = "#/math/mission"; return; } // one mission at a time — finish the current one first
       const i = +b.dataset.retake;
       const orig = sub.missions[i];
       const attempts = sub.missions.filter((m) => m.retakeOf === i).length + 2;
-      SC.Engine.buildMission(MATH, BANK, { kind: "retake", qids: orig.qids, retakeOf: i, attemptNumber: attempts });
+      const routeHint = orig.story ? { from: orig.story.stops[0], to: orig.story.stops[orig.story.stops.length - 1], name: orig.story.name } : undefined;
+      SC.Engine.buildMission(MATH, BANK, { kind: "retake", qids: orig.qids, retakeOf: i, attemptNumber: attempts, routeHint });
       location.hash = "#/math/mission";
     }));
     const keep = $("#streak-keep"), lose = $("#streak-reset");
@@ -326,7 +363,7 @@
   function finishMission(m) {
     const sub = SC.State.subject("math");
     m.done = true;
-    m.elapsedMs += Date.now() - m.startedAt;
+    stopClock();   // accumulate active time (capped at runaway) into m.elapsedMs
     if (m.kind === "daily") { sub.dailyCount += 1; SC.State.bumpStreak("math"); }
     if (m.kind === "redemption") SC.State.bumpStreak("math");
     const r = SC.Engine.computeRewards(m, BANK);
@@ -339,23 +376,56 @@
     location.hash = "#/math/results/" + m.idx;
   }
 
-  /* ------------------------- clock ------------------------- */
+  /* ------------------------- clock -------------------------
+     Counts only ACTIVE time (resumes from accumulated elapsedMs, not wall-clock
+     since the mission was built) and hard-stops at the runaway cap so a clock
+     left running overnight can't report 1337:00. */
+  let clockMission = null, clockBegin = 0, clockStopped = false;
+
   function startClock(m) {
-    const begin = Date.now();
-    const base = m.elapsedMs + (Date.now() - m.startedAt);
+    const runawayMs = SC.PLATFORM.clockRunawayMin * 60000;
+    clockMission = m; clockBegin = Date.now();
+    clockStopped = m.elapsedMs >= runawayMs;
     clockTimer = setInterval(() => {
       const el = $("#clock");
       if (!el) return;
-      const ms = base + (Date.now() - begin);
+      let ms = m.elapsedMs + (Date.now() - clockBegin);
+      if (ms >= runawayMs) {                       // anti-runaway: freeze + tell them
+        ms = runawayMs; m.elapsedMs = runawayMs; clockBegin = Date.now();
+        clearInterval(clockTimer); clockTimer = null;
+        SC.State.save();
+        el.textContent = `${Math.floor(ms / 60000)}:00`;
+        el.classList.add("clock-stopped");
+        if (!clockStopped) { clockStopped = true;
+          toast("Clock stopped — looks like you stepped away. Time isn't counting anymore; pick up whenever you're ready."); }
+        return;
+      }
       const min = Math.floor(ms / 60000), sec = Math.floor((ms % 60000) / 1000);
       el.textContent = `${min}:${String(sec).padStart(2, "0")}`;
       const budget = SC.PLATFORM.sessionBudgetMin;
-      if (!nudged && min >= budget - 10) {
+      if (!nudged && min >= budget - 10 && min < budget + 5) {
         nudged = true;
         toast(`~10 minutes left in the journey — finish strong, or rest and return.`);
       }
     }, 1000);
   }
+
+  /* Accumulate active time into the mission and tear the clock down. */
+  function stopClock() {
+    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    if (clockMission) {
+      const runawayMs = SC.PLATFORM.clockRunawayMin * 60000;
+      clockMission.elapsedMs = Math.min(clockMission.elapsedMs + (Date.now() - clockBegin), runawayMs);
+      SC.State.save();
+      clockMission = null;
+    }
+  }
+  /* Pause counting when the tab is hidden; resume on return. */
+  document.addEventListener("visibilitychange", () => {
+    if (!clockMission) return;
+    if (document.hidden) { stopClock(); }
+    else if (activeMission(SC.State.subject("math")) && location.hash.includes("/mission")) { startClock(activeMission(SC.State.subject("math"))); }
+  });
 
   function toast(msg) {
     let t = $("#toast");
@@ -391,6 +461,7 @@
         return `<a class="flag" href="#/math/review/${i}/${id}">
           <span class="flag-clicks ${rec.clicks >= 3 ? "hot" : ""}">${rec.clicks}×</span>
           <span class="flag-prompt">${q.prompt.slice(0, 80)}${q.prompt.length > 80 ? "…" : ""}</span>
+          ${rec.reviewed ? `<span class="reviewed-tag" title="Walked through the full thinking model">✓ reviewed</span>` : ""}
           <span class="flag-el">${MATH.elements.find((e) => e.id === q.el).name}</span></a>`;
       }).join("") || `<p class="muted">Nothing flagged — every challenge fell on the first try.</p>`;
 
@@ -460,7 +531,14 @@
         </div>`;
       SC.Modules.wire(app());
       const btn = $("#next-step");
-      if (btn) btn.addEventListener("click", () => { shown += 1; render(); });
+      if (btn) btn.addEventListener("click", () => {
+        shown += 1;
+        if (shown >= q.steps.length) {            // walked the whole thinking model = due diligence
+          const rec = m.perQ[qid];
+          if (rec && !rec.reviewed) { rec.reviewed = true; SC.State.save(); }
+        }
+        render();
+      });
     }
     render();
   }
@@ -484,6 +562,8 @@
     const hinted = recs.filter((x) => x.r.hint1);
     const postHintWins = hinted.filter((x) => x.r.postHint === "success").length;
     const bounces = recs.filter((x) => x.r.bounceback);
+    const missed = recs.filter((x) => x.r.clicks > 1);          // got it wrong at least once
+    const reviewedMissed = missed.filter((x) => x.r.reviewed).length;
     const missions = sub.missions.filter((m) => m.kind === "daily" && m.done);
     const totalMs = missions.reduce((a, m) => a + (m.elapsedMs || 0), 0);
     return {
@@ -493,6 +573,9 @@
       hintEfficacy: hinted.length ? postHintWins / hinted.length : null,
       bounceConversion: bounces.length ? bounces.filter((x) => x.r.clicks === 1).length / bounces.length : null,
       bounceCount: bounces.length,
+      reviewFollowThrough: missed.length ? reviewedMissed / missed.length : null,
+      missedCount: missed.length,
+      reviewedCount: reviewedMissed,
       byTier, byStyle,
       missions: missions.length,
       avgMin: missions.length ? Math.round(totalMs / missions.length / 60000) : 0,
@@ -540,6 +623,9 @@
           <div class="card"><h2>Bounce-backs</h2>
             <div class="stat-big">⟲ ${pct(b.bounceConversion)}<span class="stat-unit">of revisited misses beaten (${b.bounceCount} faced)</span></div>
             <p class="muted small">Old misses, returned in new skins. Beating them is how mistakes become skill.</p></div>
+          <div class="card"><h2>Due diligence</h2>
+            <div class="stat-big">📖 ${pct(b.reviewFollowThrough)}<span class="stat-unit">of missed challenges walked through step-by-step (${b.missedCount} missed)</span></div>
+            <p class="muted small">When he misses one, does he go back and work the full thinking model? That habit is what turns a miss into mastery.</p></div>
         </div>
         ${b.total === 0 ? '<p class="muted">No record yet — your first Mission writes the first page.</p>' : ""}
       </div>`;

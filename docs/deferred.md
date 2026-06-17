@@ -1,20 +1,18 @@
 # Deferred — Parked Subjects & Features
 
-**This file holds everything deliberately deferred** until Math ships. Nothing here is pending a decision and nothing here is being built. When Math is done and Abhi says so, items graduate from here into `pending.md` as build work.
+**This file holds everything deliberately deferred** until Math ships. Nothing here is pending a decision. *(Exception: **World Awareness** was built ahead of schedule on a deliberate Abhi override — it has graduated out of this file; see below.)* When Math is done and Abhi says so, the remaining items graduate from here into `pending.md` as build work.
 
-**Working style (locked): depth-first.** Fully bake and ship one subject before the next moves.
+**Working style (locked): depth-first.** Fully bake and ship one subject before the next moves. *(Knowingly overridden once for World Awareness, 2026-06-17 — logged in `decisions_open.md`.)*
 
 ---
 
-## Subjects (named, not yet designed — except where noted)
+## Subjects
 
-### World Awareness  *(FULLY CAPTURED in product_vision.md)*
-- Its own theme/topic (may not need the One Piece skin).
-- Clean, positive, apolitical tone. Leaders/countries described positively, never overly critical.
-- **Learning Center** of reading material; diagnostics drawn **only from chapters he's read** (reading gates questions).
-- Per-country cards for top ~50 economies: flag, positive 5–10 sentence leader note, population & % of world, currency vs USD (ballpark), government system (neutral), specialty/tourism/culture, fun facts (e.g., Vatican City as a sovereign state inside Rome).
-- Reading-gated diagnostics: ~10 questions/day, only from chapters completed (cumulative).
-- **Open question to explore:** "what else would an 11-year-old want to learn to become really smart?" Candidate directions: maps & geography, basic economics, history's greatest hits, how elections/government work (neutral), inventions & scientists, world religions & festivals (respectful), space & the solar system, the UN, world languages, natural & built wonders.
+### World Awareness — ✅ GRADUATED (no longer deferred)
+- **Built on `preview` (2026-06-17), integrated into the main site.** Full spec + build details live in `product_vision.md` → "World Awareness", with the decision trail in `decisions_open.md` and build log in `completed.md`.
+- *(The earlier deferred brain-dump — reading-gated diagnostics, per-country cards for the top ~50 economies, the "what else makes an 11-yo smart?" open question — is preserved in `product_vision.md` under "Prior capture," reconciled against the version that was actually built.)*
+
+## Subjects still parked (named, not yet designed)
 
 ### Science / Data  *(Pokémon theme — named only)*
 - Taxonomy, stats, knowledge-collection (Pokédex-style). Reward = badges.

@@ -5,11 +5,16 @@
    ============================================================ */
 
 :root {
-  --ink: #2b2723;
-  --paper: #faf6ef;
-  --card: #ffffff;
-  --line: #e5ddd0;
-  --muted: #8a8174;
+  --ink: #241f1a;
+  --bg: #cabd9f;          /* page frame — deeper, warmer (darker-palette pass) */
+  --paper: #f4eee2;       /* light fill inside components */
+  --card: #fbf7ee;
+  --line: #cdbf9f;
+  --muted: #6f665a;
+  --clay-1: #b4744a;      /* exotic clay panel */
+  --clay-2: #8a4f2e;
+  --clay-edge: #6d3c20;
+  --clay-text: #fbeeda;
   --air: #c2641f;
   --water: #2e6f9e;
   --earth: #4c7a3d;
@@ -27,7 +32,7 @@
 html, body { margin: 0; padding: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--paper); color: var(--ink); line-height: 1.5;
+  background: var(--bg); color: var(--ink); line-height: 1.5;
 }
 /* Laptop-first, full-bleed (locked): no centered narrow column, no dead frame */
 #app { width: 100%; margin: 0; padding: 14px 30px 24px; }
@@ -78,8 +83,13 @@ button { font: inherit; cursor: pointer; }
 .land-soon-label { fill: #ffe9c9; font-size: 12px; font-style: italic; }
 .fissure { stroke: #0a1b22; stroke-width: 3; fill: none; stroke-linecap: round; opacity: 0.8; }
 
-@keyframes press { 0% { transform: scale(1); } 35% { transform: scale(0.94); } 70% { transform: scale(1.03); } 100% { transform: scale(1); } }
+/* press: in-place (translate lives on the outer .land-pos wrapper, so no lurch) */
+@keyframes press { 0% { transform: scale(1); } 35% { transform: scale(0.95); } 70% { transform: scale(1.03); } 100% { transform: scale(1); } }
 .land-pressed { animation: press 0.35s ease-out; }
+/* zoom: active land grows in place, then the world opens */
+@keyframes landzoom { 0% { transform: scale(1); } 18% { transform: scale(0.95); } 100% { transform: scale(1.5); opacity: 0; } }
+.land-zoom { animation: landzoom 0.43s cubic-bezier(0.4, 0, 0.5, 1) forwards; }
+.land-pos { transform-box: view-box; }
 
 .tide { fill: none; stroke: #7fb3c8; stroke-width: 6; opacity: 0.25; }
 @keyframes tide-breathe { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.35; } }
@@ -92,7 +102,7 @@ button { font: inherit; cursor: pointer; }
 .spout { animation: twinkle 4s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .tide-ring, .bird, .land-pressed { animation: none; }
+  .tide-ring, .bird, .land-pressed, .land-zoom { animation: none; }
 }
 
 .toast {
@@ -180,6 +190,7 @@ button { font: inherit; cursor: pointer; }
 .flag-clicks.hot { color: var(--hot); }
 .flag-prompt { flex: 1; }
 .flag-el { font-size: 0.8rem; color: var(--muted); }
+.reviewed-tag { font-size: 0.72rem; color: var(--good); font-weight: 600; white-space: nowrap; }
 
 .soft-row { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 0.9rem; }
 .soft-row > span:first-child { width: 92px; }
@@ -228,8 +239,31 @@ button { font: inherit; cursor: pointer; }
 .territory { transform-box: fill-box; transform-origin: center; transition: transform 0.15s ease; }
 .territory:hover { transform: scale(1.015); }
 .territory:hover .terr-shape { filter: brightness(1.07); }
-.terr-deco, .art-banner { pointer-events: none; }
-.terr-meta { font-size: 11px; font-style: italic; fill: #3d2f17; paint-order: stroke; stroke: #f3e9d2aa; stroke-width: 2.5px; }
+.terr-deco, .art-banner, .terr-cel, .terr-rim, .terr-cast, .terr-plaque { pointer-events: none; }
+
+/* cel-shaded depth layers */
+.terr-cel, .land-cel { mix-blend-mode: normal; }
+
+/* region label — subtle inked text on the land (no brown badge), name + small meta */
+.terr-name { fill: #2e2012; font-family: Georgia, serif; font-weight: 700; font-size: 15px;
+  paint-order: stroke; stroke: #f4ead0; stroke-width: 3.4px; stroke-linejoin: round; }
+.terr-meta { fill: #5a4630; font-size: 10px; font-style: italic;
+  paint-order: stroke; stroke: #f4ead0; stroke-width: 2.8px; stroke-linejoin: round; }
+
+/* location labels — light inked text (no pill); hidden until hover, visited stay shown */
+.loc-label { fill: #2e2012; font-size: 9.5px; font-weight: 600; pointer-events: none;
+  paint-order: stroke; stroke: #f4ead0; stroke-width: 2.6px; stroke-linejoin: round; transition: opacity 0.12s; }
+.loc:not(.loc-visited) .loc-label { opacity: 0; }
+.loc:not(.loc-visited):hover .loc-label,
+.loc:not(.loc-visited):focus .loc-label,
+.loc:not(.loc-visited):focus-within .loc-label { opacity: 1; }
+
+/* in-map route legend */
+.map-key { pointer-events: none; }
+.key-bg { fill: #f1e6cc; stroke: #9a7d4a; stroke-width: 1.2; opacity: 0.88; }
+.key-line { stroke: #b5642a; stroke-width: 2.6; stroke-dasharray: 7 6; stroke-linecap: round; }
+.key-arrow { fill: #b5642a; }
+.key-label { fill: #4a3a20; font-size: 11px; }
 
 .sea-wave { fill: none; stroke: #cfe8f2; stroke-width: 2; opacity: 0.7; stroke-linecap: round; }
 .serp-hump, .serp-head { fill: none; stroke: #173f52; stroke-width: 3; stroke-linecap: round; opacity: 0.8; }
@@ -254,21 +288,43 @@ button { font: inherit; cursor: pointer; }
 
 .loc { cursor: pointer; }
 .loc-hit { fill: transparent; }
-.loc-dot { fill: #7a2f1d; stroke: #f3e9d2; stroke-width: 1.5; transition: r 0.1s; }
-.loc:hover .loc-dot { fill: #c2641f; }
+.loc-dot { fill: #ffce7a; stroke: #2c2018; stroke-width: 1.5; transition: r 0.1s; }
+.loc:hover .loc-dot { fill: #ffb347; r: 6; }
+.loc:hover .loc-tag-bg { opacity: 0.95; }
 .loc-glyph { font-size: 13px; }
-.loc-name { font-size: 9.5px; fill: #3d2f17; paint-order: stroke; stroke: #f3e9d2cc; stroke-width: 2.5px; font-weight: 600; }
-.loc-visited .loc-dot { fill: #2c5e2e; }
+.loc-visited .loc-dot { fill: #7fd08a; }
 
-.route-path { fill: none; stroke: #2c3038; stroke-width: 2.4; stroke-dasharray: 7 6; stroke-linecap: round; opacity: 0.55; }
-.route-latest .route-path { opacity: 0.95; stroke: #7a2f1d; }
-.route-x { stroke: #9c1f10; stroke-width: 3.5; stroke-linecap: round; }
+.route-path { fill: none; stroke: #f0c089; stroke-width: 2.6; stroke-dasharray: 7 6; stroke-linecap: round; opacity: 0.65; }
+.route-latest .route-path { opacity: 1; stroke: #ffb45e; stroke-width: 3; }
+.route-x { stroke: #ff5a3c; stroke-width: 4; stroke-linecap: round; fill: none; }
 
 /* ---------------- ribbon extras + levels panel ---------------- */
 .ribbon + .ribbon { margin-top: 12px; }
-.ribbon.levels { margin-top: 12px; }
 .ribbon-route { font-size: 0.78rem; color: var(--air); }
+.ribbon-sub { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
 .ribbon-item.locked { opacity: 0.55; }
+
+/* ---- exotic clay panel: Bending Levels (sculpted terracotta, light text) ---- */
+.ribbon.levels {
+  margin-top: 12px; border: none; color: var(--clay-text);
+  background:
+    radial-gradient(120% 80% at 22% 8%, rgba(255,228,196,0.28), rgba(255,228,196,0) 46%),
+    radial-gradient(140% 120% at 88% 100%, rgba(40,16,4,0.42), rgba(40,16,4,0) 52%),
+    linear-gradient(155deg, var(--clay-1) 0%, var(--clay-2) 62%, var(--clay-edge) 100%);
+  box-shadow: inset 0 2px 3px rgba(255,235,205,0.30), inset 0 -8px 18px rgba(40,16,4,0.40),
+    0 6px 16px rgba(60,30,12,0.30);
+  border-radius: 16px;
+}
+.ribbon.levels h2 { color: var(--clay-text); text-shadow: 0 1px 2px rgba(40,16,4,0.5); }
+.ribbon.levels .muted { color: #f0d8b6; opacity: 0.9; }
+.ribbon.levels .level-name { color: var(--clay-text); }
+.ribbon.levels .level-pct { color: #f3ddbc; }
+.ribbon.levels .level-bar { background: rgba(30,14,4,0.38); border-color: rgba(20,10,2,0.5); }
+.ribbon.levels .level-fill { background: #f2c879; }
+.ribbon.levels .level-fill.good { background: #b6e39a; }
+.ribbon.levels .level-row { cursor: help; border-radius: 8px; padding: 2px 4px; margin: 7px 0; transition: background 0.12s; }
+.ribbon.levels .level-row:hover { background: rgba(255,235,205,0.14); }
+
 .level-row { display: flex; align-items: center; gap: 8px; margin: 9px 0; }
 .level-info { flex: 1; }
 .level-name { font-size: 0.82rem; font-weight: 600; }

@@ -1,3 +1,5 @@
+<a id="top"></a>
+
 # Ayansh Summer Camp — Product Vision
 
 This document holds **locked decisions** — the frozen product spec for Math, ready to build.
@@ -6,14 +8,34 @@ This document holds **locked decisions** — the frozen product spec for Math, r
 
 ---
 
+## 📖 Contents
+
+- [Project Overview](#project-overview)
+- [Build Strategy](#build-strategy)
+- [Platform-Wide Rules vs. Subject-Specific Rules](#platform-wide-rules-vs-subject-specific-rules)
+- [Themes](#themes)
+- [Index Page — The Landing Map](#index-page-the-landing-map)
+- [UI & Navigation](#ui-navigation)
+- [Math Mode — Avatar: The Last Airbender](#math-mode-avatar-the-last-airbender)
+- [Accounts & Auth](#accounts-auth)
+- [World Awareness](#world-awareness)
+- [Design Principles](#design-principles)
+
+---
+
+<a id="project-overview"></a>
 ## Project Overview
 
 **App name (locked): "Summer Camp."** Simple, true to what it is, and roomy enough to hold every future subject as a camp activity.
 
 A summer-project web app for an 11-year-old (just completed 5th grade, attends RSM). The app is organized as **modes** (subjects) presented as themed worlds on an index map. The first deliverable is the **Math mode diagnostic engine** — a fun, testing-first experience that surfaces skill gaps. It is explicitly **not** a tutoring product; diagnosis comes first, learning content is keyed to exposed gaps afterward.
 
-This spec covers the **diagnostic piece**. The post-diagnostic learning session is a placeholder hook (see decisions_pending.md).
+This spec covers the **diagnostic piece**. The post-diagnostic learning session is a placeholder hook (see `decisions_open.md`).
 
+
+[↑ Back to top](#top)
+
+<a id="build-strategy"></a>
 ## Build Strategy
 
 **Depth-first, not breadth-first.** Math gets fully densified and baked in the product vision before any other subject moves — no advancing three topics one pawn-step at a time. A fully baked vision makes the build-out fast. This is the working style for all future modes as well: bake one completely, then build.
@@ -22,6 +44,10 @@ This spec covers the **diagnostic piece**. The post-diagnostic learning session 
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="platform-wide-rules-vs-subject-specific-rules"></a>
 ## Platform-Wide Rules vs. Subject-Specific Rules
 
 Some rules belong to the **platform** (true for every subject — math, world awareness, science, logic, basketball) and should be built as shared/common mechanics, not re-invented per subject. Others are **subject-specific**.
@@ -48,6 +74,10 @@ Builder guidance: implement platform-wide rules as a reusable engine; each subje
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="themes"></a>
 ## Themes
 
 Available franchise themes: **Naruto, One Piece, Avatar: The Last Airbender, Pokémon**.
@@ -57,12 +87,14 @@ Rule: **one subject = one theme.** Themes are never mixed within a subject.
 | Theme | Subject |
 |---|---|
 | Avatar: The Last Airbender | **Math** |
-| One Piece | **World awareness** (geography, trade, where the world is going) |
+| ~~One Piece~~ → its own **"Atlas"** theme (as built) | **World awareness** (history & geography across continents) |
 | Pokémon | **Science / data** (taxonomy, stats, knowledge collection) |
 | Naruto | **Logic / puzzles** (skills-drill mode) |
 | Basketball (itself — no franchise wrapper) | **Basketball** (quiz mode: greats, record-holders, US & world records) |
 
-Subjects other than Math are named but **not yet designed** — math is being fully baked first (see Build Strategy below). **Basketball** is its own subject themed simply as basketball — he loves it as-is, so it needs no franchise skin. The basketball mode is a **quiz section**: names of the greats, world/US record holders, milestones.
+> **Theme update (2026-06-17):** World Awareness was originally pencilled in for a One Piece skin, but when built it got **its own clean "Atlas" identity** (explorer's-journal look) — the vision had always allowed a subject to stand as its own theme (like Basketball), and a neutral atlas fit world history better than a pirate skin. Science, Logic, and Basketball remain as mapped above.
+
+The remaining subjects (Science, Logic, Basketball) are named but **not yet designed** — Math is being fully baked, with World Awareness built alongside (see Build Strategy + the World Awareness section). **Basketball** is its own subject themed simply as basketball — he loves it as-is, so it needs no franchise skin: a **quiz section** on the greats, world/US record holders, milestones.
 
 Theme-to-subject mapping is config-driven, not hardcoded.
 
@@ -70,6 +102,10 @@ Note for the builder: use franchise-*inspired* styling (names, palettes, vibes),
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="index-page-the-landing-map"></a>
 ## Index Page — The Landing Map (locked)
 
 The app opens on a **world map of continents drifting together** — the visual centerpiece and the front door to every subject.
@@ -78,7 +114,8 @@ The app opens on a **world map of continents drifting together** — the visual 
 - **One land per theme/subject.** The Avatar continent is labeled **"Airbender (Math)"** — franchise name with the subject in parentheses. The other lands are the other subjects.
 - **Tactile click (mostly visual + sound):** clicking a land gives a satisfying **press-down-and-spring-back** "ka-chunk" — the land depresses slightly and snaps back, a crack/snap micro-animation, accompanied by a **click sound**. The feel is physical and deliberate.
 - **Active land (Math):** the click zooms into that continent → the math world (nations/elements, the Missions ribbon, etc.).
-- **Inactive lands (World Awareness, Science/Data, Logic, Basketball):** visible on the map and **still clickable** — the tactile click feedback fires — but they show a **"Coming Soon"** label and do **not** lead anywhere, because nothing is built behind them yet. (Builds anticipation; explains why only Math is enterable now.)
+- **Active lands (Math, World Awareness):** clicking zooms in and enters that world. *(World Awareness was activated 2026-06-17 — its land is now live, routing to `#/world`.)*
+- **Inactive lands (Science/Data, Logic, Basketball):** visible on the map and **still clickable** — the tactile click feedback fires — but they show a **"Coming Soon"** label and do **not** lead anywhere, because nothing is built behind them yet. (Builds anticipation.)
 - Navigation overall: landing map → click a land → (Math) zoom into the subject world → mode home → start today's Mission.
 
 ### Ambient Effects — Landing Map (locked)
@@ -95,6 +132,10 @@ Subtle background life that makes the map feel alive without distracting. **Clas
 - Pause/reduce animation when the tab is backgrounded; honor **prefers-reduced-motion**; cap frame cost so it never becomes a CPU/battery hog.
 - **Rule:** if an effect ever costs load speed or responsiveness, the effect loses.
 
+
+[↑ Back to top](#top)
+
+<a id="ui-navigation"></a>
 ## UI & Navigation (locked)
 
 - **Top nav: the subjects/topics sit up top** (Math, World awareness, Science/data, Logic/puzzles, Basketball), each in its theme.
@@ -104,10 +145,15 @@ Subtle background life that makes the map feel alive without distracting. **Clas
 - **Color:** each subject uses its theme-native palette (Avatar world colors for math — and within it, nation palettes can tint their territories: Water Tribe blues, Earth Kingdom greens, Fire Nation reds, Air Nomad oranges). Tweakable.
 - **Laptop-first, full-bleed (locked, 2026-06-12):** the app is custom-cut for MacBook/laptop screens — layouts stretch to fill the viewport, the landing map is a full-screen scene, and no screen ships with large dead margins. Mobile-friendliness is explicitly NOT a requirement.
 - **Visual richness bar (locked, 2026-06-12):** maps and worlds must feel like a hand-illustrated treasure map, not a diagram — amorphous organic landmasses (never plain geometric shapes), parchment texture, per-element iconography and terrain motifs (mountains, waves, flames, swirls, trees), dashed journey routes traced on the map, a compass rose, sea creatures, ambient life. Mystical and abstract beats simple and clean-empty; no large dead whitespace on any screen. All artwork original SVG, franchise-inspired — never copied assets. (Perf guardrails still rule: filters render static, animations stay transform/opacity.)
+- **Painterly polish + darker palette (locked, 2026-06-13 — after Abhi's "childish, not polished anime" feedback):** map art is **cel-shaded** — layered top-light/bottom-shadow gradients, a soft cast shadow under each landmass, a thin rim-light — over a **deeper, richer palette** (deep-teal ocean, aged parchment, darker territory fills) so it reads as polished anime, not childish-flat. Territory labels are compact carved **plaques** (element name + level·% as one unit) so names, meta, and location labels never collide; location names sit in small pills placed away from the plaques. An in-map **legend** explains the dashed lines (= your journeys) and the ✕ (= journey's end). Clicking a land **zooms in place** (no sideways lurch) before entering the world. Feature panels (e.g. Bending Levels) may use an **exotic-clay** surface; each Bending-Level row carries **hover info** (its Common-Core domain + what the level/% means). Still all original SVG; perf guardrails hold.
 - **Typography: clear and simple, never fancy.** An 11-year-old has good eyes — the font just needs to stay out of the way. No decorative typefaces, no fonts that make him think about the font. Attractive **themes**, simple type, everything clearly visible.
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="math-mode-avatar-the-last-airbender"></a>
 ## Math Mode — Avatar: The Last Airbender
 
 ### Core Narrative Frame
@@ -209,6 +255,7 @@ How Ayansh's math progress is benchmarked — every metric derived from existing
 - **Style profile** — first-try rate per pedagogical style tag: which styles click (a diagnostic no classroom surfaces).
 - **Independence** — % solved hint-free, and post-hint success rate (hint efficacy).
 - **Bounce-back conversion** — % of revisited misses beaten: the neuroplasticity loop measured. This is the purest "is he learning from mistakes" number.
+- **Review follow-through ("due diligence", added 2026-06-13)** — of the challenges he got wrong, the % whose full step-by-step thinking model he actually walked through afterward. The habit-of-learning signal: did he go back and do the work on his misses, or just move on? Tracked per problem (a ✓ on each flagged item) and rolled up on the Training Record.
 - **Consistency** — streak, missions/week, average session time vs. budget.
 - **Grade frontier** (parent-facing later; computed now, never shown to him) — G5 vs G6 performance split, for the "lean into Book Six" call.
 
@@ -249,7 +296,7 @@ Every Mission ends with a reward. The carrot matters — rewards are what make a
 | Theme / subject | Reward currency |
 |---|---|
 | Avatar (Math) | **Pai Sho tiles** — collectible tiles; rare **White Lotus tile** for special feats |
-| One Piece (World awareness) | Treasure / Berries |
+| Atlas (World awareness) — *as built* | **Continent badges** + day-streak + personal-best (no franchise currency) |
 | Pokémon (Science/data) | Badges |
 | Naruto (Logic/puzzles) | Ninja rank progression (Genin → Chunin → Jonin) |
 
@@ -287,9 +334,14 @@ Config values only — the clicks-to-correct data decides whether the next week'
 - **Not endless.** Open-ended time is boring and lets the session sprawl into the whole afternoon — against the pull intent. The Mission has a sense of an ending.
 - **Clock, with a toggle (his choice):** a clock can show in the top-right from the moment he starts. He can **toggle it on or off** — some kids panic at a ticking clock, some like knowing. A gentle "~10 minutes left" style nudge is preferred over an anxiety-inducing countdown. Whether or not the clock is visible, **elapsed time is always recorded** and shown afterward.
 - **Results dashboard shows time:** total session time and (optionally) per-question time appear in the results, so neither he nor the parent has to guess how long he sat at the screen. Explicit goal: **he should not sit in front of the screen forever.**
+- **Runaway guard (locked 2026-06-13):** the clock counts only **active** time (it pauses when the tab is hidden) and **hard-stops after ~2 hours** with a gentle "looks like you stepped away — time isn't counting anymore" message, so a session left open overnight can't record an absurd time (e.g. 1337:00). The cap is config (`clockRunawayMin`).
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="accounts-auth"></a>
 ## Accounts & Auth (CAPTURED — DEFERRED; build without login first)
 
 > Intent logged so it's not lost. **No auth work during the initial build** — build the whole thing on one site, no login, then add the account layer later.
@@ -302,9 +354,226 @@ Config values only — the clicks-to-correct data decides whether the next week'
 
 ---
 
-## World Awareness (CAPTURED — NOT BEING BUILT YET; math first)
 
-> Brain-dump from Abhi, logged so nothing is lost. **No build work until math is fully shipped.** World Awareness may stand as **its own theme/topic** (like Basketball) — it does not need to borrow the One Piece skin if its own identity is cleaner.
+[↑ Back to top](#top)
+
+<a id="world-awareness"></a>
+## World Awareness (BUILT on preview — integrated into the main site)
+
+> **BUILT — a deliberate Abhi override of depth-first (2026-06-17).** World Awareness is live on `preview`, integrated as the **World land on the index map** (clicking it routes into `#/world`). It stands as **its own themed world** ("Atlas" design, not the One Piece skin). What's live: 6 continents · 39 interactive lessons (~255 quiz questions) + 6 section quizzes & badges · a 29-country atlas · a Geography Drill · per-continent "Big Question" debate cards · dashboard/streaks. Files under `code/` (`code/world-awareness` is integrated via `code/js/wa/*` + `code/css/wa.css`). Not yet committed to git (still on the working tree; Math's preview→main gates untouched). Full build log: `completed.md` + `decisions_open.md`. The spec below is what was built.
+
+> 📝 **Build-time notes.** The full vision below describes a **continent-based, teaching-first, interactive-lesson** product. All three earlier open differences were resolved (2026-06-13) and the product was then **built on preview** (2026-06-17); these were the decisions that shaped it:
+> - ✅ **RESOLVED — Spine: teaching-first by design** (Abhi, 2026-06-13). World Awareness teaches first (lesson), then the quiz follows. Per-lesson quizzes **plus** a section-level quiz after a group of lessons (e.g., a 10-lesson section → one section quiz). This is *intentionally different from Math* (which is diagnostic-first) — subjects are allowed to differ; not a conflict.
+> - ✅ **RESOLVED — Delivery: interactive "explorable explanations"** (Abhi, 2026-06-13: "use the most sophisticated way within this environment"). Lessons are scroll-driven and *manipulable*, not passive video. Rendering palette, by reliability-first preference: **animated SVG (default)** → **Canvas/WebGL** for rich scenes & small simulations → **interactive widgets** (draggable timelines, click-to-reveal maps, manipulable models) → **pre-rendered media** (Lottie JSON or short video clips) only for cinematic moments. Still within the locked stack: vanilla HTML/CSS/JS, **no framework, no backend, no auth** (libraries via CDN are fine; progress in **browser storage** like Math), static free hosting. Engineered for speed + graceful fallback per *"never make him wait."* Build a **reusable lesson engine** (shared scroll/animation/widget primitives) so each lesson is content + config, not new code. *Cost to accept: highest authoring effort per lesson — the engine is what keeps ~40 lessons tractable.*
+> - ✅ **RESOLVED — Structure: continent/lesson spine + per-country cards both kept** (Abhi, 2026-06-13). The 6-continent × ~40-lesson structure is the backbone; the **per-country cards (flags, currencies, leaders, etc.) survive as a feature inside it** — e.g., reachable from a continent/region or a map, complementing the lessons rather than replacing them.
+
+---
+
+### Summer Camp World Awareness — Product Vision Document
+
+#### Executive Summary
+A comprehensive world awareness platform that teaches an 11-year-old learner about major historic events and turning points across all continents. Content is organized geographically (by continent) and delivers bite-sized animated lessons followed by integrated quizzes. The learner completes one lesson, takes a quiz on that specific lesson, and moves to the next.
+
+**Platform Goal:** Build genuine world awareness by exploring what actually mattered in human history across different regions—why events happened, who they affected, and why they still matter today.
+
+#### Target Audience
+- **Primary User:** One 11-year-old learner with strong intellect and curiosity about world events and history
+- **Secondary Users:** Parent/guardian (progress tracking, content oversight)
+- **Learning Style:** Visual learner who enjoys animation; prefers digestible, focused content over dense textbooks
+
+#### Core Learning Objectives
+By completing this platform, the learner will:
+1. Understand major historic turning points across every continent
+2. Recognize cause-and-effect in world events (why things happened, what changed)
+3. Develop geographical and cultural context for global affairs
+4. See interconnections between events across regions (trade, war, migration, ideas)
+5. Build ability to ask informed questions about current world events
+6. Appreciate the diversity of human experience across cultures and histories
+
+#### Content Architecture
+
+**Curriculum Structure: Continents as Organizing Principle.** The platform is organized into **6 continental sections**, each containing lessons on the most important historic events and turning points in that region.
+
+```
+World Awareness Platform
+├── Europe
+│   ├── Lesson 1: Ancient Greece & Democracy
+│   ├── Lesson 2: Roman Empire Rise & Fall
+│   ├── Lesson 3: Medieval Feudalism & The Church
+│   ├── Lesson 4: Renaissance & Enlightenment
+│   ├── Lesson 5: Industrial Revolution
+│   ├── Lesson 6: World War I: Causes & Consequences
+│   ├── Lesson 7: World War II: Rise of Fascism
+│   └── Lesson 8: Cold War & Fall of Communism
+│   └── [End-of-Section Quiz: 50 questions across all Europe lessons]
+│
+├── Asia
+│   ├── Lesson 9: Ancient China: Dynasties & Inventions
+│   ├── Lesson 10: India: Empires, Religion, & Independence
+│   ├── Lesson 11: Japan: Feudalism to Modernization
+│   ├── Lesson 12: Ottoman Empire & Islam
+│   ├── Lesson 13: Colonialism in Asia
+│   ├── Lesson 14: Asian Independence Movements (1900s)
+│   ├── Lesson 15: China's Communist Revolution
+│   └── Lesson 16: Modern Asia: Tigers & Powers
+│   └── [End-of-Section Quiz: 50 questions across all Asia lessons]
+│
+├── Africa
+│   ├── Lesson 17: Ancient Africa: Kingdoms & Trade
+│   ├── Lesson 18: Slavery & The Atlantic Trade
+│   ├── Lesson 19: European Colonization
+│   ├── Lesson 20: African Independence Movements
+│   ├── Lesson 21: Post-Colonial Africa
+│   └── Lesson 22: Modern Africa: Challenges & Growth
+│   └── [End-of-Section Quiz: 40 questions]
+│
+├── Americas (North, Central, South)
+│   ├── Lesson 23: Indigenous Civilizations (Aztec, Maya, Inca)
+│   ├── Lesson 24: European Conquest & Colonization
+│   ├── Lesson 25: Slavery in the Americas
+│   ├── Lesson 26: American & Latin American Independence
+│   ├── Lesson 27: US Civil War & Expansion
+│   ├── Lesson 28: Industrial Boom & Immigration
+│   └── Lesson 29: Modern Americas: Cold War & After
+│   └── [End-of-Section Quiz: 40 questions]
+│
+├── Middle East
+│   ├── Lesson 30: Birth of Civilization (Mesopotamia, Persia)
+│   ├── Lesson 31: Islam & Islamic Empires
+│   ├── Lesson 32: Ottoman Decline & European Interests
+│   ├── Lesson 33: Creation of Modern Middle East (Post-WWI)
+│   ├── Lesson 34: Oil, Geopolitics & Israel
+│   └── Lesson 35: Modern Middle East: Conflicts & Change
+│   └── [End-of-Section Quiz: 40 questions]
+│
+└── Oceania & Pacific
+    ├── Lesson 36: Indigenous Peoples & Cultures
+    ├── Lesson 37: European Exploration & Colonization
+    ├── Lesson 38: Australia & New Zealand Development
+    └── Lesson 39: Pacific Islands & WWII
+    └── [End-of-Section Quiz: 30 questions]
+
+Total Lessons: ~40 lessons across all continents
+Total Quiz Questions: ~250–300 integrated + 6 section reviews
+```
+
+**Lesson Design Principles**
+- **Length:** 4–6 minutes of animation per lesson
+- **Focus:** One major historic event or turning point per lesson
+- **Visual Style:** Animated maps, timelines, character illustrations, cause-and-effect diagrams
+- **Narrative:** "Why did this happen? What changed? Why does it matter today?"
+- **Language:** Age-appropriate, avoids jargon without sacrificing accuracy
+- **Structure:** (1) Hook (compelling question or scenario); (2) Historical context (what came before); (3) The event itself (what happened, who was involved); (4) Consequences (how the world changed); (5) Modern relevance (why this still matters)
+
+**Quiz Integration: Two-Level System**
+
+*Level 1: Lesson-End Quizzes.* Each lesson is immediately followed by its own quiz — 5–10 questions specific to that lesson; types include multiple choice, true/false, short answer, scenario-based; immediate right/wrong feedback with explanation; difficulty adapts based on performance; flow is watch lesson → take quiz → move to next lesson (immediate reinforcement).
+
+Example — Lesson 2 "Roman Empire Rise & Fall": 5-minute animation (founding → peak → decline) + 8-question quiz ("Which event marked the 'fall' of the Western Roman Empire?"; "Why did the Eastern/Byzantine empire last longer?"; scenario: "You're a Roman general in 200 AD. What challenges do you see?").
+
+*Level 2: Section-End Reviews.* After completing all lessons in a continent, the learner takes a comprehensive cumulative quiz — 50 questions covering the whole section (adjustable down to 25 if too long); scope is cross-lesson connections, synthesis, application ("How did the Industrial Revolution in Europe change Asia?"; "Compare colonialism in Africa vs. Americas"; map-based "Identify which continent each event belongs to"; timeline "Put these 5 events in chronological order"). Reward: a section badge ("European Historian," "Asian Explorer") on completion.
+
+#### Platform Features
+
+**Learning Experience.** Lesson Player with play/pause/rewind, transcript toggle (read along), 1.5x/2x speed for re-watching, and "Did you know?" bonus facts sprinkled throughout. Integrated Quiz Interface that is clean and distraction-free, with a progress indicator (question 3/8), immediate feedback with explanations, a review mode (see all answers after completing), and one hint per quiz if needed. Dashboard giving an overview of progress, badges earned, current streak, and upcoming lessons.
+
+#### Engagement & Fun: Making It Genuinely Enjoyable
+
+**Narrative & Voice.** A **guide character** (animated or narrated) who reacts to events, asks rhetorical questions, and makes connections ("Wait—did you catch that?") in a conversational, non-preachy tone. **Surprising hooks** open each lesson ("The Roman Empire lasted 1,000 years. How long has the US existed?"). **Real-world bridges** end lessons by connecting to modern news the learner may have heard about.
+
+**Gamification Done Right.** Streak counter ("You've learned 5 days in a row!"), badges by continent ("European Historian," "Asian Explorer," "Americas Master") unlocked per section, personal-best tracking ("Your highest quiz score: 92% on Lesson 7" — celebrating individual achievement, not competition), progress visualization (lessons completed, sections mastered, overall journey), and small achievement animations when unlocking a badge or milestone.
+
+**Interactive & Dynamic Learning.** Drag-and-drop timelines (order events chronologically, instant feedback), click-to-reveal maps (tap regions to discover events, trade routes, cultural connections), scenario questions ("What would you have done?" — ungraded, just thinking), and easter eggs (hidden bonus facts and fun connections).
+
+**Choice & Autonomy.** Pick your path (learner chooses which continent to explore first), optional deep dives (lessons on specific figures — Cleopatra, Napoleon, Genghis Khan), profile customization (avatar, color theme, nickname — unlocked via badges), and difficulty tuning (quiz difficulty adapts; no "stuck" feeling).
+
+**Social & Parent Involvement.** Section report cards for the parent ("Your son mastered European history! Here are 3 fun facts to discuss at dinner"), teaching-as-mastery (encourage the learner to explain a lesson back to a parent), an optional parent challenge ("Can you score higher than your son on the Americas section?"), and discussion prompts ("Ask your parent: What do they remember about this event?").
+
+**Pacing & Surprise.** Varied lesson length (most 4–6 min, some 3, some 7) to avoid mechanical repetition; cliffhanger openers ("By the end you'll understand why an island nation defeated a continental superpower…"); a mix of serious topics (wars, politics) and lighter ones (innovations, cultural moments); and surprise facts ("This technology was invented 1,000 years before anyone else…").
+
+**Rewards That Matter.** Progressive unlocking (unlock Asia after completing Europe, etc.), milestone celebrations (at 10/20/30 lessons — "You've learned 1/3 of world history!"), mastery badges displayed on the dashboard and shareable with a parent, and bragging rights ("You're now an expert on [continent]").
+
+**The Secret Sauce: Genuine Expertise.** After each section, prompt "Can you explain to your parent what you learned about [continent]?" — pride of mastery beats any gamification mechanic. If the learner asks deeper questions, optional "rabbit hole" sections let them explore further.
+
+#### Accessibility
+Captions/subtitles on all animations; adjustable text size; dark mode for evening learning; playback speed 0.75x–2x for accessibility and re-learning.
+
+#### Proposed Roadmap
+
+*Phase 1 (MVP — Launch with ~40 Lessons).* Continent priority order (by content availability & learner interest): (1) **Europe** — 8 lessons, Ancient Greece through Cold War; (2) **Asia** — 8 lessons, China, India, Japan, Ottoman; (3) **Americas** — 7 lessons, Indigenous to modern; (4) **Africa** — 6 lessons; (5) **Middle East** — 6 lessons; (6) **Oceania** — 4 lessons. Launch content: all 40 lessons + 6 section-level quizzes.
+
+*Phase 2 (Expansion & Depth).* Theme deep-dives ("Women in History Across Continents," "Trade Routes & Empires"), interactive maps (click to explore events by location), a "connections" module (how events across continents influenced each other), a chronological timeline across all continents, and biographical deep-dives.
+
+#### Technical Requirements
+
+> ✅ *Superseded by the resolved delivery decision at the top of this section: interactive "explorable explanations" in vanilla HTML/CSS/JS — **no backend, no auth, no framework** (libraries via CDN ok), progress in browser storage, static free hosting. The video-player / backend / auth / Firebase language below is kept only as the original brain-dump; the resolved approach governs.*
+
+**Frontend:** animated video player (HTML5, WebGL, or an animation library like Lottie); quiz interface (form validation, immediate feedback); responsive design (tablet, laptop, possibly mobile); progress state management (local storage or backend sync). **Backend (if needed):** simple user authentication (child + parent); progress-tracking database (chapter completion, quiz scores); quiz question-bank management; parent-dashboard API. **Content Management:** easy-to-edit lesson metadata (title, description, video file); quiz question database (importable from spreadsheet or CMS); A/B testing framework for difficulty tuning.
+
+#### Success Metrics
+
+*Learning Outcomes:* lesson completion rate (target 80%+ of 40 lessons); quiz performance (target 70%+ first attempt); section mastery (target 75%+); retention (score improvement on re-takes); cross-lesson connections (questions linking continents). *Engagement:* session length (target 5–10 min/lesson); return visits (days active/week); quiz engagement (lessons completed to quizzes taken); retry rate. *Satisfaction & Impact:* learner feedback ("Can you explain it to a friend?"), parent observation (is he asking about world news?), and curiosity indicators (does he want to deep-dive further?).
+
+#### Design & Tone
+Colorful, modern animations; clear typography; minimal clutter. Conversational, respectful voice (not "talking down" to an intelligent kid). Energetic but not overwhelming pacing; lessons end on cliffhangers or compelling questions. Diverse representation in characters, perspectives, and examples.
+
+#### Timeline & Milestones
+Wk 1–2: finalize all 40 lesson outlines · Wk 3–4: write Europe & Asia scripts (16) · Wk 5–6: create/source Europe & Asia animations (16) · Wk 7–8: write & animate Americas, Africa, Middle East, Oceania (24) · Wk 9: build lesson player & quiz interface · Wk 10: develop quiz banks (40 lessons + 6 section reviews) · Wk 11: integrate backend (auth, progress, submission) · Wk 12: end-to-end testing & learner feedback · Wk 13: launch on subdomain (vercel.app) · Wk 14+: monitor, gather feedback, plan Phase 2.
+
+#### Risks & Mitigation
+| Risk | Mitigation |
+|------|-----------|
+| Animation production is time-consuming across 40 lessons | Start with simpler 2D animation; use templates or AI-assisted tools; prioritize most interesting continents first |
+| Content accuracy across diverse regions & histories | Research rigorously; cite sources; fact-check; be transparent about bias & perspective |
+| Lessons feel disconnected (why does Africa matter to a kid in California?) | Emphasize relevance: immigration, trade, cultural influence, modern geopolitics; show how continents connect |
+| Quiz difficulty varies wildly across lessons | Clear rubrics for question difficulty; test with the learner; adaptively adjust pool |
+| Learner loses motivation mid-curriculum | Badges per continent, streak tracking, parent engagement, milestone celebrations |
+| Tracking 40 lessons + 250+ questions | Simple backend (Firebase or similar); keep question bank in CSV initially; scale only if needed |
+
+#### Future Expansion Ideas
+Interactive world map (click any region for major events), timeline view (scroll chronologically across all continents), theme deep-dives ("Women in History," "Trade & Economics," "Technology's Impact," "Religious Movements"), comparison module (colonialism in Africa vs. Asia vs. Americas), biographical profiles (emperors, generals, freedom fighters, inventors), discussion forum, podcast companion (audio for car rides), printable workbook, parent guide (dinner-table conversation starters), and a current-events bridge ("This news story connects to Lesson 12 about the Middle East").
+
+#### Conclusion
+This platform transforms world awareness from a dry checklist of facts into a guided journey across continents, discovering what actually mattered in human history and why it still shapes our world. By combining ~40 focused animated lessons with integrated, immediate-feedback quizzes, it empowers an intelligent young learner to build genuine global literacy at his own pace. The continent-based structure avoids treating world history as "Europe + everybody else" — it gives equal weight to Asia, Africa, the Americas, Middle East, and Oceania, showing how regions influenced each other and developed independently. **Success = the learner completes most lessons, understands cause-and-effect across continents, asks questions about global affairs, and sees connections between past and present.**
+
+---
+
+### Competition Alignment & External Resources (added 2026-06-13)
+
+**Direction (Abhi, 2026-06-13): keep the current content, but "mix it up" so the app doubles as gentle, early prep for two standout, internationally-available competitions.** The goal is to light a fire from age ~10 and give the learner a real ladder to climb as world events keep unfolding — not to turn the app into a cram tool. Tone stays no-pressure and effort-based; the competitions are an *aspiration*, not a stressor.
+
+#### Standout #1 — World Scholar's Cup (WSC)  *(the lead target)*
+- **What it is:** a joyful, team-based academic tournament built around a fresh **annual theme**, spanning six subject areas — **History, Social Studies / current affairs, Science & Technology, Literature & the Arts, and a rotating Special Area** — across four events: **Team Debate, Collaborative Writing, the Scholar's Challenge (written multiple-choice), and the Scholar's Bowl (a multimedia team quiz).**
+- **Age fit:** **Junior Division ≈ ages 10–13** (no hard lower limit; most are ≥10), plus **Skittles / Lpaca** tracks for 10–11-year-olds. Ideal for the target learner.
+- **The ladder (what sustains interest):** Regional Round → **Global Round** (host cities worldwide) → **Tournament of Champions at Yale University**.
+- **Global reach:** runs on every inhabited continent. **India:** regional rounds in Delhi, Chennai, Mumbai, Bangalore. **Europe & beyond (2026 Global Rounds):** Prague (Europe), Dubai, Kuala Lumpur, Seoul, Shanghai, Bangkok, Da Nang, Christchurch.
+- **Links:** scholarscup.org/faq · scholarscup.org/global-round · scholarscup.org/calendar
+
+#### Standout #2 — International Geography Championships / International Geography Bee (IGB)  *(the geography complement)*
+- **What it is:** a pure "where is the world and what's happening in it" competition — **physical & human geography, countries / capitals / flags, maps, and current events tied to places.**
+- **Format & ladder:** a **free Online Regional Qualifying Exam (50 MCQ)** → Regional Finals → National / Continental Championships → the **International Geography Championships** (Summer).
+- **Age fit (divisions):** **Elementary** (finishing grades 1–4), **Intermediate** (grades 5–6), **Middle** (7–8), **High** (9–12), with **JV / Varsity** levels. *A learner finishing 5th grade competes in the Intermediate division.*
+- **Global reach:** **USA**, **Europe** (IHBB European Division — buzzer-based online regional tournaments, no prior qualifying needed), **Asia** (International Academic Competitions – Asian Division; **India via Xpress Minds**), and Canada. The exam window runs ~September → early May.
+- **Links:** geochampionships.com/qualify · geochampionships.com/about/faq · internationalgeographybee.com/europe · iacompetitionsasia.com/international-geography-bee
+
+#### Other options (aspirational / context — not primary targets)
+- **National Current Events League** (US, low-friction in-school meets; has an elementary division) — good for building the news habit.
+- **Academic WorldQuest** (team foreign-affairs) and most **Model UN** programs are **high-school / older-middle** — north stars for later.
+- **National Geographic GeoBee:** **permanently discontinued** (last held 2019). A new independent **National Geography Bee** launched but is currently **high-school-focused**.
+
+#### How the app "mixes in" these two (build direction — keep all current content, layer these on)
+1. **Geography depth (for IGB):** keep the 39 lessons + country atlas; layer in **place knowledge** — capitals, flags (have), and **physical features (rivers, mountains, deserts)** — plus **"where did this happen?" map questions** tied to each lesson, and an optional **map-drill / capitals quiz mode**.
+2. **WSC-style breadth & thinking:** add per-section **"Big Question" debate prompts** (argue *both* sides — mirrors Team Debate), a short **"collaborative writing" spark**, **current-events bridges** ("this connects to a news story you may have heard"), and **cross-subject tie-ins** (art / science / literature woven into history). Consider an **annual-theme** framing like WSC's.
+3. **Quiz-style variety:** include **multimedia "identify the flag / map / image"** items (Scholar's-Bowl flavor) and an optional **timed MCQ round** (Scholar's-Challenge flavor) alongside the current teaching-checks.
+4. **Guardrail:** all of the above stays optional and effort-framed — no leaderboards-vs-peers, no shame; the existing badge/streak/personal-best loop is the reward.
+
+*Status (2026-06-13): first build of this layer is DONE on preview — a **Geography Drill** (flags / capitals / physical-geography, relaxed or ⏱️ timed, with a personal-best) and per-continent **"Big Question" debate cards** (argue both sides). Still to come if wanted: per-lesson "where did this happen?" map placement, a collaborative-writing spark, and an annual-theme framing.*
+
+---
+
+### Prior capture (preserved — reconcile with the vision above)
+
+> Earlier brain-dump from Abhi, kept so nothing is lost. Its **reading-gated, per-country** model and **diagnostic-first** spine differ from the continent/lesson vision above; the two need merging or a pick before build.
 
 **Spirit & boundaries:** a **clean, positive environment.** Leaders and countries are described in a positive, factual light — *not* overly critical of anyone. Keep it apolitical in tone; favor wonder and fun facts over hot-button geopolitics.
 
@@ -327,6 +596,10 @@ Config values only — the clicks-to-correct data decides whether the next week'
 
 ---
 
+
+[↑ Back to top](#top)
+
+<a id="design-principles"></a>
 ## Design Principles
 
 1. **Diagnostic-first.** Surface gaps; don't teach until gaps are known.
@@ -337,3 +610,6 @@ Config values only — the clicks-to-correct data decides whether the next week'
 6. **Not adaptive (v1).** Fixed pools, even domain distribution, fixed tier-ramp schedule. Adaptivity is a later consideration.
 7. **Extensible modes.** Math is the first region on the map; the architecture must accommodate future subjects as new themed regions.
 8. **Agile, never make him wait.** Fast loads, snappy interactions, no jank. Polish and ambient effects are welcome only when they stay lightweight and never cost speed or responsiveness — agile beats pretty, every time.
+
+
+[↑ Back to top](#top)

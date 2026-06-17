@@ -26,20 +26,31 @@ SC.Art = (function () {
         <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.22  0 0 0 0.06 0"/>
         <feComposite operator="over" in2="SourceGraphic"/>
       </filter>
-      <radialGradient id="${idp}-oceanG" cx="50%" cy="42%" r="75%">
-        <stop offset="0%" stop-color="#7ab7cf"/>
-        <stop offset="55%" stop-color="#4f93b4"/>
-        <stop offset="100%" stop-color="#2e6587"/>
+      <radialGradient id="${idp}-oceanG" cx="50%" cy="40%" r="78%">
+        <stop offset="0%" stop-color="#3c7e95"/>
+        <stop offset="52%" stop-color="#1f5870"/>
+        <stop offset="100%" stop-color="#0c2c3e"/>
       </radialGradient>
       <radialGradient id="${idp}-glow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#9fe8e2" stop-opacity="0.9"/>
+        <stop offset="0%" stop-color="#aef4ee" stop-opacity="0.95"/>
         <stop offset="100%" stop-color="#3aa6a0" stop-opacity="0"/>
       </radialGradient>
       <linearGradient id="${idp}-parchG" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#efe0bd"/>
-        <stop offset="50%" stop-color="#e9d6ac"/>
-        <stop offset="100%" stop-color="#dec896"/>
+        <stop offset="0%" stop-color="#cdb78b"/>
+        <stop offset="50%" stop-color="#bda273"/>
+        <stop offset="100%" stop-color="#a2864f"/>
       </linearGradient>
+      <!-- cel-shading overlay: top light, bottom shadow → volume on flat fills -->
+      <linearGradient id="${idp}-cel" x1="0" y1="0" x2="0.15" y2="1">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.34"/>
+        <stop offset="38%" stop-color="#ffffff" stop-opacity="0.06"/>
+        <stop offset="64%" stop-color="#1c1206" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#160f04" stop-opacity="0.30"/>
+      </linearGradient>
+      <!-- soft blur for cast shadows under landmasses -->
+      <filter id="${idp}-soft" x="-35%" y="-35%" width="170%" height="180%">
+        <feGaussianBlur stdDeviation="7"/>
+      </filter>
     </defs>`;
   }
 

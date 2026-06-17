@@ -18,6 +18,7 @@ SC.PLATFORM = {
   missionSize: 20,                // ~20; 18–22 acceptable
   missionsPerWeek: 5,             // "week" in the ramp = 5 completed Missions (architect default)
   sessionBudgetMin: 45,           // ~40–60 min budget
+  clockRunawayMin: 120,           // stop a forgotten clock after ~2h (anti-runaway)
   masteryThreshold: 0.80,         // first-click rate => Adept + green territory
   masterThreshold: 0.90,          // Adept -> Master (architect default, tunable)
   minAttemptsGuard: 16,           // ~15–20 attempts before mastery can be earned
@@ -67,7 +68,7 @@ SC.SUBJECTS = [
     },
     contentGlobal: "MATH_QUESTIONS", // window.<X> set by the data file
   },
-  { id: "world",      active: false, displayName: "World Awareness", landLabel: "World Awareness", comingSoon: true },
+  { id: "world",      active: true,  displayName: "World Awareness", landLabel: "World Awareness" }, // its own themed world — wa.* files, routes under #/world
   { id: "science",    active: false, displayName: "Science / Data",  landLabel: "Science / Data",  comingSoon: true },
   { id: "logic",      active: false, displayName: "Logic / Puzzles", landLabel: "Logic / Puzzles", comingSoon: true },
   { id: "basketball", active: false, displayName: "Basketball",      landLabel: "Basketball",      comingSoon: true },

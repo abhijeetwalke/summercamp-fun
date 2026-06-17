@@ -1,6 +1,6 @@
 /* ============================================================
    Summer Camp — Math question bank (STARTER SET)  [MATH]
-   30 hand-written questions proving the schema (pending.md P0.2).
+   60 hand-written questions proving the schema (pending.md P0.2).
    The full 800-question bank is built on this exact shape.
    STATUS: sample/preview — NOT yet parent-spot-checked (C.4 gate).
 

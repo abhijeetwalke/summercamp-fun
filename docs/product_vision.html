@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Camp — Product Vision</title>
+<style>
+  :root{ --ink:#1f2430; --soft:#566; --faint:#8a8f9c; --paper:#faf7f0; --card:#fff; --line:#e7e0d2; --accent:#2c5282; --gold:#a87d22; --code:#f0ece2; }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.65;}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .layout{display:flex;align-items:flex-start;max-width:1180px;margin:0 auto}
+  /* sidebar */
+  .toc{position:sticky;top:0;align-self:flex-start;width:300px;flex:none;height:100vh;overflow:auto;padding:26px 18px 40px;border-right:1px solid var(--line);background:#f3eee3}
+  .toc h2{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+  .toc-link{display:block;padding:5px 10px;border-radius:7px;color:var(--soft);font-size:.92rem;border-left:2px solid transparent;margin:1px 0}
+  .toc-link:hover{background:#eae2d2;text-decoration:none;color:var(--ink)}
+  .toc-link.lvl3{padding-left:24px;font-size:.85rem;color:var(--faint)}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:#ece4d4;font-weight:600}
+  /* content */
+  .content{flex:1;min-width:0;max-width:840px;padding:30px 40px 120px}
+  .content h1{font-size:2rem;margin:.2em 0 .5em;line-height:1.2}
+  .content h2{font-size:1.5rem;margin:1.8em 0 .4em;padding-bottom:.25em;border-bottom:2px solid var(--line);scroll-margin-top:14px}
+  .content h3{font-size:1.18rem;margin:1.5em 0 .3em;color:#2a3142;scroll-margin-top:14px}
+  .content h4{font-size:1.02rem;margin:1.2em 0 .2em;color:var(--soft)}
+  .content p{margin:.6em 0}
+  .content ul,.content ol{margin:.5em 0 .8em;padding-left:1.4em}
+  .content li{margin:.25em 0}
+  .content code{background:var(--code);padding:.12em .4em;border-radius:5px;font-size:.88em;font-family:"SFMono-Regular",Consolas,monospace}
+  .content pre{background:#1f2430;color:#eee;padding:14px 16px;border-radius:10px;overflow:auto;font-size:.85rem;line-height:1.5}
+  .content pre code{background:none;padding:0;color:inherit}
+  .content blockquote{margin:.8em 0;padding:.5em 16px;border-left:3px solid var(--gold);background:#f6efdd;border-radius:0 8px 8px 0;color:#5a5340}
+  .content table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.93rem}
+  .content th,.content td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  .content th{background:#efe7d6}
+  .content hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+  .content a[href^="http"]:after{content:" ↗";color:var(--faint);font-size:.85em}
+  /* back to top */
+  #totop{position:fixed;right:22px;bottom:22px;background:var(--accent);color:#fff;border:0;border-radius:999px;padding:11px 16px;font-weight:600;font-size:.85rem;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s}
+  #totop.show{opacity:1;pointer-events:auto}
+  .src-note{font-size:.8rem;color:var(--faint);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  @media (max-width:860px){
+    .layout{flex-direction:column}
+    .toc{position:static;width:100%;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+    .content{padding:20px}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <h2>📖 Contents</h2>
+    <a class="toc-link lvl2" href="#project-overview">Project Overview</a>
+<a class="toc-link lvl2" href="#build-strategy">Build Strategy</a>
+<a class="toc-link lvl2" href="#platform-wide-rules-vs-subject-specific-rules">Platform-Wide Rules vs. Subject-Specific Rules</a>
+<a class="toc-link lvl2" href="#themes">Themes</a>
+<a class="toc-link lvl2" href="#index-page-the-landing-map-locked">Index Page — The Landing Map (locked)</a>
+<a class="toc-link lvl3" href="#ambient-effects-landing-map-locked">Ambient Effects — Landing Map (locked)</a>
+<a class="toc-link lvl2" href="#ui-amp-navigation-locked">UI &amp;amp; Navigation (locked)</a>
+<a class="toc-link lvl2" href="#math-mode-avatar-the-last-airbender">Math Mode — Avatar: The Last Airbender</a>
+<a class="toc-link lvl3" href="#core-narrative-frame">Core Narrative Frame</a>
+<a class="toc-link lvl3" href="#theme-to-structure-mapping">Theme-to-Structure Mapping</a>
+<a class="toc-link lvl3" href="#element-to-domain-mapping">Element-to-Domain Mapping</a>
+<a class="toc-link lvl3" href="#question-pools">Question Pools</a>
+<a class="toc-link lvl3" href="#daily-mission-flow">Daily Mission Flow</a>
+<a class="toc-link lvl3" href="#hint-system-approved">Hint System (approved)</a>
+<a class="toc-link lvl3" href="#tracking-amp-results-dashboard">Tracking &amp;amp; Results Dashboard</a>
+<a class="toc-link lvl3" href="#progress-benchmarks-the-training-record-approved-2026-06-12-evolves-with-abhi">Progress Benchmarks — the Training Record (approved 2026-06-12; evolves with Abhi)</a>
+<a class="toc-link lvl3" href="#progression-payoffs-approved">Progression Payoffs (approved)</a>
+<a class="toc-link lvl3" href="#world-map-mastery-mechanics-locked">World Map Mastery Mechanics (locked)</a>
+<a class="toc-link lvl3" href="#closed-loop-learning-per-problem">Closed-Loop Learning (per problem)</a>
+<a class="toc-link lvl3" href="#rewards-locked-details-architect39s-design">Rewards (locked; details = architect&amp;#39;s design)</a>
+<a class="toc-link lvl3" href="#tier-ramp-default-schedule-approved-abhi-hand-tunes-weekly">Tier Ramp — Default Schedule (approved; Abhi hand-tunes weekly)</a>
+<a class="toc-link lvl3" href="#frustration-sensing-approved">Frustration Sensing (approved)</a>
+<a class="toc-link lvl3" href="#streaks-approved">Streaks (approved)</a>
+<a class="toc-link lvl3" href="#session-timing-approved">Session Timing (approved)</a>
+<a class="toc-link lvl2" href="#accounts-amp-auth-captured-deferred-build-without-login-first">Accounts &amp;amp; Auth (CAPTURED — DEFERRED; build without login first)</a>
+<a class="toc-link lvl2" href="#world-awareness-built-on-preview-integrated-into-the-main-site">World Awareness (BUILT on preview — integrated into the main site)</a>
+<a class="toc-link lvl3" href="#summer-camp-world-awareness-product-vision-document">Summer Camp World Awareness — Product Vision Document</a>
+<a class="toc-link lvl3" href="#competition-alignment-amp-external-resources-added-2026-06-13">Competition Alignment &amp;amp; External Resources (added 2026-06-13)</a>
+<a class="toc-link lvl3" href="#prior-capture-preserved-reconcile-with-the-vision-above">Prior capture (preserved — reconcile with the vision above)</a>
+<a class="toc-link lvl2" href="#design-principles">Design Principles</a>
+    <div class="src-note">Generated from <code>product_vision.md</code> — that file is the source of truth.</div>
+  </nav>
+  <main class="content" id="content">
+<h1 id="ayansh-summer-camp-product-vision">Ayansh Summer Camp — Product Vision</h1>
+<p>This document holds <strong>locked decisions</strong> — the frozen product spec for Math, ready to build.</p>
+<p><strong>Document set</strong> (full orientation in <code>CLAUDE.md</code>): <code>product_vision.md</code> (this — the frozen spec) · <code>pending.md</code> (build-work backlog) · <code>completed.md</code> (finished work) · <code>decisions_open.md</code> (product decisions still needing Abhi) · <code>deferred.md</code> (parked subjects/features). Word discipline: &quot;pending&quot; = build work, &quot;open&quot; = product decisions.</p>
+<hr>
+<h2 id="project-overview">Project Overview</h2>
+<p><strong>App name (locked): &quot;Summer Camp.&quot;</strong> Simple, true to what it is, and roomy enough to hold every future subject as a camp activity.</p>
+<p>A summer-project web app for an 11-year-old (just completed 5th grade, attends RSM). The app is organized as <strong>modes</strong> (subjects) presented as themed worlds on an index map. The first deliverable is the <strong>Math mode diagnostic engine</strong> — a fun, testing-first experience that surfaces skill gaps. It is explicitly <strong>not</strong> a tutoring product; diagnosis comes first, learning content is keyed to exposed gaps afterward.</p>
+<p>This spec covers the <strong>diagnostic piece</strong>. The post-diagnostic learning session is a placeholder hook (see <code>decisions_open.md</code>).</p>
+<h2 id="build-strategy">Build Strategy</h2>
+<p><strong>Depth-first, not breadth-first.</strong> Math gets fully densified and baked in the product vision before any other subject moves — no advancing three topics one pawn-step at a time. A fully baked vision makes the build-out fast. This is the working style for all future modes as well: bake one completely, then build.</p>
+<p><strong>Tech stack (locked): plain HTML / CSS / JavaScript — no framework, no build step, no backend. 100% free.</strong> Questions ship as static JSON; all progress persists in the browser (localStorage / IndexedDB); hosting is a free static host (GitHub Pages / Cloudflare Pages). Tradeoff: progress is per-device until a later light cloud-sync (deferred). Full build sequencing lives in <code>pending.md</code>.</p>
+<hr>
+<h2 id="platform-wide-rules-vs-subject-specific-rules">Platform-Wide Rules vs. Subject-Specific Rules</h2>
+<p>Some rules belong to the <strong>platform</strong> (true for every subject — math, world awareness, science, logic, basketball) and should be built as shared/common mechanics, not re-invented per subject. Others are <strong>subject-specific</strong>.</p>
+<p><strong>Platform-wide (common across all themes):</strong></p>
+<ul>
+<li>Three difficulty tiers (easy / medium / hard) and the <strong>week-by-week tier-blend ramp</strong> (the 70/25/5 → 25/45/30 schedule, hand-tuned from data).</li>
+<li><strong>Five answer options</strong> on every question.</li>
+<li><strong>Clicks-to-correct</strong> logging + live per-question counter + Mission-level tally.</li>
+<li><strong>Hint ladder</strong> (Miss 1 nudge → Miss 2 first-step → Miss 3+ none) with efficacy tracking.</li>
+<li><strong>Closed-loop</strong> thinking-model solutions + interactive concept modules.</li>
+<li><strong>Streaks</strong> (Mon–Fri, redemption choice), <strong>session timing</strong> (time budget, toggle clock), <strong>frustration sensing</strong>.</li>
+<li><strong>Rewards</strong> (theme-native currency, effort-aligned, never gating) and <strong>progression payoffs</strong> (status levels + territory unlocks).</li>
+<li><strong>UI shell</strong>: top-nav subjects, left ribbon, sequential unlock, retakes with attempt counts, simple clear fonts, theme-native palettes.</li>
+<li><strong>Pull-don&#39;t-push</strong> + <strong>effort-based (never ability-based)</strong> feedback.</li>
+<li><strong>Pedagogical style tags</strong> concept (the specific styles may vary by subject).</li>
+</ul>
+<p><strong>Subject-specific (math example):</strong></p>
+<ul>
+<li>The <strong>Avatar</strong> narrative frame and <strong>element-to-Common-Core-domain</strong> mapping.</li>
+<li>Math&#39;s particular <strong>style tags</strong> (Singapore bar-model, sansu, etc.).</li>
+<li>The math <strong>question bank</strong> and its thinking models.</li>
+<li><strong>Mission-as-journey</strong> routes through the Avatar world.</li>
+</ul>
+<p>Builder guidance: implement platform-wide rules as a reusable engine; each subject plugs in its own content, theme skin, and domain map.</p>
+<hr>
+<h2 id="themes">Themes</h2>
+<p>Available franchise themes: <strong>Naruto, One Piece, Avatar: The Last Airbender, Pokémon</strong>.</p>
+<p>Rule: <strong>one subject = one theme.</strong> Themes are never mixed within a subject.</p>
+<table>
+<thead>
+<tr>
+<th>Theme</th>
+<th>Subject</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Avatar: The Last Airbender</td>
+<td><strong>Math</strong></td>
+</tr>
+<tr>
+<td><del>One Piece</del> → its own <strong>&quot;Atlas&quot;</strong> theme (as built)</td>
+<td><strong>World awareness</strong> (history &amp; geography across continents)</td>
+</tr>
+<tr>
+<td>Pokémon</td>
+<td><strong>Science / data</strong> (taxonomy, stats, knowledge collection)</td>
+</tr>
+<tr>
+<td>Naruto</td>
+<td><strong>Logic / puzzles</strong> (skills-drill mode)</td>
+</tr>
+<tr>
+<td>Basketball (itself — no franchise wrapper)</td>
+<td><strong>Basketball</strong> (quiz mode: greats, record-holders, US &amp; world records)</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Theme update (2026-06-17):</strong> World Awareness was originally pencilled in for a One Piece skin, but when built it got <strong>its own clean &quot;Atlas&quot; identity</strong> (explorer&#39;s-journal look) — the vision had always allowed a subject to stand as its own theme (like Basketball), and a neutral atlas fit world history better than a pirate skin. Science, Logic, and Basketball remain as mapped above.</p>
+</blockquote>
+<p>The remaining subjects (Science, Logic, Basketball) are named but <strong>not yet designed</strong> — Math is being fully baked, with World Awareness built alongside (see Build Strategy + the World Awareness section). <strong>Basketball</strong> is its own subject themed simply as basketball — he loves it as-is, so it needs no franchise skin: a <strong>quiz section</strong> on the greats, world/US record holders, milestones.</p>
+<p>Theme-to-subject mapping is config-driven, not hardcoded.</p>
+<p>Note for the builder: use franchise-<em>inspired</em> styling (names, palettes, vibes), not official artwork or assets.</p>
+<hr>
+<h2 id="index-page-the-landing-map-locked">Index Page — The Landing Map (locked)</h2>
+<p>The app opens on a <strong>world map of continents drifting together</strong> — the visual centerpiece and the front door to every subject.</p>
+<ul>
+<li><strong>Composition:</strong> 4–6 <strong>asymmetric landmasses</strong> meeting in an abstract way — cracked lands in the middle with <strong>fissures</strong> between them, <strong>ocean</strong> around the edges. The pieces fit like a jagged puzzle that doesn&#39;t quite interlock — irregular seams, not clean borders.</li>
+<li><strong>One land per theme/subject.</strong> The Avatar continent is labeled <strong>&quot;Airbender (Math)&quot;</strong> — franchise name with the subject in parentheses. The other lands are the other subjects.</li>
+<li><strong>Tactile click (mostly visual + sound):</strong> clicking a land gives a satisfying <strong>press-down-and-spring-back</strong> &quot;ka-chunk&quot; — the land depresses slightly and snaps back, a crack/snap micro-animation, accompanied by a <strong>click sound</strong>. The feel is physical and deliberate.</li>
+<li><strong>Active land (Math):</strong> the click zooms into that continent → the math world (nations/elements, the Missions ribbon, etc.).</li>
+<li><strong>Active lands (Math, World Awareness):</strong> clicking zooms in and enters that world. <em>(World Awareness was activated 2026-06-17 — its land is now live, routing to <code>#/world</code>.)</em></li>
+<li><strong>Inactive lands (Science/Data, Logic, Basketball):</strong> visible on the map and <strong>still clickable</strong> — the tactile click feedback fires — but they show a <strong>&quot;Coming Soon&quot;</strong> label and do <strong>not</strong> lead anywhere, because nothing is built behind them yet. (Builds anticipation.)</li>
+<li>Navigation overall: landing map → click a land → (Math) zoom into the subject world → mode home → start today&#39;s Mission.</li>
+</ul>
+<h3 id="ambient-effects-landing-map-locked">Ambient Effects — Landing Map (locked)</h3>
+<p>Subtle background life that makes the map feel alive without distracting. <strong>Classy and restrained, never in-your-face.</strong></p>
+<ul>
+<li><strong>Occasional bird:</strong> every so often (not constant) a bird — or a small Avatar-style V — drifts across the screen and is gone. Rewards a glance; never demands attention.</li>
+<li><strong>Gentle tides:</strong> the ocean breathes softly at the land edges — slow, subtle, calm.</li>
+<li><strong>Restraint is the rule:</strong> ambient effects sit <em>behind</em> the lands and never compete with them. If in doubt, less.</li>
+</ul>
+<p><strong>Performance guardrails (hard — agile beats pretty):</strong></p>
+<ul>
+<li>Lightweight and GPU-cheap only: CSS transforms/opacity, SVG, or light canvas. <strong>No heavy video, no huge sprite loops.</strong></li>
+<li>Page must stay <strong>agile</strong> — fast load, no jank, no waiting. Effects start <strong>after</strong> the map is interactive and never block first paint or input.</li>
+<li>Pause/reduce animation when the tab is backgrounded; honor <strong>prefers-reduced-motion</strong>; cap frame cost so it never becomes a CPU/battery hog.</li>
+<li><strong>Rule:</strong> if an effect ever costs load speed or responsiveness, the effect loses.</li>
+</ul>
+<h2 id="ui-amp-navigation-locked">UI &amp; Navigation (locked)</h2>
+<ul>
+<li><strong>Top nav: the subjects/topics sit up top</strong> (Math, World awareness, Science/data, Logic/puzzles, Basketball), each in its theme.</li>
+<li><strong>Side-panel ribbon:</strong> inside a subject, a left-hand panel shows the Missions laid out as a ribbon, in order.</li>
+<li><strong>Sequential unlock: only one Mission is unlocked at a time.</strong> All previous Missions remain fully visible — their content, results, everything.</li>
+<li><strong>Retakes allowed, and counted:</strong> any previous Mission can be taken again. Every Mission carries a <strong>session count</strong> — which attempt this is — shown right on the ribbon (e.g., &quot;attempt 2&quot;). The <strong>first attempt is the diagnostic of record</strong>; retakes are logged separately as improvement signal (they pair naturally with bounce-back rewards).</li>
+<li><strong>Color:</strong> each subject uses its theme-native palette (Avatar world colors for math — and within it, nation palettes can tint their territories: Water Tribe blues, Earth Kingdom greens, Fire Nation reds, Air Nomad oranges). Tweakable.</li>
+<li><strong>Laptop-first, full-bleed (locked, 2026-06-12):</strong> the app is custom-cut for MacBook/laptop screens — layouts stretch to fill the viewport, the landing map is a full-screen scene, and no screen ships with large dead margins. Mobile-friendliness is explicitly NOT a requirement.</li>
+<li><strong>Visual richness bar (locked, 2026-06-12):</strong> maps and worlds must feel like a hand-illustrated treasure map, not a diagram — amorphous organic landmasses (never plain geometric shapes), parchment texture, per-element iconography and terrain motifs (mountains, waves, flames, swirls, trees), dashed journey routes traced on the map, a compass rose, sea creatures, ambient life. Mystical and abstract beats simple and clean-empty; no large dead whitespace on any screen. All artwork original SVG, franchise-inspired — never copied assets. (Perf guardrails still rule: filters render static, animations stay transform/opacity.)</li>
+<li><strong>Painterly polish + darker palette (locked, 2026-06-13 — after Abhi&#39;s &quot;childish, not polished anime&quot; feedback):</strong> map art is <strong>cel-shaded</strong> — layered top-light/bottom-shadow gradients, a soft cast shadow under each landmass, a thin rim-light — over a <strong>deeper, richer palette</strong> (deep-teal ocean, aged parchment, darker territory fills) so it reads as polished anime, not childish-flat. Territory labels are compact carved <strong>plaques</strong> (element name + level·% as one unit) so names, meta, and location labels never collide; location names sit in small pills placed away from the plaques. An in-map <strong>legend</strong> explains the dashed lines (= your journeys) and the ✕ (= journey&#39;s end). Clicking a land <strong>zooms in place</strong> (no sideways lurch) before entering the world. Feature panels (e.g. Bending Levels) may use an <strong>exotic-clay</strong> surface; each Bending-Level row carries <strong>hover info</strong> (its Common-Core domain + what the level/% means). Still all original SVG; perf guardrails hold.</li>
+<li><strong>Typography: clear and simple, never fancy.</strong> An 11-year-old has good eyes — the font just needs to stay out of the way. No decorative typefaces, no fonts that make him think about the font. Attractive <strong>themes</strong>, simple type, everything clearly visible.</li>
+</ul>
+<hr>
+<h2 id="math-mode-avatar-the-last-airbender">Math Mode — Avatar: The Last Airbender</h2>
+<h3 id="core-narrative-frame">Core Narrative Frame</h3>
+<p>The premise of the show is the premise of the diagnostic: <strong>the Avatar must master all four elements — he must master all math domains.</strong> The student is the Avatar.</p>
+<h3 id="theme-to-structure-mapping">Theme-to-Structure Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Avatar concept</th>
+<th>Math structure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>The Avatar</strong> (the student)</td>
+<td>Must achieve mastery across all elements/domains</td>
+</tr>
+<tr>
+<td><strong>Books</strong> (seasons, e.g. &quot;Book One: Water&quot;)</td>
+<td>Grade levels — <strong>Book Five</strong> (advanced 5th), <strong>Book Six</strong> (6th)</td>
+</tr>
+<tr>
+<td><strong>Nations / elements</strong></td>
+<td>Common Core domain clusters — Water, Earth, Fire, Air, Spirit, + Avatar State capstone (table below)</td>
+</tr>
+<tr>
+<td><strong>Missions</strong></td>
+<td>Daily 20-question diagnostics</td>
+</tr>
+<tr>
+<td><strong>World Map</strong></td>
+<td>Results heat map — each nation&#39;s territory colored by mastery</td>
+</tr>
+</tbody></table>
+<h3 id="element-to-domain-mapping">Element-to-Domain Mapping</h3>
+<p>Full Common Core coverage — every Grade 5 and Grade 6 domain has a home; no domain is missed.</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Logic</th>
+<th>Grade 5 domain</th>
+<th>Grade 6 domain</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Water</strong></td>
+<td>flow, fluidity</td>
+<td>Number &amp; Operations — Fractions (NF)</td>
+<td>The Number System (NS)</td>
+</tr>
+<tr>
+<td><strong>Earth</strong></td>
+<td>solid, structural</td>
+<td>Geometry (G); Measurement &amp; Data (MD)</td>
+<td>Geometry (G)</td>
+</tr>
+<tr>
+<td><strong>Fire</strong></td>
+<td>power, transformation</td>
+<td>Operations &amp; Algebraic Thinking (OA)</td>
+<td>Expressions &amp; Equations (EE)</td>
+</tr>
+<tr>
+<td><strong>Air</strong></td>
+<td>balance, movement</td>
+<td>Number &amp; Operations in Base Ten (NBT)</td>
+<td>Ratios &amp; Proportional Relationships (RP)</td>
+</tr>
+<tr>
+<td><strong>Spirit / Energy</strong></td>
+<td>the unseen, patterns you can&#39;t see directly</td>
+<td>— (no G5 stats domain)</td>
+<td>Statistics &amp; Probability (SP)</td>
+</tr>
+<tr>
+<td><strong>Avatar State</strong></td>
+<td>true capstone — mastery of all at once</td>
+<td>cross-domain mixed multi-step</td>
+<td>cross-domain mixed multi-step</td>
+</tr>
+</tbody></table>
+<p>Coverage check — <strong>Grade 5 (5 domains):</strong> OA, NBT, NF, MD, G — all mapped. <strong>Grade 6 (5 domains):</strong> RP, NS, EE, G, SP — all mapped. Statistics &amp; Probability gets its own first-class element (<strong>Spirit</strong>) rather than being buried. <strong>Avatar State</strong> is now purely the cross-domain capstone, not a dumping ground for unmapped domains.</p>
+<h3 id="question-pools">Question Pools</h3>
+<ul>
+<li><strong>Book Five (advanced 5th grade): 400 questions.</strong> &quot;Advanced&quot; because he has already passed 5th grade; calibrate to the top end.</li>
+<li><strong>Book Six (6th grade): 400 questions.</strong></li>
+<li><strong>Coverage guarantee:</strong> no Common Core standard within either grade is missed. Grade 5 ≈ 26 standards, Grade 6 ≈ 29 — at 400/grade that&#39;s ~14 questions per standard, enough to cover each standard across multiple <strong>style tags</strong> and <strong>difficulty tiers</strong> without holes. (At the old 400 total it was ~7–8/standard — too thin once split by style × tier.)</li>
+<li><strong>Build phasing:</strong> 800 questions, each with a thinking-model solution and two derived hints, is a deliberate multi-session build. Plan: <strong>Session 1</strong> — generate + validate the question bank (top-tier, no sloppiness). <strong>Session 2</strong> — app shell, UI, wiring. No corner-cutting; if it spills to a third session, fine.</li>
+<li>Distribute questions <strong>evenly across the Common Core domains</strong> within each grade.</li>
+<li>Question style: <strong>applied math, competition-flavored</strong> — Math Kangaroo / AMC 8 / international 5th–6th grade competitive-exam caliber. Multi-step reasoning and word problems preferred over bare computation.</li>
+<li><strong>Difficulty tiers:</strong> every question is tagged Tier 1 (easy / confidence-builder), Tier 2 (grade-solid), or Tier 3 (competition-stretch).</li>
+<li><strong>Sourcing (locked):</strong> the initial 800 are a <strong>mix</strong> — hand-curated from Math Kangaroo, AMC, and RSM, <em>plus</em> LLM-generated against Common Core specs (answer-checked, domain- and tier-tagged, parent spot-checked before entering the pool).</li>
+<li><strong>Pedagogical style tags (locked):</strong> every question also carries a <strong>style tag</strong> (shown bottom-right of the question) capturing the <em>character</em> of the problem, not just its domain. The same domain (fractions stays fractions) can appear in different styles — and which styles click for him is its own diagnostic signal a US classroom would never surface:<ul>
+<li><strong>Visual / Model-based</strong> — Singapore bar-model flavor; concrete → pictorial → abstract; word problems reasoned through drawn quantities.</li>
+<li><strong>Insight / Puzzle</strong> — Kangaroo / AMC / olympiad lineage; pattern, cleverness, the &quot;aha.&quot;</li>
+<li><strong>Deep-dive / One-problem-many-ways</strong> — Japanese <em>sansu</em> flavor; a single problem explored multiple ways; productive struggle.</li>
+<li><strong>Exploratory / Conceptual</strong> — open-middle, low-stakes, &quot;why does this work?&quot;; pairs naturally with the no-shame, effort-based design.</li>
+<li><strong>Standards / Procedural</strong> — US Common Core baseline.</li>
+</ul>
+</li>
+<li>Numbers (400/400 = 800 total, 20/day) define the <strong>structure</strong>; they are tunable, config-driven parameters — not sacred values.</li>
+</ul>
+<h3 id="daily-mission-flow">Daily Mission Flow</h3>
+<ul>
+<li><strong>One Mission per day: ~20 problems, Monday through Friday.</strong> Near twenty is the rule, not exactly twenty — 18 in one Mission and 22 in another is fine if the story or domain coverage calls for it.</li>
+<li><strong>Future load balancing:</strong> ~20 holds while Math is the only subject. Once other subjects (world awareness, science, logic, basketball) come online and he&#39;s doing several a day, the per-subject Mission size drops — likely to ~15, then ~10 — so total daily load stays sane.</li>
+<li><strong>Missions are chapters, never numbers (locked 2026-06-12):</strong> every Mission carries an episode-style name (&quot;The Road to Omashu&quot;, &quot;The White Lotus Errand&quot;) shown as &quot;Chapter N · {name}&quot; — flat &quot;Mission 3&quot; labels are banned. Future locked Missions appear in the ribbon as <strong>named journey teasers</strong> with real routes (the engine honors them when the Mission starts) — the road ahead pulls him forward.</li>
+<li><strong>Every Mission is a journey (locked):</strong> each Mission has its own self-contained story — the Avatar traveling from one place to another in the world (e.g., Southern Air Temple → Omashu). The problems are the <strong>challenges encountered along the way</strong>: crossing a river, bartering in a market, repairing a glider — each challenge <em>is</em> a math problem. Completing the final challenge means arriving at the destination.<ul>
+<li>The story is a wrapper, never interference: problems stay rigorous; the narrative supplies context and motivation.</li>
+<li>Route design can mirror the set&#39;s element coverage — the journey passes through the territories whose domains appear in that Mission.</li>
+<li>Stories are template-generated per Mission from a library of locations, travel beats, and challenge framings, so they stay fresh across a whole summer without hand-writing each one.</li>
+</ul>
+</li>
+<li><strong>Pull, don&#39;t push (core design intent):</strong> early Missions must be easy. The first few Missions draw heavily from Tier 1 — fast finishes and big early wins create the hook that brings him back on his own.</li>
+<li><strong>Static difficulty ramp:</strong> each subsequent Mission shifts the tier blend toward Tier 2 and Tier 3 on a <strong>fixed schedule</strong> (not adaptive). The goal is flow — challenge rising to meet demonstrated skill. The clicks-to-correct data tells the parent when the ramp is outpacing or boring him; the tier-blend schedule is hand-tuned between weeks.</li>
+<li>Each Mission pulls questions across all nations/elements (preserving the even-spread rule), mixing Book Five and Book Six.</li>
+<li><strong>Grade is invisible to him (locked):</strong> never show whether a question is 5th- or 6th-grade — no &quot;Book Five/Six,&quot; grade, or level labels anywhere in the kid-facing UI. A question is just a challenge on the journey. Grade lives in the data only (tracking, ramp tuning, the future parent view).</li>
+<li><strong>Problem diversity:</strong> each Mission&#39;s set is deliberately diverse (problem types, contexts, formats), and diversity is also sprinkled across the week — no two days should feel the same.</li>
+<li><strong>Constrained randomization (scales with the pool):</strong> the pool starts at 400 per grade and grows toward ~2,000 per grade over time; problem selection uses constrained randomization — random within the rules (tier blend, element spread, diversity, no repeats).</li>
+<li>Format: <strong>multiple choice — five answer options on every question, all tiers, all the time.</strong> Five options (vs. four) keeps the clicks-to-correct signal meaningful: a second click is a 1-in-4 guess, not 1-in-3, so the diagnostic stays honest deeper into a question.</li>
+<li>If he answers wrong, he <strong>keeps clicking until he finds the correct answer</strong> — he always finishes the question.</li>
+<li><strong>Show your work (locked):</strong> he keeps a physical scratch notebook / whiteboard (his choice) beside the app to work out steps. This is deliberately <em>not</em> a pure clicking game — easy items he can read and compute mentally; harder ones demand written work he can show his parent. <strong>Difficulty is not held back</strong> on account of the MCQ format: hard, multi-step questions are wanted, because the work happens off-screen in the notebook and the click only records the result. (Future option, not now: a photo-of-work upload — parked.)</li>
+<li><strong>Hints:</strong> a miss on the first attempt triggers a <strong>hint</strong> that channels him in the right direction without giving the answer away. <strong>Hint efficacy is tracked:</strong> if he gets it right on the click after the hint, the hint worked — this data vets hint quality over time.</li>
+</ul>
+<h3 id="hint-system-approved">Hint System (approved)</h3>
+<ul>
+<li><strong>Escalation ladder:</strong><ul>
+<li><strong>Miss 1 → Hint 1:</strong> a directional nudge — reframes what the problem is really asking, points at the right element/technique. Never a step of the solution.</li>
+<li><strong>Miss 2 → Hint 2:</strong> names the concept and reveals the <em>first step</em> of the thinking model (e.g., &quot;convert both to twelfths first&quot;).</li>
+<li><strong>Miss 3+:</strong> no more hints. He finishes the question by elimination; it&#39;s flagged hot on the dashboard and the full thinking-model walkthrough does the teaching.</li>
+</ul>
+</li>
+<li><strong>Authoring:</strong> both hints are <strong>pre-written per question, derived from the question&#39;s thinking-model solution</strong> (Hint 1 from its intent statement, Hint 2 from its first step) — so hints and solution always agree. Drafted by LLM, human-reviewed before entering the pool.</li>
+<li><strong>Quality loop:</strong> post-hint success rates per question identify weak hints for rewrite; consistently failing hints are also a signal the question itself is mis-tiered.</li>
+<li><strong>Log attempts per question (clicks-to-correct).</strong> 1 click = solid. 2+ clicks = he didn&#39;t have it; each extra click is option-exhaustion. The attempt count is the core diagnostic signal, not just right/wrong.</li>
+<li><strong>Live attempt display:</strong> a live counter on each question shows attempts for that specific question, plus a Mission-level running tally (e.g., how many solved first-try so far vs. multi-try) — since some he&#39;ll nail first time and some not so much.</li>
+</ul>
+<h3 id="tracking-amp-results-dashboard">Tracking &amp; Results Dashboard</h3>
+<ul>
+<li>Track per question: question ID, element/domain, Book (grade), attempts-to-correct, hint shown / hint efficacy, date.</li>
+<li>Track per student: Missions completed, cumulative per-element performance.</li>
+<li><strong>Attempt counts are visible to him</strong> — not hidden. The primary surface is the post-Mission <strong>results dashboard</strong>.</li>
+<li><strong>Dashboard shows the click distribution:</strong> e.g., &quot;Out of 20 — 3 problems took 4 clicks, 2 took 3 clicks, 1 took 2 clicks, everything else first try.&quot; That distribution is the diagnostic at a glance.</li>
+<li><strong>The dashboard links directly to the flagged problems</strong> — that&#39;s how he knows what to pay attention to.</li>
+<li><strong>Pool replenishment (locked direction):</strong> the pool will be replenished as it depletes. A key mechanic: <strong>variant problems</strong> — the same problem regenerated with different numbers — to verify he now truly gets it. This leans on the brain&#39;s neuroplasticity: revisiting a missed pattern in a fresh skin converts the mistake into durable skill.</li>
+<li><strong>Replenishment pipeline (approved):</strong> every question is stored as a <strong>parameterized template</strong> (numbers as variables, answer computed from them), so variants are generated mechanically, not rewritten. Weekly batch: (1) variants of his missed problems re-enter the pool after ~1–2 weeks; (2) new LLM-drafted questions are validated (answer-checked, domain-tagged, tier-tagged) and parent spot-checked before going live. This is how 400 grows toward 2,000 without quality drift.</li>
+<li><strong>Output: soft spots, not summaries.</strong> The <strong>World Map</strong> updates after each Mission: each nation&#39;s territory colored by mastery. No motivational fluff. Raw signal, backed by attempt counts.</li>
+</ul>
+<h3 id="progress-benchmarks-the-training-record-approved-2026-06-12-evolves-with-abhi">Progress Benchmarks — the Training Record (approved 2026-06-12; evolves with Abhi)</h3>
+<p>How Ayansh&#39;s math progress is benchmarked — every metric derived from existing logs, no new instrumentation. Kid-facing surface: the <strong>Training Record</strong> page (streak chip opens it), in effort language. The same numbers feed the future parent view.</p>
+<ul>
+<li><strong>Mastery coverage</strong> — elements at Adept+ (the 80% bar) out of all elements: the headline number.</li>
+<li><strong>Overall first-try rate</strong> — cumulative and per element.</li>
+<li><strong>Tier handling</strong> — first-try rate split by tier. Reading: Tier 1 should stay ~green (confidence floor); <strong>Tier 2 ≥80% = grade-solid</strong>; <strong>Tier 3 ≥60% = competition-ready signal</strong> (Kangaroo/AMC-caliber questions make this an external anchor).</li>
+<li><strong>Style profile</strong> — first-try rate per pedagogical style tag: which styles click (a diagnostic no classroom surfaces).</li>
+<li><strong>Independence</strong> — % solved hint-free, and post-hint success rate (hint efficacy).</li>
+<li><strong>Bounce-back conversion</strong> — % of revisited misses beaten: the neuroplasticity loop measured. This is the purest &quot;is he learning from mistakes&quot; number.</li>
+<li><strong>Review follow-through (&quot;due diligence&quot;, added 2026-06-13)</strong> — of the challenges he got wrong, the % whose full step-by-step thinking model he actually walked through afterward. The habit-of-learning signal: did he go back and do the work on his misses, or just move on? Tracked per problem (a ✓ on each flagged item) and rolled up on the Training Record.</li>
+<li><strong>Consistency</strong> — streak, missions/week, average session time vs. budget.</li>
+<li><strong>Grade frontier</strong> (parent-facing later; computed now, never shown to him) — G5 vs G6 performance split, for the &quot;lean into Book Six&quot; call.</li>
+</ul>
+<h3 id="progression-payoffs-approved">Progression Payoffs (approved)</h3>
+<ul>
+<li>The World Map isn&#39;t just a heat map — it <strong>visibly accrues</strong> as he works, so earned mastery feels like building a place, not watching a number. This is the antidote to week-3 novelty decay.</li>
+<li><strong>Bending levels per element:</strong> each element/domain has a rising level (e.g., Apprentice → Adept → Master), driven by first-click rate and bounce-backs in that domain. &quot;I&#39;m a Master Waterbender&quot; = &quot;I&#39;ve got fractions cold.&quot;</li>
+<li><strong>Territory unlocks:</strong> completing Missions and clearing soft spots opens up regions of the map (new nations, sub-locations), tied to the Mission-as-journey routes — completed journeys trace visibly across the map.</li>
+<li>Pairs with rewards (Pai Sho tiles) but is distinct: tiles are currency, bending levels are <em>status</em>. Both accrue from effort, never from raw ability.</li>
+</ul>
+<h3 id="world-map-mastery-mechanics-locked">World Map Mastery Mechanics (locked)</h3>
+<p>The numeric definition of &quot;mastery&quot; that drives both bending levels and territory color:</p>
+<ul>
+<li><strong>Core metric: first-click rate across all questions in a domain.</strong> A question is &quot;mastered&quot; if answered correctly on the <strong>first click</strong>; multi-click answers don&#39;t count toward mastery (they&#39;re soft spots).</li>
+<li><strong>Mastery threshold = 80% first-click rate</strong> across all questions he has attempted in that element/domain.<ul>
+<li>Hitting <strong>80% first-click in Fractions (Water)</strong> bumps him from <strong>Apprentice → Adept</strong> in Water Bending, and that territory shifts toward green.</li>
+<li>(Higher tiers — Adept → Master — can use a higher bar, e.g. 90%, <em>and</em> require a minimum attempt count so it reflects durable skill, not a small lucky sample. Exact upper-tier thresholds: architect&#39;s default, Abhi tunes from data.)</li>
+</ul>
+</li>
+<li><strong>Territory color follows the same 80% rule:</strong> gray (untouched) → amber (in progress) → green (≥80% first-click). Same signal as bending level, shown spatially.</li>
+<li><strong>Minimum sample guard:</strong> a domain needs a minimum number of attempted questions (architect default ~15–20) before a level/color can be earned, so one good Mission doesn&#39;t fake mastery.</li>
+<li><strong>Bounce-backs help:</strong> correctly solving a variant of a previously-missed problem (on first click) counts toward the rate — the neuroplasticity loop directly moves the mastery needle.</li>
+</ul>
+<h3 id="closed-loop-learning-per-problem">Closed-Loop Learning (per problem)</h3>
+<ul>
+<li>The system is a <strong>closed loop</strong>: it&#39;s okay to make mistakes — mistakes feed the loop. From the dashboard, he returns to each missed problem and works through it.</li>
+<li><strong>Every question carries an extremely detailed solution written as a thinking model, not a written-down answer.</strong> It walks the intent of the problem, the mental process, and the full solution step by step by step. Reading and following the thinking model is what builds his confidence.</li>
+<li><strong>The learning format is interactive</strong> — he works through the thinking model, not passively reads it.</li>
+<li><strong>Interactive concept modules (locked):</strong> where a concept benefits from manipulation — number lines, fraction bars, place-value/number-system explorers, area models — the walkthrough embeds a hands-on interactive module that demonstrates the point. Build cost is accepted; these are a core part of the closed loop, not a nice-to-have.</li>
+<li><strong>Videos are a stretch goal:</strong> curated video solutions may be added later, but only if they are bang on / on point for the exact problem, and <strong>with no commercials</strong>. Video sourcing (YouTube, API access) is parked for now.</li>
+<li>Flow: Mission → results dashboard (click distribution + World Map) → revisit flagged problems → thinking-model walkthroughs.</li>
+</ul>
+<hr>
+<h3 id="rewards-locked-details-architect39s-design">Rewards (locked; details = architect&#39;s design)</h3>
+<p>Every Mission ends with a reward. The carrot matters — rewards are what make a kid <em>want</em> to move on — so each theme carries its own native reward currency rather than generic points:</p>
+<table>
+<thead>
+<tr>
+<th>Theme / subject</th>
+<th>Reward currency</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Avatar (Math)</td>
+<td><strong>Pai Sho tiles</strong> — collectible tiles; rare <strong>White Lotus tile</strong> for special feats</td>
+</tr>
+<tr>
+<td>Atlas (World awareness) — <em>as built</em></td>
+<td><strong>Continent badges</strong> + day-streak + personal-best (no franchise currency)</td>
+</tr>
+<tr>
+<td>Pokémon (Science/data)</td>
+<td>Badges</td>
+</tr>
+<tr>
+<td>Naruto (Logic/puzzles)</td>
+<td>Ninja rank progression (Genin → Chunin → Jonin)</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>How rewards are earned (effort-aligned):</strong> base reward for completing the Mission, bonuses for first-click streaks, hint-free problems, and <strong>bounce-backs</strong> (correctly solving a variant of a problem he previously missed — the neuroplasticity loop made visible and celebrated).</li>
+<li><strong>Rewards never gate progress.</strong> They are earnings on top of the journey, not locks in front of it — tomorrow&#39;s Mission is always open.</li>
+<li>A collection screen shows the tile set growing; tiles can unlock small map cosmetics. Kept light: the reward system serves the pull, it doesn&#39;t become the product.</li>
+</ul>
+<h3 id="tier-ramp-default-schedule-approved-abhi-hand-tunes-weekly">Tier Ramp — Default Schedule (approved; Abhi hand-tunes weekly)</h3>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Tier 1 (easy)</th>
+<th>Tier 2 (grade-solid)</th>
+<th>Tier 3 (stretch)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>70%</td>
+<td>25%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>50%</td>
+<td>35%</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>3</td>
+<td>35%</td>
+<td>40%</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>4+</td>
+<td>25%</td>
+<td>45%</td>
+<td>30%</td>
+</tr>
+</tbody></table>
+<p>Config values only — the clicks-to-correct data decides whether the next week&#39;s blend holds, accelerates, or eases off. <strong>The easy→medium→hard ratios above are kept as-is</strong> — they&#39;re considered well-calibrated.</p>
+<p><strong>Grade-scope flexibility (keep everything, including easy):</strong> keep <strong>all</strong> of Book Five — easy, medium, and hard — even though he&#39;s RSM-accelerated and may already be at a 6th-grade level. Rationale: if he finds 5th-grade easy, he&#39;ll <strong>bang through it fast</strong>, and that speed is itself a pull — it hooks him. Don&#39;t strip the easy tier to &quot;save time.&quot; If the early data shows he&#39;s burning through everything easy, the fallback is to <strong>keep only the hardest tier of Book Five and lean into Book Six</strong> — but that&#39;s a post-launch tuning call once Abhi sees what he can handle, not a pre-build cut.</p>
+<h3 id="frustration-sensing-approved">Frustration Sensing (approved)</h3>
+<ul>
+<li><strong>Signals (v1, zero new instrumentation — all derivable from existing logs):</strong> time-per-click outliers (long stall <em>or</em> rapid-fire option-mashing), consecutive multi-click questions, mid-Mission abandonment.</li>
+<li><strong>Response (v1, gentle):</strong> after a frustration trigger, the next question served is a Tier 1 confidence-builder (a &quot;breather&quot; question), and the app offers — never forces — a break (&quot;Even the Avatar rests between training sessions&quot;). All triggers logged for the parent dashboard; no nagging, no shame language.</li>
+</ul>
+<h3 id="streaks-approved">Streaks (approved)</h3>
+<ul>
+<li>A <strong>Monday–Friday streak</strong> is tracked and shown prominently — he likes streaks, and they are a clean, honest pull (reward for showing up, every day).</li>
+<li><strong>Streak redemption (his choice):</strong> if he misses a day, the streak isn&#39;t silently lost. He&#39;s <strong>offered a choice</strong> — keep the streak alive by completing a short <strong>5-problem redemption set</strong> (a small ramp covering the missed day), or let the streak reset. His call, no judgment either way.</li>
+<li>Redemption problems follow the same rules as Missions (tier-appropriate, diverse), just a lighter count. Redemption activity is logged but kept separate from the first-attempt diagnostic of record.</li>
+</ul>
+<h3 id="session-timing-approved">Session Timing (approved)</h3>
+<ul>
+<li><strong>Time budget:</strong> ~20 problems is budgeted at roughly <strong>40–60 minutes</strong> (architect&#39;s call: ~45 min target). Generous enough to think; bounded enough to not sprawl. He can take a break during or mid-Mission.</li>
+<li><strong>Not endless.</strong> Open-ended time is boring and lets the session sprawl into the whole afternoon — against the pull intent. The Mission has a sense of an ending.</li>
+<li><strong>Clock, with a toggle (his choice):</strong> a clock can show in the top-right from the moment he starts. He can <strong>toggle it on or off</strong> — some kids panic at a ticking clock, some like knowing. A gentle &quot;~10 minutes left&quot; style nudge is preferred over an anxiety-inducing countdown. Whether or not the clock is visible, <strong>elapsed time is always recorded</strong> and shown afterward.</li>
+<li><strong>Results dashboard shows time:</strong> total session time and (optionally) per-question time appear in the results, so neither he nor the parent has to guess how long he sat at the screen. Explicit goal: <strong>he should not sit in front of the screen forever.</strong></li>
+<li><strong>Runaway guard (locked 2026-06-13):</strong> the clock counts only <strong>active</strong> time (it pauses when the tab is hidden) and <strong>hard-stops after ~2 hours</strong> with a gentle &quot;looks like you stepped away — time isn&#39;t counting anymore&quot; message, so a session left open overnight can&#39;t record an absurd time (e.g. 1337:00). The cap is config (<code>clockRunawayMin</code>).</li>
+</ul>
+<hr>
+<h2 id="accounts-amp-auth-captured-deferred-build-without-login-first">Accounts &amp; Auth (CAPTURED — DEFERRED; build without login first)</h2>
+<blockquote>
+<p>Intent logged so it&#39;s not lost. <strong>No auth work during the initial build</strong> — build the whole thing on one site, no login, then add the account layer later.</p>
+</blockquote>
+<ul>
+<li><strong>Eventual model: separate child and parent accounts.</strong><ul>
+<li><strong>Parent view:</strong> sees everything — full results dashboard, what math he&#39;s doing, time spent, frustration triggers, progression.</li>
+<li><strong>Child view:</strong> a focused subset — his Missions, his World Map, his rewards/streaks; not the parent-analytics surface.</li>
+<li>Two distinct dashboard views over the same underlying data.</li>
+</ul>
+</li>
+<li><strong>For now (build phase):</strong> single website, no login, everything on one surface. Auth, account separation, and the two-view split come <strong>after</strong> the core app is built and working. Designing the data model so a <code>role</code> (parent/child) can later gate views is a cheap forward-accommodation; actual login is deferred.</li>
+</ul>
+<hr>
+<h2 id="world-awareness-built-on-preview-integrated-into-the-main-site">World Awareness (BUILT on preview — integrated into the main site)</h2>
+<blockquote>
+<p><strong>BUILT — a deliberate Abhi override of depth-first (2026-06-17).</strong> World Awareness is live on <code>preview</code>, integrated as the <strong>World land on the index map</strong> (clicking it routes into <code>#/world</code>). It stands as <strong>its own themed world</strong> (&quot;Atlas&quot; design, not the One Piece skin). What&#39;s live: 6 continents · 39 interactive lessons (~255 quiz questions) + 6 section quizzes &amp; badges · a 29-country atlas · a Geography Drill · per-continent &quot;Big Question&quot; debate cards · dashboard/streaks. Files under <code>code/</code> (<code>code/world-awareness</code> is integrated via <code>code/js/wa/*</code> + <code>code/css/wa.css</code>). Not yet committed to git (still on the working tree; Math&#39;s preview→main gates untouched). Full build log: <code>completed.md</code> + <code>decisions_open.md</code>. The spec below is what was built.</p>
+</blockquote>
+<blockquote>
+<p>📝 <strong>Build-time notes.</strong> The full vision below describes a <strong>continent-based, teaching-first, interactive-lesson</strong> product. All three earlier open differences were resolved (2026-06-13) and the product was then <strong>built on preview</strong> (2026-06-17); these were the decisions that shaped it:</p>
+<ul>
+<li>✅ <strong>RESOLVED — Spine: teaching-first by design</strong> (Abhi, 2026-06-13). World Awareness teaches first (lesson), then the quiz follows. Per-lesson quizzes <strong>plus</strong> a section-level quiz after a group of lessons (e.g., a 10-lesson section → one section quiz). This is <em>intentionally different from Math</em> (which is diagnostic-first) — subjects are allowed to differ; not a conflict.</li>
+<li>✅ <strong>RESOLVED — Delivery: interactive &quot;explorable explanations&quot;</strong> (Abhi, 2026-06-13: &quot;use the most sophisticated way within this environment&quot;). Lessons are scroll-driven and <em>manipulable</em>, not passive video. Rendering palette, by reliability-first preference: <strong>animated SVG (default)</strong> → <strong>Canvas/WebGL</strong> for rich scenes &amp; small simulations → <strong>interactive widgets</strong> (draggable timelines, click-to-reveal maps, manipulable models) → <strong>pre-rendered media</strong> (Lottie JSON or short video clips) only for cinematic moments. Still within the locked stack: vanilla HTML/CSS/JS, <strong>no framework, no backend, no auth</strong> (libraries via CDN are fine; progress in <strong>browser storage</strong> like Math), static free hosting. Engineered for speed + graceful fallback per <em>&quot;never make him wait.&quot;</em> Build a <strong>reusable lesson engine</strong> (shared scroll/animation/widget primitives) so each lesson is content + config, not new code. <em>Cost to accept: highest authoring effort per lesson — the engine is what keeps ~40 lessons tractable.</em></li>
+<li>✅ <strong>RESOLVED — Structure: continent/lesson spine + per-country cards both kept</strong> (Abhi, 2026-06-13). The 6-continent × ~40-lesson structure is the backbone; the <strong>per-country cards (flags, currencies, leaders, etc.) survive as a feature inside it</strong> — e.g., reachable from a continent/region or a map, complementing the lessons rather than replacing them.</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="summer-camp-world-awareness-product-vision-document">Summer Camp World Awareness — Product Vision Document</h3>
+<h4 id="executive-summary">Executive Summary</h4>
+<p>A comprehensive world awareness platform that teaches an 11-year-old learner about major historic events and turning points across all continents. Content is organized geographically (by continent) and delivers bite-sized animated lessons followed by integrated quizzes. The learner completes one lesson, takes a quiz on that specific lesson, and moves to the next.</p>
+<p><strong>Platform Goal:</strong> Build genuine world awareness by exploring what actually mattered in human history across different regions—why events happened, who they affected, and why they still matter today.</p>
+<h4 id="target-audience">Target Audience</h4>
+<ul>
+<li><strong>Primary User:</strong> One 11-year-old learner with strong intellect and curiosity about world events and history</li>
+<li><strong>Secondary Users:</strong> Parent/guardian (progress tracking, content oversight)</li>
+<li><strong>Learning Style:</strong> Visual learner who enjoys animation; prefers digestible, focused content over dense textbooks</li>
+</ul>
+<h4 id="core-learning-objectives">Core Learning Objectives</h4>
+<p>By completing this platform, the learner will:</p>
+<ol>
+<li>Understand major historic turning points across every continent</li>
+<li>Recognize cause-and-effect in world events (why things happened, what changed)</li>
+<li>Develop geographical and cultural context for global affairs</li>
+<li>See interconnections between events across regions (trade, war, migration, ideas)</li>
+<li>Build ability to ask informed questions about current world events</li>
+<li>Appreciate the diversity of human experience across cultures and histories</li>
+</ol>
+<h4 id="content-architecture">Content Architecture</h4>
+<p><strong>Curriculum Structure: Continents as Organizing Principle.</strong> The platform is organized into <strong>6 continental sections</strong>, each containing lessons on the most important historic events and turning points in that region.</p>
+<pre><code>World Awareness Platform
+├── Europe
+│   ├── Lesson 1: Ancient Greece &amp; Democracy
+│   ├── Lesson 2: Roman Empire Rise &amp; Fall
+│   ├── Lesson 3: Medieval Feudalism &amp; The Church
+│   ├── Lesson 4: Renaissance &amp; Enlightenment
+│   ├── Lesson 5: Industrial Revolution
+│   ├── Lesson 6: World War I: Causes &amp; Consequences
+│   ├── Lesson 7: World War II: Rise of Fascism
+│   └── Lesson 8: Cold War &amp; Fall of Communism
+│   └── [End-of-Section Quiz: 50 questions across all Europe lessons]
+│
+├── Asia
+│   ├── Lesson 9: Ancient China: Dynasties &amp; Inventions
+│   ├── Lesson 10: India: Empires, Religion, &amp; Independence
+│   ├── Lesson 11: Japan: Feudalism to Modernization
+│   ├── Lesson 12: Ottoman Empire &amp; Islam
+│   ├── Lesson 13: Colonialism in Asia
+│   ├── Lesson 14: Asian Independence Movements (1900s)
+│   ├── Lesson 15: China&#39;s Communist Revolution
+│   └── Lesson 16: Modern Asia: Tigers &amp; Powers
+│   └── [End-of-Section Quiz: 50 questions across all Asia lessons]
+│
+├── Africa
+│   ├── Lesson 17: Ancient Africa: Kingdoms &amp; Trade
+│   ├── Lesson 18: Slavery &amp; The Atlantic Trade
+│   ├── Lesson 19: European Colonization
+│   ├── Lesson 20: African Independence Movements
+│   ├── Lesson 21: Post-Colonial Africa
+│   └── Lesson 22: Modern Africa: Challenges &amp; Growth
+│   └── [End-of-Section Quiz: 40 questions]
+│
+├── Americas (North, Central, South)
+│   ├── Lesson 23: Indigenous Civilizations (Aztec, Maya, Inca)
+│   ├── Lesson 24: European Conquest &amp; Colonization
+│   ├── Lesson 25: Slavery in the Americas
+│   ├── Lesson 26: American &amp; Latin American Independence
+│   ├── Lesson 27: US Civil War &amp; Expansion
+│   ├── Lesson 28: Industrial Boom &amp; Immigration
+│   └── Lesson 29: Modern Americas: Cold War &amp; After
+│   └── [End-of-Section Quiz: 40 questions]
+│
+├── Middle East
+│   ├── Lesson 30: Birth of Civilization (Mesopotamia, Persia)
+│   ├── Lesson 31: Islam &amp; Islamic Empires
+│   ├── Lesson 32: Ottoman Decline &amp; European Interests
+│   ├── Lesson 33: Creation of Modern Middle East (Post-WWI)
+│   ├── Lesson 34: Oil, Geopolitics &amp; Israel
+│   └── Lesson 35: Modern Middle East: Conflicts &amp; Change
+│   └── [End-of-Section Quiz: 40 questions]
+│
+└── Oceania &amp; Pacific
+    ├── Lesson 36: Indigenous Peoples &amp; Cultures
+    ├── Lesson 37: European Exploration &amp; Colonization
+    ├── Lesson 38: Australia &amp; New Zealand Development
+    └── Lesson 39: Pacific Islands &amp; WWII
+    └── [End-of-Section Quiz: 30 questions]
+
+Total Lessons: ~40 lessons across all continents
+Total Quiz Questions: ~250–300 integrated + 6 section reviews
+</code></pre>
+<p><strong>Lesson Design Principles</strong></p>
+<ul>
+<li><strong>Length:</strong> 4–6 minutes of animation per lesson</li>
+<li><strong>Focus:</strong> One major historic event or turning point per lesson</li>
+<li><strong>Visual Style:</strong> Animated maps, timelines, character illustrations, cause-and-effect diagrams</li>
+<li><strong>Narrative:</strong> &quot;Why did this happen? What changed? Why does it matter today?&quot;</li>
+<li><strong>Language:</strong> Age-appropriate, avoids jargon without sacrificing accuracy</li>
+<li><strong>Structure:</strong> (1) Hook (compelling question or scenario); (2) Historical context (what came before); (3) The event itself (what happened, who was involved); (4) Consequences (how the world changed); (5) Modern relevance (why this still matters)</li>
+</ul>
+<p><strong>Quiz Integration: Two-Level System</strong></p>
+<p><em>Level 1: Lesson-End Quizzes.</em> Each lesson is immediately followed by its own quiz — 5–10 questions specific to that lesson; types include multiple choice, true/false, short answer, scenario-based; immediate right/wrong feedback with explanation; difficulty adapts based on performance; flow is watch lesson → take quiz → move to next lesson (immediate reinforcement).</p>
+<p>Example — Lesson 2 &quot;Roman Empire Rise &amp; Fall&quot;: 5-minute animation (founding → peak → decline) + 8-question quiz (&quot;Which event marked the &#39;fall&#39; of the Western Roman Empire?&quot;; &quot;Why did the Eastern/Byzantine empire last longer?&quot;; scenario: &quot;You&#39;re a Roman general in 200 AD. What challenges do you see?&quot;).</p>
+<p><em>Level 2: Section-End Reviews.</em> After completing all lessons in a continent, the learner takes a comprehensive cumulative quiz — 50 questions covering the whole section (adjustable down to 25 if too long); scope is cross-lesson connections, synthesis, application (&quot;How did the Industrial Revolution in Europe change Asia?&quot;; &quot;Compare colonialism in Africa vs. Americas&quot;; map-based &quot;Identify which continent each event belongs to&quot;; timeline &quot;Put these 5 events in chronological order&quot;). Reward: a section badge (&quot;European Historian,&quot; &quot;Asian Explorer&quot;) on completion.</p>
+<h4 id="platform-features">Platform Features</h4>
+<p><strong>Learning Experience.</strong> Lesson Player with play/pause/rewind, transcript toggle (read along), 1.5x/2x speed for re-watching, and &quot;Did you know?&quot; bonus facts sprinkled throughout. Integrated Quiz Interface that is clean and distraction-free, with a progress indicator (question 3/8), immediate feedback with explanations, a review mode (see all answers after completing), and one hint per quiz if needed. Dashboard giving an overview of progress, badges earned, current streak, and upcoming lessons.</p>
+<h4 id="engagement-amp-fun-making-it-genuinely-enjoyable">Engagement &amp; Fun: Making It Genuinely Enjoyable</h4>
+<p><strong>Narrative &amp; Voice.</strong> A <strong>guide character</strong> (animated or narrated) who reacts to events, asks rhetorical questions, and makes connections (&quot;Wait—did you catch that?&quot;) in a conversational, non-preachy tone. <strong>Surprising hooks</strong> open each lesson (&quot;The Roman Empire lasted 1,000 years. How long has the US existed?&quot;). <strong>Real-world bridges</strong> end lessons by connecting to modern news the learner may have heard about.</p>
+<p><strong>Gamification Done Right.</strong> Streak counter (&quot;You&#39;ve learned 5 days in a row!&quot;), badges by continent (&quot;European Historian,&quot; &quot;Asian Explorer,&quot; &quot;Americas Master&quot;) unlocked per section, personal-best tracking (&quot;Your highest quiz score: 92% on Lesson 7&quot; — celebrating individual achievement, not competition), progress visualization (lessons completed, sections mastered, overall journey), and small achievement animations when unlocking a badge or milestone.</p>
+<p><strong>Interactive &amp; Dynamic Learning.</strong> Drag-and-drop timelines (order events chronologically, instant feedback), click-to-reveal maps (tap regions to discover events, trade routes, cultural connections), scenario questions (&quot;What would you have done?&quot; — ungraded, just thinking), and easter eggs (hidden bonus facts and fun connections).</p>
+<p><strong>Choice &amp; Autonomy.</strong> Pick your path (learner chooses which continent to explore first), optional deep dives (lessons on specific figures — Cleopatra, Napoleon, Genghis Khan), profile customization (avatar, color theme, nickname — unlocked via badges), and difficulty tuning (quiz difficulty adapts; no &quot;stuck&quot; feeling).</p>
+<p><strong>Social &amp; Parent Involvement.</strong> Section report cards for the parent (&quot;Your son mastered European history! Here are 3 fun facts to discuss at dinner&quot;), teaching-as-mastery (encourage the learner to explain a lesson back to a parent), an optional parent challenge (&quot;Can you score higher than your son on the Americas section?&quot;), and discussion prompts (&quot;Ask your parent: What do they remember about this event?&quot;).</p>
+<p><strong>Pacing &amp; Surprise.</strong> Varied lesson length (most 4–6 min, some 3, some 7) to avoid mechanical repetition; cliffhanger openers (&quot;By the end you&#39;ll understand why an island nation defeated a continental superpower…&quot;); a mix of serious topics (wars, politics) and lighter ones (innovations, cultural moments); and surprise facts (&quot;This technology was invented 1,000 years before anyone else…&quot;).</p>
+<p><strong>Rewards That Matter.</strong> Progressive unlocking (unlock Asia after completing Europe, etc.), milestone celebrations (at 10/20/30 lessons — &quot;You&#39;ve learned 1/3 of world history!&quot;), mastery badges displayed on the dashboard and shareable with a parent, and bragging rights (&quot;You&#39;re now an expert on [continent]&quot;).</p>
+<p><strong>The Secret Sauce: Genuine Expertise.</strong> After each section, prompt &quot;Can you explain to your parent what you learned about [continent]?&quot; — pride of mastery beats any gamification mechanic. If the learner asks deeper questions, optional &quot;rabbit hole&quot; sections let them explore further.</p>
+<h4 id="accessibility">Accessibility</h4>
+<p>Captions/subtitles on all animations; adjustable text size; dark mode for evening learning; playback speed 0.75x–2x for accessibility and re-learning.</p>
+<h4 id="proposed-roadmap">Proposed Roadmap</h4>
+<p><em>Phase 1 (MVP — Launch with ~40 Lessons).</em> Continent priority order (by content availability &amp; learner interest): (1) <strong>Europe</strong> — 8 lessons, Ancient Greece through Cold War; (2) <strong>Asia</strong> — 8 lessons, China, India, Japan, Ottoman; (3) <strong>Americas</strong> — 7 lessons, Indigenous to modern; (4) <strong>Africa</strong> — 6 lessons; (5) <strong>Middle East</strong> — 6 lessons; (6) <strong>Oceania</strong> — 4 lessons. Launch content: all 40 lessons + 6 section-level quizzes.</p>
+<p><em>Phase 2 (Expansion &amp; Depth).</em> Theme deep-dives (&quot;Women in History Across Continents,&quot; &quot;Trade Routes &amp; Empires&quot;), interactive maps (click to explore events by location), a &quot;connections&quot; module (how events across continents influenced each other), a chronological timeline across all continents, and biographical deep-dives.</p>
+<h4 id="technical-requirements">Technical Requirements</h4>
+<blockquote>
+<p>✅ <em>Superseded by the resolved delivery decision at the top of this section: interactive &quot;explorable explanations&quot; in vanilla HTML/CSS/JS — <strong>no backend, no auth, no framework</strong> (libraries via CDN ok), progress in browser storage, static free hosting. The video-player / backend / auth / Firebase language below is kept only as the original brain-dump; the resolved approach governs.</em></p>
+</blockquote>
+<p><strong>Frontend:</strong> animated video player (HTML5, WebGL, or an animation library like Lottie); quiz interface (form validation, immediate feedback); responsive design (tablet, laptop, possibly mobile); progress state management (local storage or backend sync). <strong>Backend (if needed):</strong> simple user authentication (child + parent); progress-tracking database (chapter completion, quiz scores); quiz question-bank management; parent-dashboard API. <strong>Content Management:</strong> easy-to-edit lesson metadata (title, description, video file); quiz question database (importable from spreadsheet or CMS); A/B testing framework for difficulty tuning.</p>
+<h4 id="success-metrics">Success Metrics</h4>
+<p><em>Learning Outcomes:</em> lesson completion rate (target 80%+ of 40 lessons); quiz performance (target 70%+ first attempt); section mastery (target 75%+); retention (score improvement on re-takes); cross-lesson connections (questions linking continents). <em>Engagement:</em> session length (target 5–10 min/lesson); return visits (days active/week); quiz engagement (lessons completed to quizzes taken); retry rate. <em>Satisfaction &amp; Impact:</em> learner feedback (&quot;Can you explain it to a friend?&quot;), parent observation (is he asking about world news?), and curiosity indicators (does he want to deep-dive further?).</p>
+<h4 id="design-amp-tone">Design &amp; Tone</h4>
+<p>Colorful, modern animations; clear typography; minimal clutter. Conversational, respectful voice (not &quot;talking down&quot; to an intelligent kid). Energetic but not overwhelming pacing; lessons end on cliffhangers or compelling questions. Diverse representation in characters, perspectives, and examples.</p>
+<h4 id="timeline-amp-milestones">Timeline &amp; Milestones</h4>
+<p>Wk 1–2: finalize all 40 lesson outlines · Wk 3–4: write Europe &amp; Asia scripts (16) · Wk 5–6: create/source Europe &amp; Asia animations (16) · Wk 7–8: write &amp; animate Americas, Africa, Middle East, Oceania (24) · Wk 9: build lesson player &amp; quiz interface · Wk 10: develop quiz banks (40 lessons + 6 section reviews) · Wk 11: integrate backend (auth, progress, submission) · Wk 12: end-to-end testing &amp; learner feedback · Wk 13: launch on subdomain (vercel.app) · Wk 14+: monitor, gather feedback, plan Phase 2.</p>
+<h4 id="risks-amp-mitigation">Risks &amp; Mitigation</h4>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Animation production is time-consuming across 40 lessons</td>
+<td>Start with simpler 2D animation; use templates or AI-assisted tools; prioritize most interesting continents first</td>
+</tr>
+<tr>
+<td>Content accuracy across diverse regions &amp; histories</td>
+<td>Research rigorously; cite sources; fact-check; be transparent about bias &amp; perspective</td>
+</tr>
+<tr>
+<td>Lessons feel disconnected (why does Africa matter to a kid in California?)</td>
+<td>Emphasize relevance: immigration, trade, cultural influence, modern geopolitics; show how continents connect</td>
+</tr>
+<tr>
+<td>Quiz difficulty varies wildly across lessons</td>
+<td>Clear rubrics for question difficulty; test with the learner; adaptively adjust pool</td>
+</tr>
+<tr>
+<td>Learner loses motivation mid-curriculum</td>
+<td>Badges per continent, streak tracking, parent engagement, milestone celebrations</td>
+</tr>
+<tr>
+<td>Tracking 40 lessons + 250+ questions</td>
+<td>Simple backend (Firebase or similar); keep question bank in CSV initially; scale only if needed</td>
+</tr>
+</tbody></table>
+<h4 id="future-expansion-ideas">Future Expansion Ideas</h4>
+<p>Interactive world map (click any region for major events), timeline view (scroll chronologically across all continents), theme deep-dives (&quot;Women in History,&quot; &quot;Trade &amp; Economics,&quot; &quot;Technology&#39;s Impact,&quot; &quot;Religious Movements&quot;), comparison module (colonialism in Africa vs. Asia vs. Americas), biographical profiles (emperors, generals, freedom fighters, inventors), discussion forum, podcast companion (audio for car rides), printable workbook, parent guide (dinner-table conversation starters), and a current-events bridge (&quot;This news story connects to Lesson 12 about the Middle East&quot;).</p>
+<h4 id="conclusion">Conclusion</h4>
+<p>This platform transforms world awareness from a dry checklist of facts into a guided journey across continents, discovering what actually mattered in human history and why it still shapes our world. By combining ~40 focused animated lessons with integrated, immediate-feedback quizzes, it empowers an intelligent young learner to build genuine global literacy at his own pace. The continent-based structure avoids treating world history as &quot;Europe + everybody else&quot; — it gives equal weight to Asia, Africa, the Americas, Middle East, and Oceania, showing how regions influenced each other and developed independently. <strong>Success = the learner completes most lessons, understands cause-and-effect across continents, asks questions about global affairs, and sees connections between past and present.</strong></p>
+<hr>
+<h3 id="competition-alignment-amp-external-resources-added-2026-06-13">Competition Alignment &amp; External Resources (added 2026-06-13)</h3>
+<p><strong>Direction (Abhi, 2026-06-13): keep the current content, but &quot;mix it up&quot; so the app doubles as gentle, early prep for two standout, internationally-available competitions.</strong> The goal is to light a fire from age ~10 and give the learner a real ladder to climb as world events keep unfolding — not to turn the app into a cram tool. Tone stays no-pressure and effort-based; the competitions are an <em>aspiration</em>, not a stressor.</p>
+<h4 id="standout-1-world-scholar39s-cup-wsc-the-lead-target">Standout #1 — World Scholar&#39;s Cup (WSC)  <em>(the lead target)</em></h4>
+<ul>
+<li><strong>What it is:</strong> a joyful, team-based academic tournament built around a fresh <strong>annual theme</strong>, spanning six subject areas — <strong>History, Social Studies / current affairs, Science &amp; Technology, Literature &amp; the Arts, and a rotating Special Area</strong> — across four events: <strong>Team Debate, Collaborative Writing, the Scholar&#39;s Challenge (written multiple-choice), and the Scholar&#39;s Bowl (a multimedia team quiz).</strong></li>
+<li><strong>Age fit:</strong> <strong>Junior Division ≈ ages 10–13</strong> (no hard lower limit; most are ≥10), plus <strong>Skittles / Lpaca</strong> tracks for 10–11-year-olds. Ideal for the target learner.</li>
+<li><strong>The ladder (what sustains interest):</strong> Regional Round → <strong>Global Round</strong> (host cities worldwide) → <strong>Tournament of Champions at Yale University</strong>.</li>
+<li><strong>Global reach:</strong> runs on every inhabited continent. <strong>India:</strong> regional rounds in Delhi, Chennai, Mumbai, Bangalore. <strong>Europe &amp; beyond (2026 Global Rounds):</strong> Prague (Europe), Dubai, Kuala Lumpur, Seoul, Shanghai, Bangkok, Da Nang, Christchurch.</li>
+<li><strong>Links:</strong> scholarscup.org/faq · scholarscup.org/global-round · scholarscup.org/calendar</li>
+</ul>
+<h4 id="standout-2-international-geography-championships-international-geography-bee-igb-the-geography-complement">Standout #2 — International Geography Championships / International Geography Bee (IGB)  <em>(the geography complement)</em></h4>
+<ul>
+<li><strong>What it is:</strong> a pure &quot;where is the world and what&#39;s happening in it&quot; competition — <strong>physical &amp; human geography, countries / capitals / flags, maps, and current events tied to places.</strong></li>
+<li><strong>Format &amp; ladder:</strong> a <strong>free Online Regional Qualifying Exam (50 MCQ)</strong> → Regional Finals → National / Continental Championships → the <strong>International Geography Championships</strong> (Summer).</li>
+<li><strong>Age fit (divisions):</strong> <strong>Elementary</strong> (finishing grades 1–4), <strong>Intermediate</strong> (grades 5–6), <strong>Middle</strong> (7–8), <strong>High</strong> (9–12), with <strong>JV / Varsity</strong> levels. <em>A learner finishing 5th grade competes in the Intermediate division.</em></li>
+<li><strong>Global reach:</strong> <strong>USA</strong>, <strong>Europe</strong> (IHBB European Division — buzzer-based online regional tournaments, no prior qualifying needed), <strong>Asia</strong> (International Academic Competitions – Asian Division; <strong>India via Xpress Minds</strong>), and Canada. The exam window runs ~September → early May.</li>
+<li><strong>Links:</strong> geochampionships.com/qualify · geochampionships.com/about/faq · internationalgeographybee.com/europe · iacompetitionsasia.com/international-geography-bee</li>
+</ul>
+<h4 id="other-options-aspirational-context-not-primary-targets">Other options (aspirational / context — not primary targets)</h4>
+<ul>
+<li><strong>National Current Events League</strong> (US, low-friction in-school meets; has an elementary division) — good for building the news habit.</li>
+<li><strong>Academic WorldQuest</strong> (team foreign-affairs) and most <strong>Model UN</strong> programs are <strong>high-school / older-middle</strong> — north stars for later.</li>
+<li><strong>National Geographic GeoBee:</strong> <strong>permanently discontinued</strong> (last held 2019). A new independent <strong>National Geography Bee</strong> launched but is currently <strong>high-school-focused</strong>.</li>
+</ul>
+<h4 id="how-the-app-quotmixes-inquot-these-two-build-direction-keep-all-current-content-layer-these-on">How the app &quot;mixes in&quot; these two (build direction — keep all current content, layer these on)</h4>
+<ol>
+<li><strong>Geography depth (for IGB):</strong> keep the 39 lessons + country atlas; layer in <strong>place knowledge</strong> — capitals, flags (have), and <strong>physical features (rivers, mountains, deserts)</strong> — plus <strong>&quot;where did this happen?&quot; map questions</strong> tied to each lesson, and an optional <strong>map-drill / capitals quiz mode</strong>.</li>
+<li><strong>WSC-style breadth &amp; thinking:</strong> add per-section <strong>&quot;Big Question&quot; debate prompts</strong> (argue <em>both</em> sides — mirrors Team Debate), a short <strong>&quot;collaborative writing&quot; spark</strong>, <strong>current-events bridges</strong> (&quot;this connects to a news story you may have heard&quot;), and <strong>cross-subject tie-ins</strong> (art / science / literature woven into history). Consider an <strong>annual-theme</strong> framing like WSC&#39;s.</li>
+<li><strong>Quiz-style variety:</strong> include <strong>multimedia &quot;identify the flag / map / image&quot;</strong> items (Scholar&#39;s-Bowl flavor) and an optional <strong>timed MCQ round</strong> (Scholar&#39;s-Challenge flavor) alongside the current teaching-checks.</li>
+<li><strong>Guardrail:</strong> all of the above stays optional and effort-framed — no leaderboards-vs-peers, no shame; the existing badge/streak/personal-best loop is the reward.</li>
+</ol>
+<p><em>Status (2026-06-13): first build of this layer is DONE on preview — a <strong>Geography Drill</strong> (flags / capitals / physical-geography, relaxed or ⏱️ timed, with a personal-best) and per-continent <strong>&quot;Big Question&quot; debate cards</strong> (argue both sides). Still to come if wanted: per-lesson &quot;where did this happen?&quot; map placement, a collaborative-writing spark, and an annual-theme framing.</em></p>
+<hr>
+<h3 id="prior-capture-preserved-reconcile-with-the-vision-above">Prior capture (preserved — reconcile with the vision above)</h3>
+<blockquote>
+<p>Earlier brain-dump from Abhi, kept so nothing is lost. Its <strong>reading-gated, per-country</strong> model and <strong>diagnostic-first</strong> spine differ from the continent/lesson vision above; the two need merging or a pick before build.</p>
+</blockquote>
+<p><strong>Spirit &amp; boundaries:</strong> a <strong>clean, positive environment.</strong> Leaders and countries are described in a positive, factual light — <em>not</em> overly critical of anyone. Keep it apolitical in tone; favor wonder and fun facts over hot-button geopolitics.</p>
+<p><strong>Learning Center (distinct from diagnostics):</strong> the topic has a <strong>learning-center region</strong> of reading material; the diagnostic questions are drawn <em>only from material he has actually read</em>. Reading gates questions, not the other way around.</p>
+<p><strong>Per-country content (top ~50 countries by economy):</strong> a &quot;Top 10 things to know&quot; style card per country, e.g.:</p>
+<ul>
+<li>Flag (recognize flags of important countries)</li>
+<li>Leader — a short, positive 5–10 sentence note (e.g., Modi in India, the US president) on who they are / how they came to power. Positive framing only.</li>
+<li>Population and % of world</li>
+<li>Currency, with a ballpark USD comparison (e.g., $1 ≈ ₹90) — exact rates change daily, ballpark is fine</li>
+<li>System of government (democracy or other), described neutrally</li>
+<li>Specialty, tourism, culture</li>
+<li>Fun facts (e.g., <strong>Vatican City</strong> — a sovereign state inside Rome, not part of any nation; show where it sits geographically)</li>
+</ul>
+<p><strong>Fun-facts ≠ questions:</strong> an interesting-facts layer exists for wonder alone; it&#39;s also the well the diagnostics draw from.</p>
+<p><strong>Reading-gated diagnostics (10/day):</strong> once he&#39;s read certain chapters, that day&#39;s 10 questions come <strong>only</strong> from those chapters. Example: finished chapters 1–3 → 10 questions drawn from any of chapters 1–3. Next day, finished 4–5 → 10 questions from any of chapters 1–5. Cumulative, reading-gated.</p>
+<p><strong>Open question Abhi posed (to explore later):</strong> <em>what else would an 11-year-old want to learn to become really smart?</em> — candidate directions to discuss when World Awareness is taken up: world geography &amp; maps, basic economics (why currencies differ, trade), world history&#39;s greatest hits, how governments/elections work (neutrally), famous inventions &amp; scientists, world religions &amp; festivals (respectfully), space &amp; the solar system, the UN / how countries cooperate, languages of the world, great wonders (natural &amp; built).</p>
+<hr>
+<h2 id="design-principles">Design Principles</h2>
+<ol>
+<li><strong>Diagnostic-first.</strong> Surface gaps; don&#39;t teach until gaps are known.</li>
+<li><strong>Structure over numbers.</strong> Pool sizes, daily counts, schedules are config parameters.</li>
+<li><strong>Fun testing experience.</strong> Franchise-inspired theming and game-like progression — but the data captured is rigorous.</li>
+<li><strong>Pull, don&#39;t push.</strong> Easy early Missions create the hook; difficulty ramps to keep challenge meeting skill (flow). Sign-up and getting started must be as easy and fun as possible — zero friction at the front door.</li>
+<li><strong>Effort-based feedback, never ability-based.</strong> The app&#39;s language mirrors the Avatar frame — mastery comes from training, drills, and practice. Reward what the work produced (first-click streaks, training completed, territory earned). Never &quot;you&#39;re smart.&quot; The experience theme is cleverness, hard work, and intuition made concrete — not abstract praise.</li>
+<li><strong>Not adaptive (v1).</strong> Fixed pools, even domain distribution, fixed tier-ramp schedule. Adaptivity is a later consideration.</li>
+<li><strong>Extensible modes.</strong> Math is the first region on the map; the architecture must accommodate future subjects as new themed regions.</li>
+<li><strong>Agile, never make him wait.</strong> Fast loads, snappy interactions, no jank. Polish and ambient effects are welcome only when they stay lightweight and never cost speed or responsiveness — agile beats pretty, every time.</li>
+</ol>
+
+  </main>
+</div>
+<button id="totop" aria-label="Back to top">↑ Top</button>
+<script>
+  var links=[].slice.call(document.querySelectorAll(".toc-link"));
+  var map={}; links.forEach(function(a){ map[a.getAttribute("href").slice(1)]=a; });
+  var heads=[].slice.call(document.querySelectorAll(".content h2, .content h3"));
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove("active");});
+        var a=map[e.target.id]; if(a){a.classList.add("active"); a.scrollIntoView({block:"nearest"});}
+      }
+    });
+  },{rootMargin:"0px 0px -75% 0px",threshold:0});
+  heads.forEach(function(h){io.observe(h);});
+  var top=document.getElementById("totop");
+  top.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+  addEventListener("scroll",function(){ top.classList.toggle("show", scrollY>500); });
+</script>
+</body>
+</html>

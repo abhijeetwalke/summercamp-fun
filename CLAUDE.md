@@ -6,7 +6,7 @@
 
 ## What this project is
 
-**App name (locked): Summer Camp.** A summer-project educational **web app for an 11-year-old** (just finished 5th grade, attends RSM accelerated math) — and possibly his friends later, so build it rich. It's a **diagnostic-first** learning app — it surfaces skill gaps through fun, themed testing, then teaches to those gaps. The first and only subject being built now is **Math**, themed around **Avatar: The Last Airbender**. Other subjects are designed later, one at a time (depth-first).
+**App name (locked): Summer Camp.** A summer-project educational **web app for an 11-year-old** (just finished 5th grade, attends RSM accelerated math) — and possibly his friends later, so build it rich. It's a **diagnostic-first** learning app — it surfaces skill gaps through fun, themed testing, then teaches to those gaps. **Math** (themed around **Avatar: The Last Airbender**) is the founding subject. **World Awareness** has since also been built (a deliberate Abhi override of the depth-first rule, 2026-06-17) and is integrated as a second land on the index map; note that World Awareness is **teaching-first** (lesson → quiz), intentionally different from Math's diagnostic-first engine. Remaining subjects (Science, Logic, Basketball) are designed later, one at a time.
 
 **Core philosophy:** diagnose before teaching; pull the kid in with easy early wins, then ramp to flow; reward effort, never raw ability; keep it a clean, positive, no-shame space.
 
@@ -16,13 +16,15 @@
 
 ## The documents (read in this order)
 
-1. **`CLAUDE.md`** (this file) — orientation + current status.
-2. **`wisdom.md`** — the **distilled why**: 15 lines of project soul pulled from everything below. Read it before any build work; if a decision conflicts with it, wisdom wins — flag to Abhi.
+> **Layout (locked, 2026-06-13):** `CLAUDE.md` stays at the repo root; the other six docs live in **`docs/`**; the app (entry file + `css/ js/ data/ assets/`) lives in **`code/`**.
+
+1. **`CLAUDE.md`** (this file, at root) — orientation + current status.
+2. **`wisdom.md`** — the **distilled why**: 16 lines of project soul pulled from everything below. Read it before any build work; if a decision conflicts with it, wisdom wins — flag to Abhi.
 3. **`product_vision.md`** — the **living spec**: the complete "what we're building" for Math (themes, Avatar mapping, Mission engine, hints, dashboard, mastery, rewards, progression, UI, sourcing, style tags). Build to it — but it's not frozen: when Abhi's words carry product-level signal, fold it into the vision directly (and log it in the decision log). Facelifts to its writing are welcome too (Abhi, 2026-06-12).
 4. **`pending.md`** — the **build-work backlog** (engineering tasks), dependency-ordered phases + parallel content track. **Work from here.**
 5. **`completed.md`** — finished build work. **When you finish a task, move it here** with a date + short note + file paths.
 6. **`decisions_open.md`** — **product** decisions still needing Abhi's input. Currently: none — Math is fully decided. (Also holds the running decision log and operating notes.)
-7. **`deferred.md`** — parked subjects (World Awareness, Science, Logic, Basketball) and features (auth, video, photo-upload). Don't build these until Math ships.
+7. **`deferred.md`** — parked subjects (Science, Logic, Basketball) and features (auth, video, photo-upload). *(World Awareness has graduated out of here — built on preview.)* Don't build the rest until Math ships.
 
 **Any new session:** start here, read 1→7 in order, then continue from "Current status" below. That's the whole onboarding.
 
@@ -45,18 +47,20 @@
 3. **Gate 2:** ask "ready to push to main?" / "does preview look good?" → Abhi says yes → merge `preview` → `main`.
 4. **Only then** move the finished items from `pending.md` to `completed.md` — landing on `main` is what "done" means. If preview has a mistake, roll it back; nothing random ever reaches `main`.
 
-**Entry-file naming (locked):** on `preview` the app entry is **`index.preview.html`** (double-click it to review); at the Gate 2 merge it becomes **`index.html`** on `main`.
+**Entry-file naming (locked):** on `preview` the app entry is **`code/index.preview.html`** (double-click it to review); at the Gate 2 merge it becomes **`code/index.html`** on `main`.
 
 **Doc hygiene (locked): mint condition.** Each fact lives in exactly **one** document; other docs cross-reference it, never restate it. Abhi audits for overlap.
 
 ---
 
-## Current status (as of 2026-06-12)
+## Current status (as of 2026-06-17)
 
 - ✅ **Math product vision: fully baked.** No open product decisions.
-- ✅ **Docs hardened:** pending.md gap-fixed vs vision; `wisdom.md` created; git repo initialized (`main` = baseline, work on `preview`).
-- 🟡 **Build: first full pass on `preview`, awaiting Gate review.** Playable app at `index.preview.html` (double-click it). Detailed marks in the STATUS block atop `pending.md`'s build order.
-- **Next step:** Abhi reviews preview → Gates → then the two long poles: parameterized variants (P2.4) and the full 800-question bank (Content Track).
+- ✅ **Docs hardened + reorganized:** repo split into root `CLAUDE.md` + `docs/` (six docs) + `code/` (app); staleness swept (see decision log).
+- 🟡 **Math build: full pass + visual/UX polish on `preview`, awaiting Gate review.** Playable at `code/index.preview.html`. Polish marks in the STATUS block atop `pending.md`.
+- 🟡 **World Awareness: BUILT on `preview` (Abhi override of depth-first, 2026-06-17).** Integrated as the **World land on the index map** (`#/world`): 6 continents, 39 interactive lessons + 6 section quizzes & badges, a 29-country atlas, a Geography Drill, and per-continent "Big Question" debate cards. Files: `code/js/wa/*`, `code/css/wa.css` (scoped under `.wa-scope`), wired via `code/js/config.js` + `code/js/app.js`. Headless-tested (jsdom), all green. **Not yet committed to git** — both Math and World sit on the working tree awaiting Abhi's preview→main gates. Full log: `completed.md` + `decisions_open.md`.
+- 📄 **Vision viewer:** `docs/product_vision.html` is a navigable (sticky TOC) HTML view generated from `product_vision.md` by `docs/build-vision-html.js` — regenerate after any vision edit.
+- **Next step:** Abhi reviews both Math and World on `preview` in-browser → Gates. Then Math's two long poles remain: parameterized variants (P2.4) and the full 800-question bank (Content Track).
 
 ---
 

@@ -4,7 +4,7 @@
 
 **Lifecycle:** a task starts here → Cowork/Code builds it → the task moves to `completed.md` with a date + short note + files touched. Deferred subjects/features live in `deferred.md`.
 
-**Scope: MATH only.** Other subjects and auth are in `deferred.md` until math ships.
+**Scope: MATH only.** This backlog tracks Math. Auth and the remaining subjects (Science, Logic, Basketball) are in `deferred.md` until math ships. *(World Awareness was built ahead of schedule on a deliberate Abhi override — it's on `preview`, logged in `completed.md` + `decisions_open.md`, and is not tracked here.)*
 
 ---
 
@@ -34,13 +34,14 @@
 
 # BUILD ORDER (dependency-sequenced — do phases in order)
 
-> **STATUS (2026-06-12, on `preview` — moves to completed.md only after Gate 2 / main):**
+> **STATUS (2026-06-13, on `preview` — moves to completed.md only after Gate 2 / main):**
 > ✅ Phase 0 complete (P0.1–P0.4). ✅ Phase 1 complete (P1.1–P1.4). ✅ P2.1 journeys, P2.2 mastery + continent map, P2.3 streaks/timing/frustration/rewards, P2.5 three modules (fraction bar, number line, area model). ◐ P2.4 partial — bounce-backs re-serve the original question; parameterized variants still to build. ✅ P3.1–P3.3 initial (landing map + tactile click + sound + ambience + subject shell). ⬜ P3.4 deploy. ◐ Content: 60-question starter bank (of 800), schema-validated, balanced across elements/tiers/grades — NOT yet parent-spot-checked (C.4 gate).
+> **Polish pass 2026-06-13 (on `preview`):** painterly cel-shaded + darker-palette map, label plaques (overlap fixed) + in-map route legend, in-place land zoom, exotic-clay Bending-Levels panel + per-row hover info, runaway-clock cap (`clockRunawayMin`), review-follow-through ("due diligence") metric on missed problems. Build done; verified by JS syntax + label-collision check; **final visuals need an in-browser eyeball at Gate review** (headless rasterizers can't render the SVG turbulence/displacement filters).
 
 ## PHASE 0 — Foundation (build first; everything depends on it)
 
 ### P0.1 — Project skeleton
-- [ ] Static site scaffold: `index.html`, `/css`, `/js`, `/data`, `/assets`. No build tooling.
+- [ ] Static site scaffold under `code/`: `code/index.html`, `code/css`, `code/js`, `code/data`, `code/assets`. No build tooling. *(Locked layout 2026-06-13; on `preview` the entry is `code/index.preview.html`.)*
 - [ ] Simple client-side routing (hash-based or single-page view switching) — landing → subject → mission → dashboard.
 
 ### P0.2 — Data schema (the contract everything else uses)

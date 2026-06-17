@@ -13,7 +13,7 @@ The soul of the project in 16 lines. Everything else is detail. If a decision ev
 9. **Mastery is earned and visible.** 80% first-click turns a territory green and a bender into an Adept — he's building a world, not watching a number.
 10. **Content is never cheap.** 800 competition-caliber questions, each with a thinking-model solution and two derived hints — validated, tagged, spot-checked. Spend the time and tokens; no sloppiness.
 11. **Theme is a wrapper, rigor is the core.** Stories and journeys motivate; the problems stay rigorous. Never let the skin soften the math.
-12. **Depth-first.** Perfect one subject completely before the next moves. Math until it's done — no breadth temptations.
+12. **Depth-first.** Perfect one subject completely before the next moves — no breadth temptations. *(Knowingly overridden once: Abhi chose to build World Awareness alongside Math on 2026-06-17 — a deliberate, logged exception, not a drift. The principle still stands for everything else.)*
 13. **Agile beats pretty.** Never make him wait. Any effect that costs load speed or responsiveness loses.
 14. **Sessions have an ending.** ~45 bounded minutes; no endless screen time. The Mission ends, the day's win is banked.
 15. **Structure over numbers.** Counts, pool sizes, ratios, schedules are config — tuned from real data, not sacred values.

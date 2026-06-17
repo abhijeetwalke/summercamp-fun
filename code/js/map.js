@@ -60,16 +60,22 @@ SC.Maps = (function () {
       const g = LANDING_LANDS[s.id];
       if (!g) return "";
       const [tx, ty] = LANDING_POS[s.id] || [0, 0];
-      return `<g class="land ${s.active ? "land-active" : "land-soon"}" data-subject="${s.id}" tabindex="0" role="button"
-        aria-label="${s.landLabel}${s.comingSoon ? " — coming soon" : ""}" transform="translate(${tx} ${ty})">
-        <path d="${g.path}" filter="url(#${idp}-rough)" fill="${g.fill}" class="land-shape"></path>
-        <g class="land-deco">${g.deco(A)}</g>
-        ${A.subjectGlyph(s.id, g.lx, g.ly - 28, 16)}
-        ${A.banner(idp, g.lx, g.ly + 4, Math.max(116, s.landLabel.length * 9), s.landLabel)}
-        ${s.comingSoon ? `<g class="soon-flag" transform="translate(${g.lx + 56} ${g.ly - 50})">
-            <line x1="0" y1="0" x2="0" y2="28" stroke="#4a3a26" stroke-width="2"/>
-            <path d="M 0 0 h 58 l -7 7 l 7 7 h -58 Z" fill="#3f3a33"/>
-            <text x="29" y="11" text-anchor="middle" class="soon-text">COMING SOON</text></g>` : ""}
+      // Outer group holds the position; inner .land scales in place (no lurch on click).
+      return `<g class="land-pos" transform="translate(${tx} ${ty})">
+        <g class="land ${s.active ? "land-active" : "land-soon"}" data-subject="${s.id}" tabindex="0" role="button"
+          aria-label="${s.landLabel}${s.comingSoon ? " — coming soon" : ""}">
+          <path d="${g.path}" transform="translate(0 10)" fill="#06141c" opacity="0.32" filter="url(#${idp}-soft)" class="land-cast"></path>
+          <path d="${g.path}" filter="url(#${idp}-rough)" fill="${g.fill}" class="land-shape"></path>
+          <path d="${g.path}" filter="url(#${idp}-rough)" fill="url(#${idp}-cel)" class="land-cel"></path>
+          <path d="${g.path}" filter="url(#${idp}-rough)" fill="none" stroke="#ffffff" stroke-width="1.6" opacity="0.26" transform="translate(0 -1.6)" class="land-rim"></path>
+          <g class="land-deco">${g.deco(A)}</g>
+          ${A.subjectGlyph(s.id, g.lx, g.ly - 28, 16)}
+          ${A.banner(idp, g.lx, g.ly + 4, Math.max(116, s.landLabel.length * 9), s.landLabel)}
+          ${s.comingSoon ? `<g class="soon-flag" transform="translate(${g.lx + 56} ${g.ly - 50})">
+              <line x1="0" y1="0" x2="0" y2="28" stroke="#2a2114" stroke-width="2"/>
+              <path d="M 0 0 h 58 l -7 7 l 7 7 h -58 Z" fill="#2c2820"/>
+              <text x="29" y="11" text-anchor="middle" class="soon-text">COMING SOON</text></g>` : ""}
+        </g>
       </g>`;
     }).join("");
 
@@ -104,13 +110,14 @@ SC.Maps = (function () {
     rootEl.querySelectorAll(".land").forEach((land) => {
       const act = () => {
         kachunk();
-        land.classList.remove("land-pressed");
-        void land.getBoundingClientRect();
-        land.classList.add("land-pressed");
         const subj = SC.getSubject(land.dataset.subject);
+        land.classList.remove("land-pressed", "land-zoom");
+        void land.getBoundingClientRect();
         if (subj && subj.active) {
-          setTimeout(() => onEnter(subj.id), reduceMotion ? 0 : 360);
+          land.classList.add("land-zoom");   // zoom in place, then enter the world
+          setTimeout(() => onEnter(subj.id), reduceMotion ? 0 : 430);
         } else {
+          land.classList.add("land-pressed");
           const t = document.getElementById("toast");
           if (t) { t.textContent = `${subj.displayName} — coming soon. Math is open!`; t.classList.add("show");
             setTimeout(() => t.classList.remove("show"), 1800); }
@@ -146,28 +153,30 @@ SC.Maps = (function () {
   /* ============================================================
      [MATH] THE FOUR NATIONS — illustrated mastery map
      ============================================================ */
+  // Six landmasses clustered into one continent silhouette, separated by thin
+  // ocean cracks (the gaps between paths) — distant/exotic jointed look.
   const TERR = {
-    water: { lx: 424, ly: 120,
-      path: "M 340 64 C 372 44 432 38 470 56 C 506 72 522 102 512 132 C 500 164 462 176 424 170 C 388 164 348 152 338 122 C 330 100 332 80 340 64 Z",
-      deco: (a) => a.mountains(360, 142, 2, "#9cc3d4") + a.waves(442, 142, 2) },
-    air: { lx: 172, ly: 186,
-      path: "M 96 150 C 120 118 168 104 206 116 C 240 126 258 156 250 190 C 244 222 214 242 178 240 C 142 238 108 220 98 192 C 92 176 90 164 96 150 Z",
-      deco: (a) => a.swirls(118, 196, 2) + a.pagoda(206, 152, "#d9b06a") },
-    earth: { lx: 420, ly: 244,
-      path: "M 300 190 C 340 158 412 150 470 164 C 524 176 556 210 552 252 C 548 296 508 326 452 334 C 400 342 340 336 308 304 C 280 278 272 224 300 190 Z",
-      deco: (a) => a.mountains(330, 282, 3, "#5f8a4a") + a.pines(450, 312, 3, "#3f6b33") + a.pagoda(478, 216, "#d9b06a") },
-    fire: { lx: 644, ly: 210,
-      path: "M 588 150 C 618 128 662 126 690 146 C 716 164 724 196 712 226 C 700 256 668 272 636 266 C 604 260 580 238 576 208 C 573 186 574 166 588 150 Z",
-      deco: (a) => a.flames(606, 200, 2) + a.mountains(656, 244, 2, "#8c4a3a") },
-    spirit: { lx: 226, ly: 366,
-      path: "M 168 320 C 196 296 244 292 276 310 C 304 326 312 358 298 386 C 284 414 246 426 212 418 C 180 410 156 388 154 360 C 153 344 156 332 168 320 Z",
-      deco: (a) => a.gnarledTree(216, 372) + a.gnarledTree(258, 392) },
-    avatarstate: { lx: 444, ly: 432,
-      path: "M 396 396 C 420 380 458 378 482 392 C 504 404 510 428 500 450 C 490 472 462 482 434 478 C 408 474 388 458 386 434 C 385 420 386 406 396 396 Z",
+    water: { ax: 405, ay: 116,
+      path: "M 250 132 C 250 100 304 84 364 90 C 424 96 470 78 522 96 C 560 110 562 142 538 162 C 506 184 448 180 398 174 C 348 168 300 184 272 168 C 250 156 250 146 250 132 Z",
+      deco: (a) => a.waves(452, 150, 2) },
+    air: { ax: 150, ay: 240,
+      path: "M 90 202 C 86 168 122 150 162 156 C 200 162 226 188 228 226 C 230 268 220 308 188 322 C 154 336 110 326 96 296 C 84 270 88 246 88 224 C 89 214 88 210 90 202 Z",
+      deco: (a) => a.swirls(106, 250, 2) },
+    earth: { ax: 408, ay: 296,
+      path: "M 300 212 C 350 192 430 190 492 202 C 542 212 552 252 548 296 C 544 340 510 372 454 380 C 398 388 340 384 306 360 C 276 338 270 300 274 262 C 276 234 282 224 300 212 Z",
+      deco: (a) => a.mountains(322, 342, 3, "#5f8a4a") + a.pines(500, 300, 2, "#3f6b33") },
+    fire: { ax: 632, ay: 268,
+      path: "M 580 212 C 584 184 620 172 658 180 C 692 188 700 220 694 254 C 688 292 696 322 674 344 C 650 366 610 356 592 330 C 574 306 576 280 576 252 C 576 232 574 224 580 212 Z",
+      deco: (a) => a.flames(612, 318, 2) },
+    spirit: { ax: 212, ay: 376,
+      path: "M 130 382 C 128 360 162 348 198 352 C 236 356 266 362 284 386 C 300 408 290 438 262 454 C 230 470 184 468 156 452 C 132 438 126 416 128 400 C 129 392 128 388 130 382 Z",
+      deco: (a) => a.gnarledTree(170, 408) + a.gnarledTree(256, 430) },
+    avatarstate: { ax: 408, ay: 438,
+      path: "M 352 412 C 350 396 380 388 412 392 C 446 396 468 406 472 430 C 474 452 452 468 422 472 C 392 476 360 470 348 450 C 340 436 346 424 352 412 Z",
       deco: () => "" },
   };
 
-  const MASTERY_FILL = { gray: "#b3a98f", amber: "#d9a23b", green: "#6f9a5d" };
+  const MASTERY_FILL = { gray: "#9a8a63", amber: "#c2871f", green: "#52803f" };
 
   function continentMap(subjectCfg, stats, capUnlocked, routes) {
     const idp = "fn";
@@ -178,24 +187,27 @@ SC.Maps = (function () {
       let state = "gray";
       if (el.id === "avatarstate") state = capUnlocked ? "cap" : "gray";
       else if (d && d.colorState) state = d.colorState;
-      const fill = state === "cap" ? "#56b3ac" : MASTERY_FILL[state];
+      const fill = state === "cap" ? "#2f9890" : MASTERY_FILL[state];
       const lvl = d ? SC.PLATFORM.levels[d.level] : SC.PLATFORM.levels[0];
-      const pct = d && d.attempts ? Math.round(d.rate * 100) + "% first-try" : "unexplored";
-      const meta = el.capstone ? (capUnlocked ? "the final trial" : "master 3 elements to unlock") : `${lvl} · ${pct}`;
+      const pct = d && d.attempts ? Math.round(d.rate * 100) + "%" : null;
+      const meta = el.capstone ? (capUnlocked ? "the final trial" : "master 3 to unlock") : (pct ? `${lvl} · ${pct}` : "unexplored");
+      const ax = t.ax, ay = t.ay;       // label anchor
       return `<g class="territory terr-${state}" data-el="${el.id}" tabindex="0" role="button" aria-label="${el.name} territory">
-        ${el.id === "avatarstate" && capUnlocked ? `<circle cx="${t.lx}" cy="${t.ly - 6}" r="64" fill="url(#${idp}-glow)"/>` : ""}
-        <path d="${t.path}" filter="url(#${idp}-rough)" fill="${fill}" stroke="${A.EL_COLORS[el.id]}" stroke-width="3.5" class="terr-shape"></path>
+        ${el.id === "avatarstate" && capUnlocked ? `<circle cx="${ax}" cy="${ay - 4}" r="66" fill="url(#${idp}-glow)"/>` : ""}
+        <path d="${t.path}" transform="translate(0 8)" fill="#0a1d27" opacity="0.30" filter="url(#${idp}-soft)" class="terr-cast"></path>
+        <path d="${t.path}" filter="url(#${idp}-rough)" fill="${fill}" stroke="${A.EL_COLORS[el.id]}" stroke-width="3" class="terr-shape"></path>
+        <path d="${t.path}" filter="url(#${idp}-rough)" fill="url(#${idp}-cel)" class="terr-cel"></path>
         <g class="terr-deco">${t.deco(A)}</g>
-        ${A.elementGlyph(el.id, t.lx, t.ly - 28, 13)}
-        ${A.banner(idp, t.lx, t.ly - 2, Math.max(86, el.name.length * 9.5), el.name)}
-        <text x="${t.lx}" y="${t.ly + 26}" text-anchor="middle" class="terr-meta">${meta}</text>
+        ${A.elementGlyph(el.id, ax, ay - 25, 11)}
+        <text x="${ax}" y="${ay + 2}" text-anchor="middle" class="terr-name">${el.name}</text>
+        <text x="${ax}" y="${ay + 16}" text-anchor="middle" class="terr-meta">${meta}</text>
       </g>`;
     }).join("");
 
-    // Kyoshi islet (flavor)
-    const islet = `<g><path filter="url(#${idp}-rough2)" fill="#bfae8a" stroke="#8a7a5a" stroke-width="2"
-      d="M 306 450 C 316 442 336 442 344 450 C 352 458 350 472 338 478 C 326 484 310 482 304 470 C 300 462 300 456 306 450 Z"/>
-      ${A.palms(316, 470, 1)}</g>`;
+    // Kyoshi islet (small detached island under the Kyoshi marker)
+    const islet = `<g><path filter="url(#${idp}-rough2)" fill="#b09a6e" stroke="#6d5a36" stroke-width="1.5"
+      d="M 206 440 C 214 433 232 433 240 440 C 247 447 245 459 234 464 C 223 469 209 467 204 457 C 200 450 200 445 206 440 Z"/>
+      ${A.palms(214, 456, 1)}</g>`;
 
     // journey routes (dashed treasure-trails through real stops, X at the end)
     const locs = SC.Journey ? SC.Journey.LOC_BY_NAME : {};
@@ -217,17 +229,22 @@ SC.Maps = (function () {
     // location markers with glyph + name
     const stopsVisited = new Set();
     (routes || []).forEach((r) => r.stops.forEach((s) => stopsVisited.add(s)));
-    const markers = (SC.Journey ? SC.Journey.LOCATIONS : []).map((l) =>
-      `<g class="loc ${stopsVisited.has(l.name) ? "loc-visited" : ""}" data-loc="${l.name}" tabindex="0" role="button" aria-label="${l.name}">
-        <circle cx="${l.x}" cy="${l.y}" r="11" class="loc-hit"/>
+    const markers = (SC.Journey ? SC.Journey.LOCATIONS : []).map((l) => {
+      const a = TERR[l.el];
+      const below = !a || l.y > (a.ay || a.ly);   // push label away from the region label
+      const ty = below ? l.y + 17 : l.y - 12;
+      return `<g class="loc ${stopsVisited.has(l.name) ? "loc-visited" : ""}" data-loc="${l.name}" tabindex="0" role="button" aria-label="${l.name}">
+        <circle cx="${l.x}" cy="${l.y}" r="12" class="loc-hit"/>
+        <text x="${l.x}" y="${l.y - 8}" text-anchor="middle" class="loc-glyph">${l.glyph}</text>
         <circle cx="${l.x}" cy="${l.y}" r="4" class="loc-dot"/>
-        <text x="${l.x}" y="${l.y - 7}" text-anchor="middle" class="loc-glyph">${l.glyph}</text>
-        <text x="${l.x}" y="${l.y + 16}" text-anchor="middle" class="loc-name">${l.name}</text>
-      </g>`).join("");
+        <text x="${l.x}" y="${ty}" text-anchor="middle" class="loc-label">${l.name}</text>
+      </g>`;
+    }).join("");
 
+    const hasRoutes = (routes || []).some((r) => r.stops && r.stops.length >= 2);
     return `<svg viewBox="0 0 760 540" width="100%" aria-label="The Four Nations mastery map">
       ${A.defs(idp)}
-      <rect x="0" y="0" width="760" height="540" fill="#cdb98a" rx="10"/>
+      <rect x="0" y="0" width="760" height="540" fill="#9c8456" rx="10"/>
       ${A.parchment(idp, 760, 540)}
       <path filter="url(#${idp}-rough2)" fill="url(#${idp}-oceanG)"
         d="M 44 58 H 716 Q 730 280 716 484 H 44 Q 28 280 44 58 Z"/>
@@ -236,9 +253,17 @@ SC.Maps = (function () {
         ${A.serpent(560, 380)}${A.koiPair(96, 250)}${A.boat(660, 330)}
       </g>
       ${terr}${islet}${routeArt}${markers}
-      ${A.compass(86, 472, 28)}
+      ${A.compass(86, 474, 28)}
       ${A.cloud(220, 62, 0.9, "c1")}${A.cloud(600, 70, 0.7, "c2")}
-      ${A.banner(idp, 380, 36, 220, "The Four Nations", "title-banner")}
+      ${A.banner(idp, 380, 36, 230, "The Four Nations", "title-banner")}
+      <g class="map-key" transform="translate(536 484)">
+        <rect x="-12" y="-18" width="232" height="54" rx="10" class="key-bg"></rect>
+        <line x1="4" y1="-3" x2="30" y2="-3" class="key-line"></line>
+        <path d="M 30 -3 l -8 -4.5 l 0 9 Z" class="key-arrow"></path>
+        <text x="42" y="1" class="key-label">${hasRoutes ? "your journeys so far" : "journeys appear as you travel"}</text>
+        <path d="M 5 16 l 11 11 M 5 27 l 11 -11" class="route-x"></path>
+        <text x="42" y="24" class="key-label">✕  journey's end</text>
+      </g>
     </svg>`;
   }
 
