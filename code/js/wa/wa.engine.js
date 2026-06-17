@@ -21,6 +21,20 @@ WA.Engine = (function () {
     if (!hash || hash === "#/" || hash === "#") location.hash = "#/world";
     else location.hash = hash.replace(/^#\//, "#/world/");
   }
+
+  /* Force the pill layout on every button (even ones created dynamically after
+     the page renders — quiz Next, results, modals). Belt-and-suspenders so a
+     button can never render narrower than its text, regardless of stylesheet. */
+  function normBtns(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll(".btn").forEach(function (b) {
+      b.style.display = "inline-flex";
+      b.style.alignItems = "center";
+      b.style.justifyContent = "center";
+      b.style.whiteSpace = "nowrap";
+      if (!b.style.gap) b.style.gap = "8px";
+    });
+  }
   function toCamp() { location.hash = "#/"; }   // back to the landing map
   function scrollTop() { try { window.scrollTo({ top: 0, behavior: "auto" }); } catch (e) {} }
 
@@ -81,13 +95,7 @@ WA.Engine = (function () {
     // always sits centered inside the pill and can never spill out — even if a stale
     // cached stylesheet is in play. (Set per-property so we don't clobber a button's
     // own inline sizing like the hero pills' min-width.)
-    scope.querySelectorAll(".btn").forEach(function (b) {
-      b.style.display = "inline-flex";
-      b.style.alignItems = "center";
-      b.style.justifyContent = "center";
-      b.style.whiteSpace = "nowrap";
-      if (!b.style.gap) b.style.gap = "8px";
-    });
+    normBtns(scope);
     app.innerHTML = "";
     app.appendChild(scope);
     scrollTop();
@@ -303,7 +311,9 @@ WA.Engine = (function () {
     // end CTA
     var cta = U.el("div", { class: "beat", style: "text-align:center;margin-top:40px" });
     cta.appendChild(U.el("p", { class: "muted", text: "Ready to lock it in?" }));
-    cta.appendChild(U.el("button", { class: "btn gold lg", text: "Take the quiz →", onclick: function () { go("#/q/" + id); } }));
+    cta.appendChild(U.el("button", { class: "btn gold lg",
+      style: "display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;font-size:1rem;padding:17px 36px",
+      text: "Take the quiz →", onclick: function () { go("#/q/" + id); } }));
     reader.appendChild(cta);
 
     body.appendChild(reader);
@@ -380,7 +390,7 @@ WA.Engine = (function () {
       card.appendChild(foot);
 
       cardSlot.innerHTML = ""; cardSlot.appendChild(card);
-      U.glossify(card);
+      U.glossify(card); normBtns(card);
       scrollTop();
     }
 
@@ -403,7 +413,7 @@ WA.Engine = (function () {
       var next = U.el("button", { class: "btn", style: "margin-top:16px",
         text: (i === qs.length - 1 ? "See results →" : "Next question →"),
         onclick: function () { i++; if (i < qs.length) renderQ(); else finish(); } });
-      card.appendChild(next);
+      card.appendChild(next); normBtns(card);
       next.focus();
     }
 
@@ -456,7 +466,7 @@ WA.Engine = (function () {
       rev.appendChild(it);
     });
     box.appendChild(rev);
-    U.glossify(box);
+    U.glossify(box); normBtns(box);
     return box;
   }
 
@@ -661,7 +671,7 @@ WA.Engine = (function () {
     b.appendChild(U.el("div", { style: "margin-top:10px;font-weight:700;color:var(--gold-deep)", text: "✨ Fun facts" }));
     b.appendChild(U.el("ul", { class: "funlist" }, c.funFacts.map(function (f) { return U.el("li", { html: f }); })));
     node.appendChild(b);
-    U.glossify(node);
+    U.glossify(node); normBtns(node);
     U.modal(node);
   }
   function factCell(k, v) { return U.el("div", { class: "fact-cell" }, [U.el("div", { class: "k", text: k }), U.el("div", { class: "v", text: v })]); }
