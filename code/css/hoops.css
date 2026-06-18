@@ -186,7 +186,8 @@
   border-left: 4px solid var(--accent); border-radius: 12px; padding: 16px 18px; font-size: 1.12rem; color: #fff; font-weight: 600; }
 .hoops-scope .fact { display: flex; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; }
 .hoops-scope .fact .bulb { font-size: 1.3rem; }
-.hoops-scope .fact b { color: var(--accent-2); display: block; margin-bottom: 2px; }
+.hoops-scope .fact > div > b { color: var(--accent-2); display: block; margin-bottom: 2px; }
+.hoops-scope .fact span b { color: inherit; display: inline; font-weight: 700; }
 .hoops-scope .hw-quote { border: 0; margin: 0; background: linear-gradient(120deg, #15242e, #0e1920); border-left: 4px solid var(--gold);
   border-radius: 0 12px 12px 0; padding: 16px 20px; }
 .hoops-scope .hw-quote p { font-size: 1.25rem; font-style: italic; color: #fff; font-weight: 500; }
