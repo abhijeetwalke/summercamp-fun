@@ -77,7 +77,8 @@ WA.Engine = (function () {
   function footer() {
     return U.el("div", { class: "foot wrap", html:
       "Summer Camp · World Awareness — a journey across continents. " +
-      "Built clean, positive, and apolitical. Your progress is saved on this device." });
+      "Built clean, positive, and apolitical. Your progress is saved on this device. " +
+      "<span style=\"opacity:.6\">· build v1.0 (2026-06-17)</span>" });
   }
 
   /* Everything WA renders is wrapped in .wa-scope so its design system is fully
