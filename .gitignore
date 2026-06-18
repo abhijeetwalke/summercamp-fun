@@ -6,3 +6,9 @@ node_modules/
 docs/node_modules/
 docs/package.json
 docs/package-lock.json
+
+# Throwaway headless test scratch files (not part of the app)
+code/_prodtest.js
+code/_*test*.js
+package.json
+package-lock.json

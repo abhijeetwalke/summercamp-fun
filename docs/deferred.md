@@ -2,7 +2,7 @@
 
 **This file holds everything deliberately deferred** until Math ships. Nothing here is pending a decision. *(Exceptions: **World Awareness** and **Basketball** were both built ahead of schedule on deliberate Abhi overrides; they have graduated out of this file — see below.)* When Math is done and Abhi says so, the remaining items graduate from here into `pending.md` as build work.
 
-**Working style (locked): depth-first.** Fully bake and ship one subject before the next moves. *(Knowingly overridden twice — World Awareness (built) and Basketball (spec'd + build scheduled), both 2026-06-17, both logged in `decisions_open.md`.)*
+**Working style (locked): depth-first.** Fully bake and ship one subject before the next moves. *(Knowingly overridden twice — World Awareness (built 2026-06-17) and Basketball (built 2026-06-18), both logged in `decisions_open.md`.)*
 
 ---
 

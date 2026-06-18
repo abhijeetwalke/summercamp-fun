@@ -117,7 +117,7 @@ The app opens on a **world map of continents drifting together** — the visual 
 - **One land per theme/subject.** The Avatar continent is labeled **"Airbender (Math)"** — franchise name with the subject in parentheses. The other lands are the other subjects.
 - **Tactile click (mostly visual + sound):** clicking a land gives a satisfying **press-down-and-spring-back** "ka-chunk" — the land depresses slightly and snaps back, a crack/snap micro-animation, accompanied by a **click sound**. The feel is physical and deliberate.
 - **Active land (Math):** the click zooms into that continent → the math world (nations/elements, the Missions ribbon, etc.).
-- **Active lands (Math, World Awareness, Basketball):** clicking zooms in and enters that world. *(World Awareness was activated 2026-06-17 → `#/world`. Basketball — the "Hardwood" land — is spec'd 2026-06-17 and will route to `#/hoops` when built.)*
+- **Active lands (Math, World Awareness, Basketball):** clicking zooms in and enters that world. *(World Awareness was activated 2026-06-17 → `#/world`. Basketball — the "Hardwood" land — was built 2026-06-18 and routes to `#/hoops`.)*
 - **Inactive lands (Science/Data, Logic):** visible on the map and **still clickable** — the tactile click feedback fires — but they show a **"Coming Soon"** label and do **not** lead anywhere, because nothing is built behind them yet. (Builds anticipation.)
 - Navigation overall: landing map → click a land → (Math) zoom into the subject world → mode home → start today's Mission.
 
