@@ -140,7 +140,7 @@
 
 .wa-scope .btn {
   display:inline-flex; align-items:center; gap:8px; justify-content:center;
-  white-space:nowrap; flex:0 0 auto; vertical-align:middle;
+  white-space:nowrap; flex:0 0 auto; vertical-align:middle; width:auto; height:auto;
   border:0; border-radius:999px; padding:13px 26px; font-weight:700; font-size:.9rem;
   background:linear-gradient(180deg, var(--navy-2), var(--navy)); color:#fff;
   box-shadow:var(--shadow-sm); transition:transform .15s var(--ease), box-shadow .25s, filter .2s;

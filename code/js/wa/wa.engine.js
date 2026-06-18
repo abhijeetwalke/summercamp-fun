@@ -32,6 +32,8 @@ WA.Engine = (function () {
       b.style.alignItems = "center";
       b.style.justifyContent = "center";
       b.style.whiteSpace = "nowrap";
+      b.style.width = "auto";   // override the Math app's stray global .lg { width:12px;height:12px }
+      b.style.height = "auto";  // (our buttons share the class name "lg" = large)
       if (!b.style.gap) b.style.gap = "8px";
     });
   }
