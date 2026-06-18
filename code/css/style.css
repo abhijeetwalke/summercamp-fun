@@ -303,6 +303,9 @@ button { font: inherit; cursor: pointer; }
 .ribbon-route { font-size: 0.78rem; color: var(--air); }
 .ribbon-sub { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
 .ribbon-item.locked { opacity: 0.55; }
+.ribbon-item.today { border-left: 3px solid var(--air); padding-left: 7px; background: #fbf2e2; border-radius: 0 8px 8px 0; }
+.linklike.strong { font-weight: 700; color: var(--air); text-decoration: none; }
+.linklike.strong:hover { text-decoration: underline; }
 
 /* ---- exotic clay panel: Bending Levels (sculpted terracotta, light text) ---- */
 .ribbon.levels {

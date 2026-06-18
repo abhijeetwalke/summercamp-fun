@@ -124,9 +124,23 @@
           ${m.done && isDaily && !live ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
           ${retakeInProgress ? `<a href="#/math/mission">continue retake</a>` : ""}
         </div></div>`;
-    }).join("") || `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
-    // the road ahead: real journeys waiting down the road (pull, don't push)
+    }).join("");
     const dailiesSoFar = sub.missions.filter((m) => m.kind === "daily").length;
+    // TODAY'S JOURNEY — the next chapter to play, always shown as a startable entry.
+    // (Without this, a brand-new player saw only locked Chapter 2+ and no Chapter 1.)
+    if (!live) {
+      const nextN = dailiesSoFar + 1;
+      const tease = SC.Journey.teaserFor(nextN);
+      ribbon += `<div class="ribbon-item open today">
+        <div class="ribbon-chapter">Chapter ${nextN} · ▶ today</div>
+        <div class="ribbon-name">${tease.name}</div>
+        <div class="ribbon-route">${linkify(tease.label)}</div>
+        <div class="ribbon-meta">ready when you are</div>
+        <div class="ribbon-actions"><button class="linklike strong" id="ribbon-start">▶ Start this journey</button></div>
+      </div>`;
+    }
+    if (!ribbon) ribbon = `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
+    // the road ahead: locked teasers AFTER today's chapter (pull, don't push)
     const firstLocked = dailiesSoFar + (live ? 1 : 2); // today's mission isn't locked
     for (let k = 0; k < 5; k++) {
       const n = firstLocked + k;
@@ -190,14 +204,17 @@
         </div>
       </div>`;
 
-    $("#start-btn").addEventListener("click", () => {
+    const startToday = () => {
       const s = SC.State.subject("math");
       if (!activeMission(s)) {
         const dNum = s.missions.filter((m) => m.kind === "daily").length + 1;
         SC.Engine.buildMission(MATH, BANK, { kind: "daily", routeHint: SC.Journey.teaserFor(dNum) });
       }
       location.hash = "#/math/mission";
-    });
+    };
+    $("#start-btn").addEventListener("click", startToday);
+    const ribbonStart = $("#ribbon-start");
+    if (ribbonStart) ribbonStart.addEventListener("click", startToday);
     wireLocLinks();
     app().querySelectorAll("[data-retake]").forEach((b) => b.addEventListener("click", () => {
       const s = SC.State.subject("math");
