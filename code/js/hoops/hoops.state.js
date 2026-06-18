@@ -129,18 +129,13 @@ HOOPS.State = (function () {
     return { score: b, lessonId: where };
   }
 
-  /* unlocking: open-by-default but progressive. A subsection is open if it's the
-     first, or the previous one has >=1 lesson done. Never a hard wall. */
-  function sectionUnlocked(sections, idx) {
-    if (idx === 0) return true;
-    return sectionProgress(sections[idx - 1]).done >= 1;
-  }
-  function lessonUnlocked(sec, lessonIdx) {
-    if (lessonIdx === 0) return true;
-    var prevId = sec.lessons[lessonIdx - 1], s = load();
-    return !!(s.lessons[prevId] && s.lessons[prevId].done);
-  }
-  function reviewUnlocked(sec) { return sectionProgress(sec).allDone; }
+  /* Unlocking: EVERYTHING is open, always (Abhi, 2026-06-18 — Basketball has no
+     precedence; he can do any subsection, lesson, or review in any order, anytime).
+     These return true unconditionally so nothing is ever gated. Progress, best
+     scores, and trophies still track normally. */
+  function sectionUnlocked(sections, idx) { return true; }
+  function lessonUnlocked(sec, lessonIdx) { return true; }
+  function reviewUnlocked(sec) { return true; }
 
   /* ---------- profile / milestones ---------- */
   function profile() { return load().profile; }

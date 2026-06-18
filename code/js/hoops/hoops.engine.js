@@ -119,6 +119,14 @@ HOOPS.Engine = (function () {
     ]));
     body.appendChild(cal);
 
+    // reading: what the Hardwood is about (overview prose, not just cards)
+    if (C.intro && C.intro.length) {
+      var about = U.el("div", { class: "hw-read" });
+      C.intro.forEach(function (b) { about.appendChild(U.renderBeat(b)); });
+      U.glossify(about);
+      body.appendChild(about);
+    }
+
     // subsection picker
     body.appendChild(U.el("div", { class: "hw-section-title" }, [
       U.el("h2", { text: "Pick where to start" }),
@@ -194,6 +202,14 @@ HOOPS.Engine = (function () {
     ht.appendChild(U.el("p", { class: "hw-lede", html: sec.intro }));
     hero.appendChild(ht);
     body.appendChild(hero);
+
+    // reading: a real overview of this subsection (prose, before the lesson list)
+    if (sec.overview && sec.overview.length) {
+      var ov = U.el("div", { class: "hw-read" });
+      sec.overview.forEach(function (b) { ov.appendChild(U.renderBeat(b)); });
+      U.glossify(ov);
+      body.appendChild(ov);
+    }
 
     var prog = S.sectionProgress(sec);
     var meter = U.el("div", { class: "hw-meter wide" }); meter.appendChild(U.el("i", { style: "width:" + prog.pct + "%" }));
@@ -286,6 +302,8 @@ HOOPS.Engine = (function () {
     L.beats.forEach(function (b) { reader.appendChild(U.renderBeat(b)); });
 
     var cta = U.el("div", { class: "beat rcta" });
+    var wc = lessonWordCount(L);
+    cta.appendChild(U.el("div", { class: "rwordcount", text: "📖 " + wc.toLocaleString() + " words · ~" + L.minutes + " min lesson (read + quiz)" }));
     cta.appendChild(U.el("p", { class: "muted", text: "Lock it in — run the quick check:" }));
     cta.appendChild(U.el("button", { class: "btn accent lg", text: "Take the quiz →", onclick: function () { go("#/q/" + id); } }));
     reader.appendChild(cta);
@@ -294,6 +312,18 @@ HOOPS.Engine = (function () {
     page("<b>" + sec.name + "</b> › " + L.title, body);
     U.observeBeats(reader);
     setupReadbar();
+  }
+  // Count the reading words in a lesson (hook + prose beats), for the on-page word-count line.
+  function lessonWordCount(L) {
+    function words(s) { return String(s || "").replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length; }
+    var n = words(L.hook);
+    (L.beats || []).forEach(function (b) {
+      n += words(b.html) + words(b.note) + words(b.label);
+      if (b.stats) b.stats.forEach(function (s) { n += words((s.v || "") + " " + (s.k || "")); });
+      ["a", "b"].forEach(function (k) { if (b[k]) { n += words(b[k].title) + words(b[k].body); if (b[k].items) b[k].items.forEach(function (it) { n += words(it); }); } });
+      if (b.items) b.items.forEach(function (it) { n += words(it.label || it); });
+    });
+    return n;
   }
   function setupReadbar() {
     var bar = document.getElementById("hw-readbar");
