@@ -1,2 +1,8 @@
 .DS_Store
 summer-camp-site.zip
+
+# Dev tooling for the docs HTML generator (build-vision-html.js) — not part of the app
+node_modules/
+docs/node_modules/
+docs/package.json
+docs/package-lock.json

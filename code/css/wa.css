@@ -551,7 +551,100 @@
 
 .wa-scope .foot { text-align:center; color:var(--ink-faint); font-size:.84rem; padding:40px 0 30px; border-top:1px solid var(--line); margin-top:50px; }
 
+/* ============================================================
+   GLOW-UP v2 (2026-06-18) — game-like energy for a 12–13-yo:
+   a bolder display typeface for headings, animated XP bar,
+   topbar level chip, trophy shelf, punchier cards + progress.
+   Everything scoped under .wa-scope; reduced-motion respected
+   by the @media block below (it neutralises all animation).
+   ============================================================ */
+.wa-scope { --display: "Avenir Next", "Futura", "Trebuchet MS", "Segoe UI", var(--sans); }
+
+.wa-scope .hero h1, .wa-scope .cont-hero h1, .wa-scope .section-title h2 {
+  font-family: var(--display); font-weight: 800; letter-spacing: -.015em;
+}
+.wa-scope .hero h1 em {
+  font-style: normal;
+  background: linear-gradient(95deg, var(--gold-deep), var(--gold), var(--teal));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* punchier continent cards + livelier progress bars */
+.wa-scope .cont-card:hover { transform: translateY(-6px) scale(1.012); border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.wa-scope .cont-card .meter { height: 11px; }
+.wa-scope .meter i { position: relative; overflow: hidden; }
+.wa-scope .meter i::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+  background-size: 220% 100%; animation: xpshine 2.6s linear infinite;
+}
+.wa-scope .lrow:hover { transform: translateX(4px) translateY(-1px); }
+
+/* ---- topbar level chip ---- */
+.wa-scope .level-chip {
+  display:flex; align-items:center; gap:7px; border:1px solid var(--line);
+  background:linear-gradient(180deg, color-mix(in srgb,var(--gold) 16%, var(--card)), var(--card));
+  border-radius:999px; padding:7px 13px; font-weight:800; color:var(--ink);
+  font-size:.9rem; transition:transform .15s var(--ease), box-shadow .2s;
+}
+.wa-scope .level-chip:hover { transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+.wa-scope .level-chip .lv-emoji { font-size:1.05rem; }
+
+/* ---- XP hero panel (home + dashboard) ---- */
+.wa-scope .xp-hero {
+  display:flex; align-items:center; gap:16px; margin:22px 0 4px; max-width:540px;
+  padding:16px 18px; border-radius:18px;
+  background:linear-gradient(135deg, color-mix(in srgb,var(--teal) 12%, var(--card)), var(--card));
+  border:1px solid var(--line); box-shadow:var(--shadow);
+}
+.wa-scope .xp-badge {
+  flex:none; width:58px; height:58px; border-radius:50%;
+  display:grid; place-items:center; font-size:1.9rem;
+  background:linear-gradient(180deg, var(--gold), var(--gold-deep));
+  box-shadow:var(--shadow-sm); border:2px solid color-mix(in srgb,var(--gold-deep) 55%, #fff);
+}
+.wa-scope .xp-info { flex:1; min-width:0; }
+.wa-scope .xp-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:7px; }
+.wa-scope .xp-top .lv-name { font-family:var(--display); font-weight:800; font-size:1.05rem; color:var(--ink); }
+.wa-scope .xp-top .xp-num { font-weight:800; color:var(--gold-deep); font-size:.92rem; white-space:nowrap; }
+.wa-scope .xp-track { height:14px; border-radius:999px; background:var(--paper-2); overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.12); }
+.wa-scope .xp-fill {
+  display:block; height:100%; border-radius:999px; width:0;
+  background:linear-gradient(90deg, var(--gold), var(--teal));
+  position:relative; overflow:hidden; transition:width 1s var(--ease);
+}
+.wa-scope .xp-fill::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  background-size:220% 100%; animation:xpshine 2.2s linear infinite;
+}
+.wa-scope .xp-next { margin-top:7px; font-size:.82rem; color:var(--ink-faint); font-weight:600; }
+
+@keyframes xpshine { to { background-position:-220% 0; } }
+
+/* ---- trophy shelf (dashboard) ---- */
+.wa-scope .trophy-shelf { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:14px; margin:18px 0; }
+.wa-scope .trophy {
+  text-align:center; padding:16px 12px; border-radius:16px;
+  background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);
+  filter:grayscale(1); opacity:.6; transition:transform .2s var(--ease), box-shadow .25s, filter .25s, opacity .25s;
+}
+.wa-scope .trophy.won {
+  filter:none; opacity:1;
+  background:linear-gradient(180deg, color-mix(in srgb,var(--gold) 14%, var(--card)), var(--card));
+  border-color:color-mix(in srgb,var(--gold-deep) 45%, var(--line)); box-shadow:var(--shadow);
+}
+.wa-scope .trophy.won:hover { transform:translateY(-4px) rotate(-1deg); }
+.wa-scope .trophy .tphy-emoji { font-size:2.4rem; line-height:1; }
+.wa-scope .trophy.won .tphy-emoji { animation:pop .5s var(--ease); }
+.wa-scope .trophy .tphy-name { font-family:var(--display); font-weight:800; font-size:1rem; margin-top:8px; }
+.wa-scope .trophy .tphy-desc { font-size:.8rem; color:var(--ink-faint); margin-top:4px; line-height:1.4; }
+.wa-scope .trophy .tphy-date { font-size:.72rem; color:var(--gold-deep); font-weight:700; margin-top:6px; text-transform:uppercase; letter-spacing:.06em; }
+.wa-scope .trophy:not(.won) .tphy-date { color:var(--ink-faint); opacity:.7; }
+
 @media (max-width:640px) {
+.wa-scope .xp-hero { max-width:100%; }
+
 .wa-scope .compare { grid-template-columns:1fr; }
 
 .wa-scope .fact-rows { grid-template-columns:1fr; }

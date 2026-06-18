@@ -4,7 +4,7 @@
 
 **Lifecycle:** a task starts here → Cowork/Code builds it → the task moves to `completed.md` with a date + short note + files touched. Deferred subjects/features live in `deferred.md`.
 
-**Scope: MATH only.** This backlog tracks Math. Auth and the remaining subjects (Science, Logic, Basketball) are in `deferred.md` until math ships. *(World Awareness was built ahead of schedule on a deliberate Abhi override — it's on `preview`, logged in `completed.md` + `decisions_open.md`, and is not tracked here.)*
+**Scope: MATH only.** This backlog tracks Math. Auth and the remaining subjects (Science, Logic) are in `deferred.md` until math ships. *(World Awareness and Basketball were both built ahead of schedule on deliberate Abhi overrides — they're on `preview`, logged in `completed.md` + `decisions_open.md`, and are not tracked here.)*
 
 ---
 

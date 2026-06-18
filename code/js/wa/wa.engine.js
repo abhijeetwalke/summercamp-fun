@@ -40,6 +40,53 @@ WA.Engine = (function () {
   function toCamp() { location.hash = "#/"; }   // back to the landing map
   function scrollTop() { try { window.scrollTo({ top: 0, behavior: "auto" }); } catch (e) {} }
 
+  /* ---------------- celebrations (XP / levels / trophies) ----------------
+     Given a celebration payload returned by S.record* / S.seeCountry /
+     S.useBigQuestion, pop confetti + toasts for any level-up and any newly
+     unlocked achievement. Toasts are staggered so they don't clobber each
+     other (a single toast element is reused). No-shame: only ever positive. */
+  function celebrate(p, startDelay) {
+    if (!p) return;
+    var d = startDelay || 0;
+    if (p.leveledUp && p.level) {
+      (function (lv, delay) {
+        setTimeout(function () { U.confetti(150); U.toast("Level up! You're now " + lv.emoji + " " + lv.name, "✨"); }, delay);
+      })(p.level, d);
+      d += 1600;
+    }
+    (p.unlocked || []).forEach(function (a) {
+      (function (ach, delay) {
+        setTimeout(function () { U.confetti(70); U.toast("Trophy unlocked — " + ach.name + "!", ach.emoji); }, delay);
+      })(a, d);
+      d += 1600;
+    });
+  }
+
+  /* The hero XP panel: explorer level + an animated bar to the next level.
+     Front-and-centre on the home hero and at the top of the dashboard. */
+  function xpHero() {
+    var lv = S.levelInfo();
+    var panel = U.el("div", { class: "xp-hero" });
+    var badge = U.el("div", { class: "xp-badge", title: "Explorer level " + lv.level },
+      [U.el("span", { class: "lv-emoji", text: lv.emoji })]);
+    var info = U.el("div", { class: "xp-info" });
+    info.appendChild(U.el("div", { class: "xp-top" }, [
+      U.el("span", { class: "lv-name", text: "Level " + lv.level + " · " + lv.name }),
+      U.el("span", { class: "xp-num", text: lv.xp + " XP" }),
+    ]));
+    var track = U.el("div", { class: "xp-track" });
+    var fill = U.el("i", { class: "xp-fill", style: "width:0%" });
+    track.appendChild(fill);
+    info.appendChild(track);
+    info.appendChild(U.el("div", { class: "xp-next", text: lv.isMax
+      ? "Top level reached — you're a World Master! 🌟"
+      : (lv.nextMin - lv.xp) + " XP to " + lv.nextEmoji + " " + lv.nextName }));
+    panel.appendChild(badge); panel.appendChild(info);
+    // animate the fill after it mounts (CSS transition on width)
+    setTimeout(function () { fill.style.width = lv.pct + "%"; }, 80);
+    return panel;
+  }
+
   /* ---------------- top bar ---------------- */
   function topbar(crumbs) {
     var p = S.profile();
@@ -60,6 +107,10 @@ WA.Engine = (function () {
     var streakChip = U.el("button", { class: "streak-chip", title: "Your learning streak", onclick: function () { go("#/dash"); } },
       [U.el("span", { class: "flame", text: "🔥" }), document.createTextNode(streak + " day" + (streak === 1 ? "" : "s"))]);
 
+    var lv = S.levelInfo();
+    var levelChip = U.el("button", { class: "level-chip", title: "Explorer level " + lv.level + " — " + lv.name + " · " + lv.xp + " XP", onclick: function () { go("#/dash"); } },
+      [U.el("span", { class: "lv-emoji", text: lv.emoji }), document.createTextNode(lv.name)]);
+
     var themeBtn = U.el("button", { class: "iconbtn", "aria-label": "Toggle dark mode", title: "Light / dark",
       text: p.theme === "dark" ? "☀️" : "🌙", onclick: function () {
         var scope = document.querySelector(".wa-scope");
@@ -71,7 +122,7 @@ WA.Engine = (function () {
     var atlasBtn = U.el("button", { class: "iconbtn", "aria-label": "Country atlas", title: "Country atlas", text: "🗺️", onclick: function () { go("#/atlas"); } });
 
     row.appendChild(camp); row.appendChild(brand); row.appendChild(crumbNode);
-    row.appendChild(streakChip); row.appendChild(atlasBtn); row.appendChild(dashBtn); row.appendChild(themeBtn);
+    row.appendChild(levelChip); row.appendChild(streakChip); row.appendChild(atlasBtn); row.appendChild(dashBtn); row.appendChild(themeBtn);
     bar.appendChild(row);
     return bar;
   }
@@ -80,7 +131,7 @@ WA.Engine = (function () {
     return U.el("div", { class: "foot wrap", html:
       "Summer Camp · World Awareness — a journey across continents. " +
       "Built clean, positive, and apolitical. Your progress is saved on this device. " +
-      "<span style=\"opacity:.6\">· build v1.0 (2026-06-17)</span>" });
+      "<span style=\"opacity:.6\">· build v2.0 (2026-06-18)</span>" });
   }
 
   /* Everything WA renders is wrapped in .wa-scope so its design system is fully
@@ -122,6 +173,7 @@ WA.Engine = (function () {
       heroStat(S.liveStreak() + "🔥", "day streak"),
     ]);
     hero.appendChild(stats);
+    hero.appendChild(xpHero());   // level + animated XP bar, front and centre
     // Layout-critical styles are set INLINE (not just in wa.css) so the pills
     // render correctly even if a cached stylesheet is in play. Inline-block +
     // nowrap = each pill sizes to its own text and can never overlap.
@@ -277,6 +329,7 @@ WA.Engine = (function () {
         return U.el("button", { class: "btn ghost", style: "margin:0 10px 8px 0",
           text: label, onclick: function () {
             reveal.innerHTML = "<div style='padding:11px 15px;border-left:3px solid " + color + ";background:var(--paper-2);border-radius:0 10px 10px 0'>" + (which === "a" ? bq.a : bq.b) + "</div>";
+            celebrate(S.useBigQuestion());   // unlocks the Debater trophy on first use
           } });
       };
       card.appendChild(mkSide("a", "var(--navy-2)", "👉 One side"));
@@ -492,7 +545,9 @@ WA.Engine = (function () {
       onComplete: function (pct, answers) {
         var res = S.recordLesson(id, pct);
         celebrateMilestones();
-        if (res.firstTime) U.toast("Lesson complete! +1 toward your " + cont.badge.name + " badge", "✅");
+        if (res.firstTime) U.toast("Lesson complete! +" + res.xpGained + " XP toward your " + cont.badge.name + " badge", "✅");
+        else if (res.xpGained) U.toast("+" + res.xpGained + " XP", "✨");
+        celebrate(res, 1200);   // level-ups + trophies, staggered after the lesson toast
       },
     });
     body.appendChild(quiz);
@@ -521,6 +576,7 @@ WA.Engine = (function () {
           U.toast("Score " + pct + "% — reach " + PASS + "% for the badge. You've got this!", "💪");
         }
         celebrateMilestones();
+        celebrate(res, 1300);   // level-ups + trophies, staggered after the section toast
       },
     });
     body.appendChild(quiz);
@@ -543,13 +599,19 @@ WA.Engine = (function () {
     body.appendChild(backbar("Home", "#/"));
     body.appendChild(U.el("h1", { style: "margin-top:6px", text: "Your journey" }));
 
+    body.appendChild(xpHero());   // level + animated XP bar at the top of the dashboard
+
+    var lv = S.levelInfo();
     var t = S.totalsAcross(C.continents);
     var best = S.bestScore();
     var grid = U.el("div", { class: "dash-grid" }, [
+      statCard(lv.emoji + " " + lv.level, "Explorer level · " + lv.name),
+      statCard(lv.xp + " XP", lv.isMax ? "Max level reached!" : (lv.nextMin - lv.xp) + " XP to " + lv.nextName),
       statCard(t.lessonsDone + "/" + t.lessonsTotal, "Lessons completed"),
       statCard(t.pct + "%", "Overall progress"),
       statCard(S.liveStreak() + " 🔥", "Current streak (best " + S.load().streak.best + ")"),
       statCard(t.badges + "/" + C.continents.length, "Continent badges"),
+      statCard(S.achievementsEarned() + "/" + S.achievementsTotal(), "Trophies unlocked"),
       statCard(best.score ? best.score + "%" : "—", best.lessonId ? "Best score · " + C.lessons[best.lessonId].title : "Best quiz score"),
       statCard(S.countriesSeenCount(), "Country cards explored"),
       statCard(S.drillStats().plays ? S.drillStats().best + "%" : "—", "Geography drill best"),
@@ -567,6 +629,24 @@ WA.Engine = (function () {
       shelf.appendChild(coin);
     });
     body.appendChild(shelf);
+
+    // trophy shelf — collectible achievements beyond the six continent badges.
+    // Locked = greyed silhouette; unlocked = full colour + earned date.
+    body.appendChild(U.el("div", { class: "section-title", style: "margin:30px 0 0" }, [
+      U.el("h2", { style: "margin:0", text: "Trophy shelf" }),
+      U.el("span", { class: "hint", text: S.achievementsEarned() + " of " + S.achievementsTotal() + " unlocked" }),
+    ]));
+    var trophies = U.el("div", { class: "trophy-shelf" });
+    S.achievements().forEach(function (a) {
+      var card = U.el("div", { class: "trophy" + (a.unlocked ? " won" : ""), title: a.desc });
+      card.appendChild(U.el("div", { class: "tphy-emoji", text: a.unlocked ? a.emoji : "🔒" }));
+      card.appendChild(U.el("div", { class: "tphy-name", text: a.name }));
+      card.appendChild(U.el("div", { class: "tphy-desc", text: a.desc }));
+      card.appendChild(U.el("div", { class: "tphy-date", text: a.unlocked && a.earnedAt
+        ? "Earned " + new Date(a.earnedAt).toLocaleDateString() : "Locked" }));
+      trophies.appendChild(card);
+    });
+    body.appendChild(trophies);
 
     // teaching prompt (the "secret sauce")
     body.appendChild(U.el("div", { class: "modern", style: "margin-top:24px" }, [
@@ -654,7 +734,7 @@ WA.Engine = (function () {
   }
 
   function openCountry(c) {
-    S.seeCountry(c.code);
+    var seen = S.seeCountry(c.code);   // null if already seen; else XP/trophy payload
     var node = U.el("div");
     var top = U.el("div", { class: "m-top" }, [
       U.el("div", { class: "flag", text: c.flag }),
@@ -676,6 +756,7 @@ WA.Engine = (function () {
     node.appendChild(b);
     U.glossify(node); normBtns(node);
     U.modal(node);
+    celebrate(seen, 400);   // e.g. the Atlas Explorer trophy when the last card opens
   }
   function factCell(k, v) { return U.el("div", { class: "fact-cell" }, [U.el("div", { class: "k", text: k }), U.el("div", { class: "v", text: v })]); }
 
@@ -774,7 +855,8 @@ WA.Engine = (function () {
       onComplete: function (pct) {
         var r = S.recordDrill(pct);
         if (r.isBest && S.drillStats().plays > 1) U.toast("New personal best: " + pct + "%!", "🌟");
-        else U.toast("Drill done — " + pct + "%", "🌐");
+        else U.toast("Drill done — " + pct + "%  ·  +" + r.xpGained + " XP", "🌐");
+        celebrate(r, 1300);   // level-ups + trophies (e.g. Map Master at 90%+)
       },
     }));
     page("<b>Geography Drill</b>", body);

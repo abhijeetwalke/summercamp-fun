@@ -19,6 +19,7 @@ This document holds **locked decisions** — the frozen product spec for Math, r
 - [Math Mode — Avatar: The Last Airbender](#math-mode-avatar-the-last-airbender)
 - [Accounts & Auth](#accounts-auth)
 - [World Awareness](#world-awareness)
+- [Basketball](#basketball)
 - [Design Principles](#design-principles)
 
 ---
@@ -92,9 +93,11 @@ Rule: **one subject = one theme.** Themes are never mixed within a subject.
 | Naruto | **Logic / puzzles** (skills-drill mode) |
 | Basketball (itself — no franchise wrapper) | **Basketball** (quiz mode: greats, record-holders, US & world records) |
 
-> **Theme update (2026-06-17):** World Awareness was originally pencilled in for a One Piece skin, but when built it got **its own clean "Atlas" identity** (explorer's-journal look) — the vision had always allowed a subject to stand as its own theme (like Basketball), and a neutral atlas fit world history better than a pirate skin. Science, Logic, and Basketball remain as mapped above.
+> **Theme update (2026-06-17):** World Awareness was originally pencilled in for a One Piece skin, but when built it got **its own clean "Atlas" identity** (explorer's-journal look) — the vision had always allowed a subject to stand as its own theme (like Basketball), and a neutral atlas fit world history better than a pirate skin. Science and Logic remain as mapped above.
 
-The remaining subjects (Science, Logic, Basketball) are named but **not yet designed** — Math is being fully baked, with World Awareness built alongside (see Build Strategy + the World Awareness section). **Basketball** is its own subject themed simply as basketball — he loves it as-is, so it needs no franchise skin: a **quiz section** on the greats, world/US record holders, milestones.
+> **Basketball update (2026-06-17, Abhi):** Basketball is now **fully spec'd** (see the [Basketball](#basketball) section) — a deliberate second override of depth-first, after World Awareness. It is its own clean **"Hardwood"** theme (no franchise skin), **teaching-first** like World Awareness (read the story → quiz at the end), built around **grit & perseverance, records, and history**. **Built on `preview` 2026-06-18** (see the [Basketball](#basketball) section).
+
+Science and Logic are named but **not yet designed** — Math is being fully baked, with World Awareness and now Basketball built alongside (see Build Strategy + their sections). **Basketball** is its own subject themed simply as basketball — he loves it as-is, so it needs no franchise skin.
 
 Theme-to-subject mapping is config-driven, not hardcoded.
 
@@ -114,8 +117,8 @@ The app opens on a **world map of continents drifting together** — the visual 
 - **One land per theme/subject.** The Avatar continent is labeled **"Airbender (Math)"** — franchise name with the subject in parentheses. The other lands are the other subjects.
 - **Tactile click (mostly visual + sound):** clicking a land gives a satisfying **press-down-and-spring-back** "ka-chunk" — the land depresses slightly and snaps back, a crack/snap micro-animation, accompanied by a **click sound**. The feel is physical and deliberate.
 - **Active land (Math):** the click zooms into that continent → the math world (nations/elements, the Missions ribbon, etc.).
-- **Active lands (Math, World Awareness):** clicking zooms in and enters that world. *(World Awareness was activated 2026-06-17 — its land is now live, routing to `#/world`.)*
-- **Inactive lands (Science/Data, Logic, Basketball):** visible on the map and **still clickable** — the tactile click feedback fires — but they show a **"Coming Soon"** label and do **not** lead anywhere, because nothing is built behind them yet. (Builds anticipation.)
+- **Active lands (Math, World Awareness, Basketball):** clicking zooms in and enters that world. *(World Awareness was activated 2026-06-17 → `#/world`. Basketball — the "Hardwood" land — is spec'd 2026-06-17 and will route to `#/hoops` when built.)*
+- **Inactive lands (Science/Data, Logic):** visible on the map and **still clickable** — the tactile click feedback fires — but they show a **"Coming Soon"** label and do **not** lead anywhere, because nothing is built behind them yet. (Builds anticipation.)
 - Navigation overall: landing map → click a land → (Math) zoom into the subject world → mode home → start today's Mission.
 
 ### Ambient Effects — Landing Map (locked)
@@ -297,6 +300,7 @@ Every Mission ends with a reward. The carrot matters — rewards are what make a
 |---|---|
 | Avatar (Math) | **Pai Sho tiles** — collectible tiles; rare **White Lotus tile** for special feats |
 | Atlas (World awareness) — *as built* | **Continent badges** + day-streak + personal-best (no franchise currency) |
+| Hardwood (Basketball) — *as spec'd* | **Trophy case** — a badge per subsection ("Heart of a Champion," "Record Keeper," "Hardwood Historian," "Hall of Famer") + day-streak + personal-best (no franchise currency) |
 | Pokémon (Science/data) | Badges |
 | Naruto (Logic/puzzles) | Ninja rank progression (Genin → Chunin → Jonin) |
 
@@ -465,6 +469,8 @@ Total Quiz Questions: ~250–300 integrated + 6 section reviews
 - **Language:** Age-appropriate, avoids jargon without sacrificing accuracy
 - **Structure:** (1) Hook (compelling question or scenario); (2) Historical context (what came before); (3) The event itself (what happened, who was involved); (4) Consequences (how the world changed); (5) Modern relevance (why this still matters)
 
+> **Reading depth — DOUBLE IT (Abhi, 2026-06-18).** The first build's lessons read too thin for a ~13-year-old. **Every one of the 39 lessons must roughly double its reading prose (~2×)** while **keeping all the same themes, structure, beats, interactives, and quizzes** — this is *add more*, never remove. Aim for ~**350–500 words** of genuine reading per lesson (was ~150–250). Go deeper, not just longer: more vivid narrative and human detail, more cause-and-effect ("because of this, that happened"), an extra paragraph or two of historical context, more "why it still matters today," and a couple more "Did you know?" facts. Pitch the **vocabulary and sentence complexity up to a confident 12–13-year-old** reading level (richer words, longer sentences, real nuance) — still clear, still accurate, still clean/positive/apolitical. The existing beat types stay; we lengthen the `p`/`lead` beats and add new `p`/`fact`/`guide` beats. Applies **across the board, all six continents.** — ***Status: BUILT on `preview`** (2026-06-18, autonomous scheduled run). All 39 lessons expanded to avg ~545 reading words (up from ~150–250), every theme/beat/interactive/quiz kept verbatim; sensitive topics handled factually and evenhandedly; jsdom-verified all 39 render at 350+ words, 0 errors. Awaiting Abhi's Gate review. See `completed.md`.*
+
 **Quiz Integration: Two-Level System**
 
 *Level 1: Lesson-End Quizzes.* Each lesson is immediately followed by its own quiz — 5–10 questions specific to that lesson; types include multiple choice, true/false, short answer, scenario-based; immediate right/wrong feedback with explanation; difficulty adapts based on performance; flow is watch lesson → take quiz → move to next lesson (immediate reinforcement).
@@ -573,6 +579,23 @@ This platform transforms world awareness from a dry checklist of facts into a gu
 
 ---
 
+### Visual & Engagement Glow-Up — World Awareness only (2026-06-17)
+
+**Direction (Abhi):** make the World Awareness experience look and feel like it's for a **12–13-year-old** — more attractive, more "I want to open this," less like schoolwork. **Scope: World Awareness only** (the Math/Avatar world and the landing map keep their current look for now). **Vibe: game-like & energetic** — the Duolingo/Kahoot register a 12–13-year-old gravitates to: confident bold color, big satisfying progress, punchy headings, snappy motion — but still clean, never babyish.
+
+**Two engagement systems to add** (Abhi picked these; *not* doing avatar/profile or sound this round):
+
+1. **XP & Levels.** Every action earns **XP** — completing a lesson, passing a quiz, a drill run, earning a section badge (more XP for higher scores / first-try). A persistent **XP bar** shows progress to the next level. **Level ladder** (effort-framed, explorer-themed), e.g. *Explorer → Scout → Navigator → Cartographer → Globetrotter → World Master*. **Level-up is a moment** — celebratory animation + "You reached Navigator!" Levels are status, never a gate; XP only ever goes up (no loss), keeping it no-shame.
+2. **Achievements / Trophies.** Collectible milestones *beyond* the six continent badges, shown on a **trophy shelf** in the dashboard (locked = silhouette, unlocked = full-color + earned-date). Examples: *First Steps* (1st lesson), *Perfect!* (100% on a quiz), *Globetrotter* (a lesson on every continent), *On Fire* (3- and 7-day streaks), *Map Master* (90%+ geography drill), *Completionist* (all 39 lessons), *Atlas Explorer* (opened every country card), *Debater* (used a Big Question). Unlocking pops a celebratory toast.
+
+**Look & feel changes (WA only):** richer, more saturated continent accent colors + subtle gradients; a bolder display typeface for headings; bigger, rounded, animated progress bars; more "lift" and motion on cards (hover/press); a stronger hero with the level/XP front and centre; level-up & achievement celebrations (confetti + toast). 
+
+**Guardrails (unchanged):** stays **effort-based, no-shame** (reward the work, never "you're smart"; XP never decreases); all of it **optional/ambient** (no pressure, no peer leaderboards); **progress preserved** — XP/levels/achievements are *derived from or added to* the existing `summer-camp-world-v1` localStorage with a migration so no current saved progress is lost; everything stays **scoped under `.wa-scope`** so it can't touch Math/landing; vanilla HTML/CSS/JS, no backend; accessible + reduced-motion respected.
+
+*Status: **BUILT on `preview`** (2026-06-18, autonomous scheduled run). XP & Levels (animated XP bar + explorer ladder + level-up celebration) and Achievements/Trophies (dashboard trophy shelf, 9 trophies, locked-silhouette → colour + earned date, unlock toast) shipped, plus the look-and-feel pass (bolder display headings, animated rounded progress bars, punchier cards, topbar level chip, stronger hero). Progress preserved via a one-time `summer-camp-world-v1` v2 migration (back-fills XP + earned trophies). Scoped under `.wa-scope`; reduced-motion respected; jsdom-verified (42/42, 0 errors). Awaiting Abhi's Gate review. See `completed.md`.*
+
+---
+
 ### Prior capture (preserved — reconcile with the vision above)
 
 > Earlier brain-dump from Abhi, kept so nothing is lost. Its **reading-gated, per-country** model and **diagnostic-first** spine differ from the continent/lesson vision above; the two need merging or a pick before build.
@@ -597,6 +620,95 @@ This platform transforms world awareness from a dry checklist of facts into a gu
 **Open question Abhi posed (to explore later):** *what else would an 11-year-old want to learn to become really smart?* — candidate directions to discuss when World Awareness is taken up: world geography & maps, basic economics (why currencies differ, trade), world history's greatest hits, how governments/elections work (neutrally), famous inventions & scientists, world religions & festivals (respectfully), space & the solar system, the UN / how countries cooperate, languages of the world, great wonders (natural & built).
 
 ---
+
+
+[↑ Back to top](#top)
+
+<a id="basketball"></a>
+## Basketball — "Hardwood" (BUILT on preview 2026-06-18 — spec'd 2026-06-17)
+
+> **BUILT on `preview` (2026-06-18).** The scheduled 10:30 PM PT build landed Basketball as the **"Hardwood" land on the index map** (`#/hoops`), its own scoped world (`code/js/hoops/*`, `code/css/hoops.css`, own localStorage key `summer-camp-hoops-v1`, runs from `file://`) — the same integration pattern as World Awareness. **As built:** 4 subsections · **20 illustrated lessons** (Heart 5 · Records 5 · Roots 6 · Legends 4) · a **6-question quiz at the end of every lesson** + a **section review quiz** per subsection + one argue-both-sides **debate card** each = **159 quiz questions** total (120 lesson + 39 review). Trophy Case rewards, real Wikimedia photos (with Hardwood-SVG fallbacks + captions/credits), California/Warriors/Lakers strip, glossary tooltips, effort-not-ability/no-shame language. Records fact-verified to 2026 values. Follow-up content passes (2026-06-18): a routing-bug fix (land click now reaches `#/hoops`), reading content **doubled then leveled** to a consistent ~235–321 words/lesson, and every lesson quiz leveled to **6 questions**. Full build + fix log: `completed.md`. Still on `preview` only — Abhi's two gates unchanged. The spec below is what was built.
+
+> **Spec'd as a deliberate second override of depth-first (Abhi, 2026-06-17)** — after World Awareness. Basketball gets its **own clean "Hardwood" theme** (no franchise skin; he loves the game as-is) and is **teaching-first like World Awareness**: the kid *reads the story / the records / the history first*, and the **quiz comes at the end of each subsection** — explicitly **not** Math's diagnostic-first engine. It will live as the **Basketball ("Hardwood") land on the index map**, routing to `#/hoops`, rendered as its own themed world (scoped CSS, own localStorage key, runs from `file://`) — the same integration pattern World Awareness used. The four subsections, the records, the stories, and the history below are the locked content map; the build researches and **fact-verifies every record, story, and date** before it ships (records change — e.g. the all-time scoring leader, the made-threes record — so nothing is taken from memory).
+
+### Look & feel — build it to read for a 14-year-old (locked, 2026-06-17 — Abhi)
+
+> Even though the learner is 11, **the Basketball section should *look and feel* like it was built for a 14-year-old** — older, cooler, more grown-up than the rest of the app. Think **sports-broadcast / ESPN-grade**, not a kids' cartoon: a sleek, confident **dark "Hardwood" UI** (deep court tones, hardwood texture, bold orange accents, crisp sans-serif type, stat-line / scoreboard / trading-card motifs), big vivid edge-to-edge photography, tasteful motion. No bubbly fonts, no babyish mascots, no cutesy stickers. The *content* stays age-appropriate and no-shame; only the **visual maturity** levels up. This applies to Basketball specifically — Math (Avatar) and World Awareness (Atlas) keep their own looks.
+
+### Why this subject, and the feeling we're after
+
+This is the subject he already loves, so it doesn't need a costume — it needs **heart**. The spine of Basketball is **grit**: true, heart-touching stories of where the greatest players came from and what they survived to get there. The intent (Abhi, 2026-06-17): *he should be thoroughly blown away by how hard the road was for these people* — and should walk away understanding that what got them there was **work, not luck and not raw "talent."** That lands straight on the project's core rule: **reward effort, never ability.** Around that emotional core sit the parts a basketball-obsessed 11-year-old devours — the **records** ("wait, *100* points in one game?"), the **history** of how the game was invented and how Black athletes transformed and came to define it, and the **legends and greatest moments**.
+
+### Spine & flow (locked)
+
+- **Teaching-first, info → quiz — and *lots* of quizzes (Abhi, 2026-06-17).** Quizzes are the **muscle-memory rep**: they're how the facts stick and how the fun happens, so the build is **quiz-dense, not quiz-light.** Each subsection is a run of **illustrated info cards / mini-lessons** (a story, a record cluster, a history beat), and **almost every info card is immediately followed by a quick check** — 2–4 questions on what he just read — so reading and answering alternate the whole way through. Then each subsection **also** ends with a larger **review quiz** that mixes everything in that subsection. Net effect: many small quizzes per subsection plus a capstone review — *lots and lots* of questions, by design.
+  - **Question count target:** a meaty bank — aim for **roughly 12–20+ questions per subsection** (lesson checks + the end review), i.e. well over **50 questions across Basketball** at launch, with room to grow. Counts are config, tuned to keep it fun, never a slog.
+  - **As built (2026-06-18):** rather than a check after *every* card, each **lesson** ends with its own **6-question quiz**, and each **subsection** ends with a **review quiz** (8–10 Qs). That's **159 questions total** (120 lesson + 39 review) across 20 lessons — comfortably past the "lots of quizzes" bar. (Open lever if wanted: bring section reviews to a uniform count, or move toward true after-each-card checks.)
+  - **Variety keeps the reps fun:** mix formats — multiple choice, true/false, "which is the record-holder," "put these in order," and image-based "who/what is this?" using the real photos/flags. Immediate right/wrong feedback with a one-line explanation on every question (World-Awareness style); no-shame on a miss — it explains and moves on.
+  - **Reuse** the World Awareness lesson/quiz engine where it fits; Basketball is content + a Hardwood skin + real imagery, not new engine code.
+- **Effort-based, no-shame language throughout.** Every story closes on what the *work* produced — the drills, the early mornings, the refusal to quit — never "he was just gifted." No shame on a wrong quiz answer; it just explains and moves on.
+- **Clean, positive, age-appropriate.** Hardship is told with honesty and dignity, never gratuitously. The tone is courage and triumph.
+- **Rewards:** a **Trophy Case** — one badge per subsection completed (Heart of a Champion, Record Keeper, Hardwood Historian, Hall of Famer), plus a day-streak and a personal-best on quizzes (same light reward loop as World Awareness; no franchise currency).
+
+### Iconic imagery (locked, 2026-06-17 — Abhi)
+
+> **Use real imagery.** Abhi's call: this is a **private, non-commercial gift for one child** (and possibly his friends), not a product and not monetized — so it should show **real photos of the actual players, venues, moments, and events**, because real faces and real places are what make it hit. This is a deliberate, logged exception for Basketball; it does **not** change the franchise-themes rule (Avatar/Pokémon/etc. still use *inspired* original art, never copyrighted assets).
+
+- **Sourcing order (reliability-first, so nothing breaks or looks sketchy):** (1) **freely-licensed real photos** — **Wikimedia Commons / Wikipedia** have excellent shots of players, arenas, and historic moments (Naismith, the Globetrotters, Texas Western, etc.); public-domain historic photography; official press/league imagery that permits embedding. (2) **Original "Hardwood" SVG/illustration** — court lines, hoop, jersey-number plates, trophy icons, silhouette art — as the **fallback** wherever a clean free photo doesn't exist, and as the connective theme art throughout. (3) Every image carries a small **caption + credit** line (good habit + it teaches him where things come from).
+- **Flags & banners (Abhi, 2026-06-17):** lean into **flags and banners** as imagery — team flags/logos, **championship banners** ("flags in the rafters"), and the **California state flag** as a home-pride touch — they read as bold, colorful, and instantly recognizable to a kid, and they make the pages pop.
+- **Imagery should *attract him* — this is his thing.** Pick the boldest, most recognizable, most exciting shots (dunks, championship moments, famous arenas), big and vivid, not tiny thumbnails. The visuals are a primary pull here, not decoration.
+- **Performance guardrails still hold:** images are sized/lazy-loaded so the page stays **agile** (the project's "never make him wait" rule). A missing image must degrade gracefully to the SVG fallback, never a broken-image box.
+
+### Home court — California (locked, 2026-06-17 — Abhi)
+
+They're in **California**, so the app should lean into **his teams and the local stars he already loves**: the **Golden State Warriors** (Stephen Curry & the Bay Area dynasty) and the **Los Angeles Lakers** (LeBron James, and the Lakers' deep history — Magic, Kareem, Kobe, Shaq). Surface these prominently across the subsections — Curry leads the three-point records, LeBron anchors both the scoring records and a grit story, and the Warriors/Lakers carry big chunks of the championship and "greatest moments" content. The California connection is a deliberate hook: *these are the players he watches.*
+
+### The four subsections (locked content map)
+
+> Quiz at the **end of each** subsection. Exact player rosters/counts are the build's to finalize during fact-checking; the set below is the spine.
+
+**1. Heart of a Champion — Grit & Perseverance** *(the emotional core)*
+Heart-touching, true origin stories. The build verifies each and tells it with dignity, closing on the work that carried them:
+- **Giannis Antetokounmpo** — son of undocumented Nigerian immigrants in Greece; sold sunglasses, toys, and watches on the street with his brothers; days without food; a kid with no country that fully claimed him → NBA MVP and champion.
+- **LeBron James** — born to a 16-year-old single mother in Akron; constant moves; missed dozens of school days one year for lack of a stable home → one of the greatest ever.
+- **Jimmy Butler** — told to leave home around age 13; bounced between friends' houses with nothing guaranteed → All-Star through relentless work.
+- **Allen Iverson** — grew up in deep poverty and adversity in Hampton, VA; "too small" his whole life; heart over size.
+- **Stephen Curry** — overlooked as too small and too skinny; only tiny Davidson recruited him → the greatest shooter the game has seen.
+- **One woman's story included** (build to verify and choose — e.g. a WNBA great's road through illness or hardship, or **Maya Moore** stepping away at her peak to free a wrongfully imprisoned man) so grit isn't told as a men-only story.
+- *Optional add:* a global-character story (e.g. **Dikembe Mutombo**'s journey from Congo and his humanitarian work).
+
+**2. The Record Books — Records & Milestones (US-focused, with the women's game)**
+The "whoa, really?" numbers, verified to current values at build time:
+- **Scoring:** Wilt Chamberlain's 100-point game; the all-time scoring crown (Kareem → **LeBron**, current leader); huge single-season and single-game marks.
+- **Championships & dynasties:** Bill Russell's 11 rings; the great Celtics/Lakers/Bulls/Warriors runs; most MVPs.
+- **Rebounds / assists / steals / blocks:** Wilt's rebounding feats; the assists and steals leaders.
+- **The three-point era:** **Stephen Curry**, all-time made threes.
+- **Triple-doubles & streaks:** Oscar Robertson's and Russell Westbrook's triple-double seasons; the longest winning streaks; the 73-win season.
+- **The women's game (WNBA + college):** all-time WNBA scoring and MVP leaders (e.g. Diana Taurasi, A'ja Wilson, Breanna Stewart) and the NCAA scoring record (**Caitlin Clark**) — so records aren't a men-only list.
+
+**3. Roots & Revolution — History** *(honest but age-appropriate; where the Black-excellence story lives)*
+Told as a story of invention, courage, and transformation — **honest about the real barriers, framed around the courage to break them and the triumph that followed** (Abhi's chosen tone, 2026-06-17):
+- **The invention:** James Naismith, 1891, a peach basket in Springfield, the first 13 rules.
+- **Early game & the Black Fives / Harlem Renaissance era; the Harlem Globetrotters** (1926).
+- **Breaking the color line (1950):** Earl Lloyd (first to play), Chuck Cooper (first drafted), Nat "Sweetwater" Clifton (first signed) — and an age-appropriate, honest account of the segregation and exclusion they pushed through.
+- **Texas Western, 1966:** the first all-Black starting five to win the NCAA title, over an all-white Kentucky — a turning point.
+- **Bill Russell:** 11 titles, the first Black NBA head coach, and a leader in the civil-rights era.
+- **The transformation:** Dr. J and the ABA → Magic & Bird reviving the league → Michael Jordan taking it global → today's overwhelmingly Black, globally beloved game and culture.
+- The throughline: *why this history matters* — courage, fairness, and excellence.
+
+**4. Legends & Greatest Moments** *(pure fun)*
+The greats and the moments every fan should know — capped by a debate card:
+- **The GOATs:** Jordan, LeBron, Kareem, Magic, Bird, Wilt, Russell, Kobe, Shaq, Hakeem, Duncan — plus women's legends (Lisa Leslie, Diana Taurasi, A'ja Wilson, Sue Bird, Caitlin Clark).
+- **Iconic moments:** Jordan's "The Shot" and "Flu Game" and last shot; Ray Allen's 2013 corner three; Kobe's 81; LeBron's 2016 block; Lillard's wave-goodbye.
+- **Signature moves:** the skyhook, the Dream Shake, the fadeaway, the crossover, the dunk.
+- **"Who's the GOAT?" debate card** — argue *both* sides (e.g. Jordan vs. LeBron), the same argue-both-sides format World Awareness uses for its "Big Question" cards. No single right answer; it teaches reasoning.
+
+### Build notes (for the scheduled build)
+
+- **Integration:** activate the Basketball/"Hardwood" land on the index map → route `#/hoops` → render Basketball as its own scoped world (mirror the World Awareness integration: `config.js` flips the land active; the router gains one `#/hoops` branch; CSS scoped under a wrapper class so it can't bleed into Math or World; its own `localStorage` key; data shipped as `.js` globals so it runs from `file://`).
+- **Reuse** the World Awareness teaching-first lesson/quiz primitives, debate-card pattern, badges/streak/personal-best, and glossary-tooltip system where they fit — Basketball should be **content + Hardwood skin + real imagery**, not a new engine.
+- **Fact-check gate:** before it's considered done, every record value, story detail, name, and date is **verified against current sources** (web research at build time), and images carry captions + credits.
+- **Gates unchanged:** the build lands on `preview` only; it is **not** committed to `main` until Abhi's two-gate review — same as Math and World Awareness.
 
 
 [↑ Back to top](#top)

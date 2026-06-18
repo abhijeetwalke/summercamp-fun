@@ -71,7 +71,7 @@ SC.SUBJECTS = [
   { id: "world",      active: true,  displayName: "World Awareness", landLabel: "World Awareness" }, // its own themed world — wa.* files, routes under #/world
   { id: "science",    active: false, displayName: "Science / Data",  landLabel: "Science / Data",  comingSoon: true },
   { id: "logic",      active: false, displayName: "Logic / Puzzles", landLabel: "Logic / Puzzles", comingSoon: true },
-  { id: "basketball", active: false, displayName: "Basketball",      landLabel: "Basketball",      comingSoon: true },
+  { id: "basketball", active: true,  route: "hoops", displayName: "Basketball",      landLabel: "Basketball" }, // its own themed world — "Hardwood" (hoops.* files), routes under #/hoops
 ];
 
 SC.getSubject = (id) => SC.SUBJECTS.find((s) => s.id === id);

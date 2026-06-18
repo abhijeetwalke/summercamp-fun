@@ -6,7 +6,8 @@
   <title>Summer Camp</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/wa.css?v=9"><!-- World Awareness subject (scoped under .wa-scope); ?v bumps to bust caches -->
+  <link rel="stylesheet" href="css/wa.css?v=10"><!-- World Awareness subject (scoped under .wa-scope); ?v bumps to bust caches -->
+  <link rel="stylesheet" href="css/hoops.css?v=1"><!-- Basketball "Hardwood" subject (scoped under .hoops-scope) -->
 </head>
 <body>
   <div id="app"></div>
@@ -22,11 +23,17 @@
   <script src="js/engine.js"></script>
 
   <!-- World Awareness subject: data + engine (renders into #app under #/world). ?v bumps to bust caches. -->
-  <script src="js/wa/wa.content.js?v=9"></script>
-  <script src="js/wa/wa.countries.js?v=9"></script>
-  <script src="js/wa/wa.state.js?v=9"></script>
-  <script src="js/wa/wa.components.js?v=9"></script>
-  <script src="js/wa/wa.engine.js?v=9"></script>
+  <script src="js/wa/wa.content.js?v=10"></script>
+  <script src="js/wa/wa.countries.js?v=10"></script>
+  <script src="js/wa/wa.state.js?v=10"></script>
+  <script src="js/wa/wa.components.js?v=10"></script>
+  <script src="js/wa/wa.engine.js?v=10"></script>
+
+  <!-- Basketball "Hardwood" subject: data + engine (renders into #app under #/hoops). -->
+  <script src="js/hoops/hoops.content.js?v=1"></script>
+  <script src="js/hoops/hoops.state.js?v=1"></script>
+  <script src="js/hoops/hoops.components.js?v=1"></script>
+  <script src="js/hoops/hoops.engine.js?v=1"></script>
 
   <script src="js/app.js"></script>
 </body>

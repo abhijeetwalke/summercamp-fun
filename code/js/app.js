@@ -48,6 +48,9 @@
     // World Awareness plugs in here: it's its own themed world (wa.* files),
     // rendered into #app. The main router stays the single source of routing.
     if (p[0] === "world" && window.WA && WA.Engine) return WA.Engine.handle(p.slice(1));
+    // Basketball ("Hardwood") plugs in here the same way: its own themed world
+    // (hoops.* files), rendered into #app under #/hoops.
+    if (p[0] === "hoops" && window.HOOPS && HOOPS.Engine) return HOOPS.Engine.handle(p.slice(1));
     location.hash = "#/";
   }
   window.addEventListener("hashchange", route);
@@ -61,7 +64,10 @@
         ${SC.Maps.landingMap(SC.SUBJECTS)}
         <div id="toast" class="toast"></div>
       </div>`;
-    SC.Maps.wireLanding(app(), (id) => { location.hash = "#/" + id; });
+    SC.Maps.wireLanding(app(), (id) => {
+      const subj = SC.getSubject(id);
+      location.hash = "#/" + ((subj && subj.route) || id); // some subjects route under a theme name (e.g. basketball → hoops)
+    });
   }
 
   /* ------------------------- math home ------------------------- */
