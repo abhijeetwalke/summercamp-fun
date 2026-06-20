@@ -72,6 +72,7 @@ SC.SUBJECTS = [
   { id: "science",    active: false, displayName: "Science / Data",  landLabel: "Science / Data",  comingSoon: true },
   { id: "logic",      active: false, displayName: "Logic / Puzzles", landLabel: "Logic / Puzzles", comingSoon: true },
   { id: "basketball", active: true,  route: "hoops", displayName: "Basketball",      landLabel: "Basketball" }, // its own themed world — "Hardwood" (hoops.* files), routes under #/hoops
+  { id: "sunsword",   active: false, displayName: "The Sun & the Sword", landLabel: "The Sun & the Sword", comingSoon: true }, // ancient-world history/philosophy island — vision only (see product_vision.md); not yet built
 ];
 
 SC.getSubject = (id) => SC.SUBJECTS.find((s) => s.id === id);

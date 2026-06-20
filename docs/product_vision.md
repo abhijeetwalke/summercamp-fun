@@ -20,6 +20,7 @@ This document holds **locked decisions** — the frozen product spec for Math, r
 - [Accounts & Auth](#accounts-auth)
 - [World Awareness](#world-awareness)
 - [Basketball](#basketball)
+- [The Sun & the Sword](#the-sun-the-sword)
 - [Design Principles](#design-principles)
 
 ---
@@ -710,6 +711,79 @@ The greats and the moments every fan should know — capped by a debate card:
 - **Reuse** the World Awareness teaching-first lesson/quiz primitives, debate-card pattern, badges/streak/personal-best, and glossary-tooltip system where they fit — Basketball should be **content + Hardwood skin + real imagery**, not a new engine.
 - **Fact-check gate:** before it's considered done, every record value, story detail, name, and date is **verified against current sources** (web research at build time), and images carry captions + credits.
 - **Gates unchanged:** the build lands on `preview` only; it is **not** committed to `main` until Abhi's two-gate review — same as Math and World Awareness.
+
+
+[↑ Back to top](#top)
+
+<a id="the-sun-the-sword"></a>
+## The Sun & the Sword
+
+> **Status: VISION ONLY (v1.0, added 2026-06-20).** A north star for tone, experience, and intent — *not* a build spec. Lives on the index map as the **SUN** airport (coming soon); not yet built. Arc list, cast, and lesson count are firm enough to build against and loose enough to improve. *Working name* — the "sun and sword" duality (Diogenes' inner light vs. everything Alexander conquered to get one) is the part to keep; swap the name freely.
+
+**The North Star.** An island where a curious child travels back ~2,000 years and meets the most magnetic humans who ever lived — conquerors, philosophers, rebels, builders, and a few genuine villains — and comes away not with a list of dates but with a working sense of how power, ideas, and consequence actually move through the world. The promise to the learner: *you are about to meet someone unforgettable, and by the end you'll understand something you didn't before — about them, and quietly, about yourself.* The promise to the parent: this is the screen that makes the other screens look boring. We compete with the two-hour movie and the endless scroll, and win using their own weapons — narrative pull, stakes, beautiful images, cliffhangers — pointed at something that compounds.
+
+**Who it's for.** A bright 11-year-old who reads above his age and already handles 15-minute lessons with appetite. Reading level, conceptual reach, and moral complexity sit at roughly a sharp 13-year-old's bar — stretching, never condescending. He already knows Diogenes by name and loves "step out of my sunlight." This is the window where he's forming instincts about what to admire, what to distrust, and what consequences look like.
+
+### What one lesson feels like
+
+A short, vivid chapter (5–15 min) with the rhythm of a great bedtime story told to a kid too old for bedtime stories and too smart to be talked down to. It **opens on a scene, not a summary** — not "Alexander was a Macedonian king," but a knot of soldiers staring across a river at an army ten times their size while their 23-year-old commander smiles. Through the chapter we braid four threads as one current, never as separate sections:
+
+- **The drama** — real stakes, real tension; dramatic where drama earns its keep, never cartoonish. On the edge of his seat, not over the top.
+- **The ingenuity** — these people were inventors under pressure (the sarissa pike, Ashoka's roads and rock-cut edicts, Persian royal couriers, siege and supply). Cleverness reframes "great" as *resourceful* — a thing he can imitate.
+- **The geography** — where it happens and why mountains, rivers, and trade routes mattered; how an idea or an army crossed a continent. The map is a character.
+- **The moral weight** — the brilliance *and* the wreckage (Alexander's genius and the cities he burned; Ashoka and Kalinga; Socrates and the hemlock). Never preach; let the consequence sit in the room and trust him to feel it.
+
+Each chapter ends on a small hook — a question, a turn, a "but what he didn't know was…" — that makes the next lesson feel like the next episode.
+
+### The engine: flow (story-first, then a 6-question quiz)
+
+Tuned to **flow** — challenge a notch above current skill, time disappears. **Story first, always**; the narrative earns his attention, *then* comes the quiz — which is the next rung of the ladder, not a test. Difficulty curve:
+
+- **Q1–2 — Easy.** He just read it. Purpose is confidence and momentum: *I've got this.*
+- **Q3–4 — Medium.** Connect two things, or recall a detail he had to be paying attention to catch.
+- **Q5–6 — Trickier.** A small inference, a "why do you think…," a comparison across two figures, a consequence to reason about — just a tad harder than comfortable, the exact place where engagement is born.
+
+Design rule: never the head-scratch that discourages. Miss one → feedback is warm and *teaches*, never scolds. The exit emotion of every lesson: *that was fun, I'm a little smarter, and I want the next one.* (Shares the teaching-first lesson→quiz spine with World Awareness and Basketball; difficulty-curved quiz is the new wrinkle.)
+
+### Content architecture
+
+Roughly **100 lessons**, grouped into thematic story arcs of **8–12 lessons** each, so figures recur, collide, and pay off across chapters (by lesson 60 he's delighted to see a name from lesson 9). Era anchor: ~**500–300 BC** — the relay of Socrates → Plato → Aristotle → Alexander, with giants thinking and conquering in parallel half a world away. Emphatically **not Europe-only**: Greece is one bright room in a very large house. Representative (not final) arcs:
+
+1. **The Men Who Asked Why** — Socrates, Plato, Aristotle, Diogenes. "How should a person live?" The hemlock. The barrel. The sunlight.
+2. **The Boy Who Wanted the World** — Philip's blueprint, Aristotle as tutor, Alexander's campaigns, the genius and the cost, the empire that dissolved the day he died.
+3. **The King Who Wept** — Ashoka: conquest, Kalinga, remorse, and a conqueror who chose dharma over more war.
+4. **Warrior Kingdoms** — Sparta, the Persian empires; discipline, glory, brutality, and what such systems cost the people inside them.
+5. **The Other Half of the World Was Thinking Too** — Confucius and Laozi in China, the Upanishadic sages in India. Good ideas were no one civilization's property.
+6. **Roads, Silk, and Silver** — the Silk Road and ancient trade; how a road can change a world more than an army.
+7. **Ingenious Under Pressure** — a cross-cutting arc on invention: phalanx, siege engines, roads, writing, currency, navigation. Constraint as the mother of cleverness.
+8. **The Long Reach of Empire** (bridge toward World Awareness) — an age-appropriate, unromantic look at how later empires used firepower and organization to dominate, extract, and divide. Connects this ancient world to the modern one he already studies.
+
+Starting clusters, not a locked syllabus — builders should discover better groupings as the cast assembles.
+
+### The cast
+
+Imagery is the hook; the cast is the heart. Every major figure gets a handsome, characterful portrait — art a kid is drawn to, like a hero on a movie poster. A non-final roster with the angle that makes each magnetic:
+
+- **Diogenes** — the troublemaker philosopher in his barrel, mocking power to its face. His favorite; possibly the island's recurring "narrator's friend" who questions every conqueror's glory.
+- **Alexander the Great** — the dazzling, dangerous young genius. Admire him *and* count the cost.
+- **Socrates** — the questioner who would rather die than stop asking.
+- **Plato & Aristotle** — student and student's student; ideas as inheritance.
+- **Ashoka** — the conqueror who looked at what he'd done and changed.
+- **Leonidas and the Spartans** — discipline and sacrifice, and the hard truth beneath the glory.
+- **Persian kings (Cyrus, Darius, Xerxes)** — empire as administration and ambition, seen from their side, not only the Greek one.
+- **Confucius & Laozi** — order and flow; two answers to how to live, from the other side of the world.
+- **The Upanishadic sages** — the inward turn; wisdom as a different kind of conquest.
+- **Marcus Aurelius** (reaching forward) — the emperor who wrote himself reminders to stay humble; power that examines itself.
+
+And room, always, for the **not-so-great** — the cruel, the cynical, the counter-examples. He doesn't need every figure to be admirable; he needs them true, carrying a consequence he can learn from.
+
+### Art, voice, and what he walks away with
+
+- **Art direction:** handsome, dignified, characterful; a coherent house style across all ~100 lessons so the island feels like one world. **Maps as living visuals** — campaign routes that draw themselves, trade routes that light up, empires that bloom and recede. Period texture (armor, scrolls, marble, the sarissa, the barrel, the rock edict). The image arrives *before or with* the beat it illustrates, never decorating after.
+- **Voice & tone:** storyteller, not textbook — warm, vivid, a little theatrical when earned. Respect his intelligence (big ideas in plain words). **Show, don't sermonize** — lay the consequence in front of him and trust him. Honest about evil and folly; no sanitizing. Curiosity is the exit emotion — every lesson leaves a door open.
+- **What he walks away with:** a felt map of the ancient world and how its parts connected; a gallery of human beings whose choices he can reason about (models and warnings both); early, durable instincts about power, freedom, ambition, and consequence; the discovery that wisdom and greatness belonged to every civilization, not one; and a reflex he'll keep for life — that a screen can make him *more* curious, not less.
+
+**Build note (when it's time):** integrate as the `sunsword` subject — flip the index-map airport active, add one router branch and a scoped world (mirror World Awareness / Basketball: scoped CSS, own `localStorage` key, `.js` data globals for `file://`). Hold the soul (story-first, flow-tuned difficulty, global scope, moral honesty, beautiful imagery); iterate everything else. Two-gate review unchanged.
 
 
 [↑ Back to top](#top)

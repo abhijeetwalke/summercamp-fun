@@ -45,18 +45,29 @@ function slug(text) {
 marked.setOptions({ headerIds: false, mangle: false });
 let html = marked.parse(md);
 
-const toc = [];
+/* Ribbon shows top-level sections (h2) only; each section's h3 sub-items are
+   nested and revealed contextually when that section is the active one — so the
+   sidebar stays calm instead of listing every internal detail at once. */
+const sections = [];
 html = html.replace(/<h([1-4])>([\s\S]*?)<\/h\1>/g, function (_, lvl, inner) {
   const level = +lvl;
   const plain = inner.replace(/<[^>]+>/g, "").trim();
   const id = slug(plain);
-  if (level === 2 || level === 3) toc.push({ level: level, label: plain, id: id });
+  if (level === 2) sections.push({ label: plain, id: id, subs: [] });
+  else if (level === 3 && sections.length) sections[sections.length - 1].subs.push({ label: plain, id: id });
   return '<h' + lvl + ' id="' + id + '">' + inner + '</h' + lvl + '>';
 });
 
-const tocHtml = toc.map(function (t) {
-  return '<a class="toc-link lvl' + t.level + '" href="#' + t.id + '">' + escapeHtml(t.label) + "</a>";
+const tocHtml = sections.map(function (s) {
+  const subs = s.subs.map(function (c) {
+    return '<a class="toc-link lvl3" href="#' + c.id + '">' + escapeHtml(c.label) + "</a>";
+  }).join("\n");
+  return '<div class="toc-group">'
+    + '<a class="toc-link lvl2" href="#' + s.id + '">' + escapeHtml(s.label) + "</a>"
+    + (subs ? '<div class="toc-sub">' + subs + "</div>" : "")
+    + "</div>";
 }).join("\n");
+const subCount = sections.reduce(function (n, s) { return n + s.subs.length; }, 0);
 
 function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
@@ -77,15 +88,21 @@ const page = `<!DOCTYPE html>
   .layout{display:flex;align-items:flex-start;max-width:1180px;margin:0 auto}
   /* sidebar */
   .toc{position:sticky;top:0;align-self:flex-start;width:300px;flex:none;height:100vh;overflow:auto;padding:26px 18px 40px;border-right:1px solid var(--line);background:#f3eee3}
-  .toc h2{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
-  .toc-link{display:block;padding:5px 10px;border-radius:7px;color:var(--soft);font-size:.92rem;border-left:2px solid transparent;margin:1px 0}
+  .toc h2{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+  .toc-group{margin:1px 0}
+  .toc-link{display:block;padding:6px 10px;border-radius:7px;color:var(--soft);font-size:.92rem;border-left:2px solid transparent}
   .toc-link:hover{background:#eae2d2;text-decoration:none;color:var(--ink)}
-  .toc-link.lvl3{padding-left:24px;font-size:.85rem;color:var(--faint)}
-  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:#ece4d4;font-weight:600}
+  .toc-link.lvl2{font-weight:600;color:var(--ink)}
+  /* sub-items stay hidden until their section is the active one — keeps the ribbon quiet */
+  .toc-sub{display:none;margin:2px 0 8px 6px;border-left:1px solid var(--line);padding-left:4px}
+  .toc-group.current .toc-sub{display:block}
+  .toc-link.lvl3{padding:4px 10px 4px 18px;font-size:.84rem;color:var(--faint);border-left:0}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:#ece4d4}
+  .toc-link.lvl3.active{border-left:0;background:#ece4d4;color:var(--accent)}
   /* content */
   .content{flex:1;min-width:0;max-width:840px;padding:30px 40px 120px}
   .content h1{font-size:2rem;margin:.2em 0 .5em;line-height:1.2}
-  .content h2{font-size:1.5rem;margin:1.8em 0 .4em;padding-bottom:.25em;border-bottom:2px solid var(--line);scroll-margin-top:14px}
+  .content h2{font-size:1.5rem;margin:2em 0 .5em;padding-bottom:.3em;border-bottom:1px solid var(--line);scroll-margin-top:14px}
   .content h3{font-size:1.18rem;margin:1.5em 0 .3em;color:#2a3142;scroll-margin-top:14px}
   .content h4{font-size:1.02rem;margin:1.2em 0 .2em;color:var(--soft)}
   .content p{margin:.6em 0}
@@ -124,24 +141,35 @@ ${html}
 </div>
 <button id="totop" aria-label="Back to top">↑ Top</button>
 <script>
+  var groups=[].slice.call(document.querySelectorAll(".toc-group"));
   var links=[].slice.call(document.querySelectorAll(".toc-link"));
-  var map={}; links.forEach(function(a){ map[a.getAttribute("href").slice(1)]=a; });
+  var byId={}; links.forEach(function(a){ byId[a.getAttribute("href").slice(1)]=a; });
   var heads=[].slice.call(document.querySelectorAll(".content h2, .content h3"));
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){
-        links.forEach(function(l){l.classList.remove("active");});
-        var a=map[e.target.id]; if(a){a.classList.add("active"); a.scrollIntoView({block:"nearest"});}
-      }
-    });
-  },{rootMargin:"0px 0px -75% 0px",threshold:0});
-  heads.forEach(function(h){io.observe(h);});
+  function setActive(id){
+    var a=byId[id]; if(!a) return;
+    links.forEach(function(l){ l.classList.remove("active"); });
+    a.classList.add("active");
+    var group=a.closest(".toc-group");
+    groups.forEach(function(g){ g.classList.toggle("current", g===group); });
+  }
+  // Pick the heading closest to (but not far below) the top of the viewport.
+  // Plain measurement on scroll — stable, and never auto-scrolls the sidebar.
+  function onScroll(){
+    var best=null, bestTop=-1e9;
+    for(var i=0;i<heads.length;i++){
+      var t=heads[i].getBoundingClientRect().top;
+      if(t<130 && t>bestTop){ bestTop=t; best=heads[i]; }
+    }
+    if(best) setActive(best.id);
+    top.classList.toggle("show", scrollY>500);
+  }
   var top=document.getElementById("totop");
-  top.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
-  addEventListener("scroll",function(){ top.classList.toggle("show", scrollY>500); });
+  top.addEventListener("click",function(){ window.scrollTo({top:0,behavior:"smooth"}); });
+  addEventListener("scroll",onScroll,{passive:true});
+  onScroll();
 </script>
 </body>
 </html>`;
 
 fs.writeFileSync(OUT, page);
-console.log("Wrote " + path.basename(OUT) + " with " + toc.length + " TOC entries (h2+h3).");
+console.log("Wrote " + path.basename(OUT) + " with " + sections.length + " top-level sections (" + subCount + " nested sub-items).");

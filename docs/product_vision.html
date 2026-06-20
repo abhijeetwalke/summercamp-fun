@@ -14,15 +14,21 @@
   .layout{display:flex;align-items:flex-start;max-width:1180px;margin:0 auto}
   /* sidebar */
   .toc{position:sticky;top:0;align-self:flex-start;width:300px;flex:none;height:100vh;overflow:auto;padding:26px 18px 40px;border-right:1px solid var(--line);background:#f3eee3}
-  .toc h2{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
-  .toc-link{display:block;padding:5px 10px;border-radius:7px;color:var(--soft);font-size:.92rem;border-left:2px solid transparent;margin:1px 0}
+  .toc h2{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+  .toc-group{margin:1px 0}
+  .toc-link{display:block;padding:6px 10px;border-radius:7px;color:var(--soft);font-size:.92rem;border-left:2px solid transparent}
   .toc-link:hover{background:#eae2d2;text-decoration:none;color:var(--ink)}
-  .toc-link.lvl3{padding-left:24px;font-size:.85rem;color:var(--faint)}
-  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:#ece4d4;font-weight:600}
+  .toc-link.lvl2{font-weight:600;color:var(--ink)}
+  /* sub-items stay hidden until their section is the active one — keeps the ribbon quiet */
+  .toc-sub{display:none;margin:2px 0 8px 6px;border-left:1px solid var(--line);padding-left:4px}
+  .toc-group.current .toc-sub{display:block}
+  .toc-link.lvl3{padding:4px 10px 4px 18px;font-size:.84rem;color:var(--faint);border-left:0}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:#ece4d4}
+  .toc-link.lvl3.active{border-left:0;background:#ece4d4;color:var(--accent)}
   /* content */
   .content{flex:1;min-width:0;max-width:840px;padding:30px 40px 120px}
   .content h1{font-size:2rem;margin:.2em 0 .5em;line-height:1.2}
-  .content h2{font-size:1.5rem;margin:1.8em 0 .4em;padding-bottom:.25em;border-bottom:2px solid var(--line);scroll-margin-top:14px}
+  .content h2{font-size:1.5rem;margin:2em 0 .5em;padding-bottom:.3em;border-bottom:1px solid var(--line);scroll-margin-top:14px}
   .content h3{font-size:1.18rem;margin:1.5em 0 .3em;color:#2a3142;scroll-margin-top:14px}
   .content h4{font-size:1.02rem;margin:1.2em 0 .2em;color:var(--soft)}
   .content p{margin:.6em 0}
@@ -52,15 +58,13 @@
 <div class="layout">
   <nav class="toc">
     <h2>📖 Contents</h2>
-    <a class="toc-link lvl2" href="#project-overview">Project Overview</a>
-<a class="toc-link lvl2" href="#build-strategy">Build Strategy</a>
-<a class="toc-link lvl2" href="#platform-wide-rules-vs-subject-specific-rules">Platform-Wide Rules vs. Subject-Specific Rules</a>
-<a class="toc-link lvl2" href="#themes">Themes</a>
-<a class="toc-link lvl2" href="#index-page-the-landing-map-locked">Index Page — The Landing Map (locked)</a>
-<a class="toc-link lvl3" href="#ambient-effects-landing-map-locked">Ambient Effects — Landing Map (locked)</a>
-<a class="toc-link lvl2" href="#ui-amp-navigation-locked">UI &amp;amp; Navigation (locked)</a>
-<a class="toc-link lvl2" href="#math-mode-avatar-the-last-airbender">Math Mode — Avatar: The Last Airbender</a>
-<a class="toc-link lvl3" href="#core-narrative-frame">Core Narrative Frame</a>
+    <div class="toc-group"><a class="toc-link lvl2" href="#project-overview">Project Overview</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#build-strategy">Build Strategy</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#platform-wide-rules-vs-subject-specific-rules">Platform-Wide Rules vs. Subject-Specific Rules</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#themes">Themes</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#index-page-the-landing-map-locked">Index Page — The Landing Map (locked)</a><div class="toc-sub"><a class="toc-link lvl3" href="#ambient-effects-landing-map-locked">Ambient Effects — Landing Map (locked)</a></div></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#ui-amp-navigation-locked">UI &amp;amp; Navigation (locked)</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#math-mode-avatar-the-last-airbender">Math Mode — Avatar: The Last Airbender</a><div class="toc-sub"><a class="toc-link lvl3" href="#core-narrative-frame">Core Narrative Frame</a>
 <a class="toc-link lvl3" href="#theme-to-structure-mapping">Theme-to-Structure Mapping</a>
 <a class="toc-link lvl3" href="#element-to-domain-mapping">Element-to-Domain Mapping</a>
 <a class="toc-link lvl3" href="#question-pools">Question Pools</a>
@@ -75,22 +79,25 @@
 <a class="toc-link lvl3" href="#tier-ramp-default-schedule-approved-abhi-hand-tunes-weekly">Tier Ramp — Default Schedule (approved; Abhi hand-tunes weekly)</a>
 <a class="toc-link lvl3" href="#frustration-sensing-approved">Frustration Sensing (approved)</a>
 <a class="toc-link lvl3" href="#streaks-approved">Streaks (approved)</a>
-<a class="toc-link lvl3" href="#session-timing-approved">Session Timing (approved)</a>
-<a class="toc-link lvl2" href="#accounts-amp-auth-captured-deferred-build-without-login-first">Accounts &amp;amp; Auth (CAPTURED — DEFERRED; build without login first)</a>
-<a class="toc-link lvl2" href="#world-awareness-built-on-preview-integrated-into-the-main-site">World Awareness (BUILT on preview — integrated into the main site)</a>
-<a class="toc-link lvl3" href="#summer-camp-world-awareness-product-vision-document">Summer Camp World Awareness — Product Vision Document</a>
+<a class="toc-link lvl3" href="#session-timing-approved">Session Timing (approved)</a></div></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#accounts-amp-auth-captured-deferred-build-without-login-first">Accounts &amp;amp; Auth (CAPTURED — DEFERRED; build without login first)</a></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#world-awareness-built-on-preview-integrated-into-the-main-site">World Awareness (BUILT on preview — integrated into the main site)</a><div class="toc-sub"><a class="toc-link lvl3" href="#summer-camp-world-awareness-product-vision-document">Summer Camp World Awareness — Product Vision Document</a>
 <a class="toc-link lvl3" href="#competition-alignment-amp-external-resources-added-2026-06-13">Competition Alignment &amp;amp; External Resources (added 2026-06-13)</a>
 <a class="toc-link lvl3" href="#visual-amp-engagement-glow-up-world-awareness-only-2026-06-17">Visual &amp;amp; Engagement Glow-Up — World Awareness only (2026-06-17)</a>
-<a class="toc-link lvl3" href="#prior-capture-preserved-reconcile-with-the-vision-above">Prior capture (preserved — reconcile with the vision above)</a>
-<a class="toc-link lvl2" href="#basketball-quothardwoodquot-built-on-preview-2026-06-18-spec39d-2026-06-17">Basketball — &amp;quot;Hardwood&amp;quot; (BUILT on preview 2026-06-18 — spec&amp;#39;d 2026-06-17)</a>
-<a class="toc-link lvl3" href="#look-amp-feel-build-it-to-read-for-a-14-year-old-locked-2026-06-17-abhi">Look &amp;amp; feel — build it to read for a 14-year-old (locked, 2026-06-17 — Abhi)</a>
+<a class="toc-link lvl3" href="#prior-capture-preserved-reconcile-with-the-vision-above">Prior capture (preserved — reconcile with the vision above)</a></div></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#basketball-quothardwoodquot-built-on-preview-2026-06-18-spec39d-2026-06-17">Basketball — &amp;quot;Hardwood&amp;quot; (BUILT on preview 2026-06-18 — spec&amp;#39;d 2026-06-17)</a><div class="toc-sub"><a class="toc-link lvl3" href="#look-amp-feel-build-it-to-read-for-a-14-year-old-locked-2026-06-17-abhi">Look &amp;amp; feel — build it to read for a 14-year-old (locked, 2026-06-17 — Abhi)</a>
 <a class="toc-link lvl3" href="#why-this-subject-and-the-feeling-we39re-after">Why this subject, and the feeling we&amp;#39;re after</a>
 <a class="toc-link lvl3" href="#spine-amp-flow-locked">Spine &amp;amp; flow (locked)</a>
 <a class="toc-link lvl3" href="#iconic-imagery-locked-2026-06-17-abhi">Iconic imagery (locked, 2026-06-17 — Abhi)</a>
 <a class="toc-link lvl3" href="#home-court-california-locked-2026-06-17-abhi">Home court — California (locked, 2026-06-17 — Abhi)</a>
 <a class="toc-link lvl3" href="#the-four-subsections-locked-content-map">The four subsections (locked content map)</a>
-<a class="toc-link lvl3" href="#build-notes-for-the-scheduled-build">Build notes (for the scheduled build)</a>
-<a class="toc-link lvl2" href="#design-principles">Design Principles</a>
+<a class="toc-link lvl3" href="#build-notes-for-the-scheduled-build">Build notes (for the scheduled build)</a></div></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#the-sun-amp-the-sword">The Sun &amp;amp; the Sword</a><div class="toc-sub"><a class="toc-link lvl3" href="#what-one-lesson-feels-like">What one lesson feels like</a>
+<a class="toc-link lvl3" href="#the-engine-flow-story-first-then-a-6-question-quiz">The engine: flow (story-first, then a 6-question quiz)</a>
+<a class="toc-link lvl3" href="#content-architecture-1">Content architecture</a>
+<a class="toc-link lvl3" href="#the-cast">The cast</a>
+<a class="toc-link lvl3" href="#art-voice-and-what-he-walks-away-with">Art, voice, and what he walks away with</a></div></div>
+<div class="toc-group"><a class="toc-link lvl2" href="#design-principles">Design Principles</a></div>
     <div class="src-note">Generated from <code>product_vision.md</code> — that file is the source of truth.</div>
   </nav>
   <main class="content" id="content">
@@ -837,6 +844,64 @@ The greats and the moments every fan should know — capped by a debate card:</p
 <li><strong>Fact-check gate:</strong> before it&#39;s considered done, every record value, story detail, name, and date is <strong>verified against current sources</strong> (web research at build time), and images carry captions + credits.</li>
 <li><strong>Gates unchanged:</strong> the build lands on <code>preview</code> only; it is <strong>not</strong> committed to <code>main</code> until Abhi&#39;s two-gate review — same as Math and World Awareness.</li>
 </ul>
+<h2 id="the-sun-amp-the-sword">The Sun &amp; the Sword</h2>
+<blockquote>
+<p><strong>Status: VISION ONLY (v1.0, added 2026-06-20).</strong> A north star for tone, experience, and intent — <em>not</em> a build spec. Lives on the index map as the <strong>SUN</strong> airport (coming soon); not yet built. Arc list, cast, and lesson count are firm enough to build against and loose enough to improve. <em>Working name</em> — the &quot;sun and sword&quot; duality (Diogenes&#39; inner light vs. everything Alexander conquered to get one) is the part to keep; swap the name freely.</p>
+</blockquote>
+<p><strong>The North Star.</strong> An island where a curious child travels back ~2,000 years and meets the most magnetic humans who ever lived — conquerors, philosophers, rebels, builders, and a few genuine villains — and comes away not with a list of dates but with a working sense of how power, ideas, and consequence actually move through the world. The promise to the learner: <em>you are about to meet someone unforgettable, and by the end you&#39;ll understand something you didn&#39;t before — about them, and quietly, about yourself.</em> The promise to the parent: this is the screen that makes the other screens look boring. We compete with the two-hour movie and the endless scroll, and win using their own weapons — narrative pull, stakes, beautiful images, cliffhangers — pointed at something that compounds.</p>
+<p><strong>Who it&#39;s for.</strong> A bright 11-year-old who reads above his age and already handles 15-minute lessons with appetite. Reading level, conceptual reach, and moral complexity sit at roughly a sharp 13-year-old&#39;s bar — stretching, never condescending. He already knows Diogenes by name and loves &quot;step out of my sunlight.&quot; This is the window where he&#39;s forming instincts about what to admire, what to distrust, and what consequences look like.</p>
+<h3 id="what-one-lesson-feels-like">What one lesson feels like</h3>
+<p>A short, vivid chapter (5–15 min) with the rhythm of a great bedtime story told to a kid too old for bedtime stories and too smart to be talked down to. It <strong>opens on a scene, not a summary</strong> — not &quot;Alexander was a Macedonian king,&quot; but a knot of soldiers staring across a river at an army ten times their size while their 23-year-old commander smiles. Through the chapter we braid four threads as one current, never as separate sections:</p>
+<ul>
+<li><strong>The drama</strong> — real stakes, real tension; dramatic where drama earns its keep, never cartoonish. On the edge of his seat, not over the top.</li>
+<li><strong>The ingenuity</strong> — these people were inventors under pressure (the sarissa pike, Ashoka&#39;s roads and rock-cut edicts, Persian royal couriers, siege and supply). Cleverness reframes &quot;great&quot; as <em>resourceful</em> — a thing he can imitate.</li>
+<li><strong>The geography</strong> — where it happens and why mountains, rivers, and trade routes mattered; how an idea or an army crossed a continent. The map is a character.</li>
+<li><strong>The moral weight</strong> — the brilliance <em>and</em> the wreckage (Alexander&#39;s genius and the cities he burned; Ashoka and Kalinga; Socrates and the hemlock). Never preach; let the consequence sit in the room and trust him to feel it.</li>
+</ul>
+<p>Each chapter ends on a small hook — a question, a turn, a &quot;but what he didn&#39;t know was…&quot; — that makes the next lesson feel like the next episode.</p>
+<h3 id="the-engine-flow-story-first-then-a-6-question-quiz">The engine: flow (story-first, then a 6-question quiz)</h3>
+<p>Tuned to <strong>flow</strong> — challenge a notch above current skill, time disappears. <strong>Story first, always</strong>; the narrative earns his attention, <em>then</em> comes the quiz — which is the next rung of the ladder, not a test. Difficulty curve:</p>
+<ul>
+<li><strong>Q1–2 — Easy.</strong> He just read it. Purpose is confidence and momentum: <em>I&#39;ve got this.</em></li>
+<li><strong>Q3–4 — Medium.</strong> Connect two things, or recall a detail he had to be paying attention to catch.</li>
+<li><strong>Q5–6 — Trickier.</strong> A small inference, a &quot;why do you think…,&quot; a comparison across two figures, a consequence to reason about — just a tad harder than comfortable, the exact place where engagement is born.</li>
+</ul>
+<p>Design rule: never the head-scratch that discourages. Miss one → feedback is warm and <em>teaches</em>, never scolds. The exit emotion of every lesson: <em>that was fun, I&#39;m a little smarter, and I want the next one.</em> (Shares the teaching-first lesson→quiz spine with World Awareness and Basketball; difficulty-curved quiz is the new wrinkle.)</p>
+<h3 id="content-architecture-1">Content architecture</h3>
+<p>Roughly <strong>100 lessons</strong>, grouped into thematic story arcs of <strong>8–12 lessons</strong> each, so figures recur, collide, and pay off across chapters (by lesson 60 he&#39;s delighted to see a name from lesson 9). Era anchor: ~<strong>500–300 BC</strong> — the relay of Socrates → Plato → Aristotle → Alexander, with giants thinking and conquering in parallel half a world away. Emphatically <strong>not Europe-only</strong>: Greece is one bright room in a very large house. Representative (not final) arcs:</p>
+<ol>
+<li><strong>The Men Who Asked Why</strong> — Socrates, Plato, Aristotle, Diogenes. &quot;How should a person live?&quot; The hemlock. The barrel. The sunlight.</li>
+<li><strong>The Boy Who Wanted the World</strong> — Philip&#39;s blueprint, Aristotle as tutor, Alexander&#39;s campaigns, the genius and the cost, the empire that dissolved the day he died.</li>
+<li><strong>The King Who Wept</strong> — Ashoka: conquest, Kalinga, remorse, and a conqueror who chose dharma over more war.</li>
+<li><strong>Warrior Kingdoms</strong> — Sparta, the Persian empires; discipline, glory, brutality, and what such systems cost the people inside them.</li>
+<li><strong>The Other Half of the World Was Thinking Too</strong> — Confucius and Laozi in China, the Upanishadic sages in India. Good ideas were no one civilization&#39;s property.</li>
+<li><strong>Roads, Silk, and Silver</strong> — the Silk Road and ancient trade; how a road can change a world more than an army.</li>
+<li><strong>Ingenious Under Pressure</strong> — a cross-cutting arc on invention: phalanx, siege engines, roads, writing, currency, navigation. Constraint as the mother of cleverness.</li>
+<li><strong>The Long Reach of Empire</strong> (bridge toward World Awareness) — an age-appropriate, unromantic look at how later empires used firepower and organization to dominate, extract, and divide. Connects this ancient world to the modern one he already studies.</li>
+</ol>
+<p>Starting clusters, not a locked syllabus — builders should discover better groupings as the cast assembles.</p>
+<h3 id="the-cast">The cast</h3>
+<p>Imagery is the hook; the cast is the heart. Every major figure gets a handsome, characterful portrait — art a kid is drawn to, like a hero on a movie poster. A non-final roster with the angle that makes each magnetic:</p>
+<ul>
+<li><strong>Diogenes</strong> — the troublemaker philosopher in his barrel, mocking power to its face. His favorite; possibly the island&#39;s recurring &quot;narrator&#39;s friend&quot; who questions every conqueror&#39;s glory.</li>
+<li><strong>Alexander the Great</strong> — the dazzling, dangerous young genius. Admire him <em>and</em> count the cost.</li>
+<li><strong>Socrates</strong> — the questioner who would rather die than stop asking.</li>
+<li><strong>Plato &amp; Aristotle</strong> — student and student&#39;s student; ideas as inheritance.</li>
+<li><strong>Ashoka</strong> — the conqueror who looked at what he&#39;d done and changed.</li>
+<li><strong>Leonidas and the Spartans</strong> — discipline and sacrifice, and the hard truth beneath the glory.</li>
+<li><strong>Persian kings (Cyrus, Darius, Xerxes)</strong> — empire as administration and ambition, seen from their side, not only the Greek one.</li>
+<li><strong>Confucius &amp; Laozi</strong> — order and flow; two answers to how to live, from the other side of the world.</li>
+<li><strong>The Upanishadic sages</strong> — the inward turn; wisdom as a different kind of conquest.</li>
+<li><strong>Marcus Aurelius</strong> (reaching forward) — the emperor who wrote himself reminders to stay humble; power that examines itself.</li>
+</ul>
+<p>And room, always, for the <strong>not-so-great</strong> — the cruel, the cynical, the counter-examples. He doesn&#39;t need every figure to be admirable; he needs them true, carrying a consequence he can learn from.</p>
+<h3 id="art-voice-and-what-he-walks-away-with">Art, voice, and what he walks away with</h3>
+<ul>
+<li><strong>Art direction:</strong> handsome, dignified, characterful; a coherent house style across all ~100 lessons so the island feels like one world. <strong>Maps as living visuals</strong> — campaign routes that draw themselves, trade routes that light up, empires that bloom and recede. Period texture (armor, scrolls, marble, the sarissa, the barrel, the rock edict). The image arrives <em>before or with</em> the beat it illustrates, never decorating after.</li>
+<li><strong>Voice &amp; tone:</strong> storyteller, not textbook — warm, vivid, a little theatrical when earned. Respect his intelligence (big ideas in plain words). <strong>Show, don&#39;t sermonize</strong> — lay the consequence in front of him and trust him. Honest about evil and folly; no sanitizing. Curiosity is the exit emotion — every lesson leaves a door open.</li>
+<li><strong>What he walks away with:</strong> a felt map of the ancient world and how its parts connected; a gallery of human beings whose choices he can reason about (models and warnings both); early, durable instincts about power, freedom, ambition, and consequence; the discovery that wisdom and greatness belonged to every civilization, not one; and a reflex he&#39;ll keep for life — that a screen can make him <em>more</em> curious, not less.</li>
+</ul>
+<p><strong>Build note (when it&#39;s time):</strong> integrate as the <code>sunsword</code> subject — flip the index-map airport active, add one router branch and a scoped world (mirror World Awareness / Basketball: scoped CSS, own <code>localStorage</code> key, <code>.js</code> data globals for <code>file://</code>). Hold the soul (story-first, flow-tuned difficulty, global scope, moral honesty, beautiful imagery); iterate everything else. Two-gate review unchanged.</p>
 <h2 id="design-principles">Design Principles</h2>
 <ol>
 <li><strong>Diagnostic-first.</strong> Surface gaps; don&#39;t teach until gaps are known.</li>
@@ -853,21 +918,32 @@ The greats and the moments every fan should know — capped by a debate card:</p
 </div>
 <button id="totop" aria-label="Back to top">↑ Top</button>
 <script>
+  var groups=[].slice.call(document.querySelectorAll(".toc-group"));
   var links=[].slice.call(document.querySelectorAll(".toc-link"));
-  var map={}; links.forEach(function(a){ map[a.getAttribute("href").slice(1)]=a; });
+  var byId={}; links.forEach(function(a){ byId[a.getAttribute("href").slice(1)]=a; });
   var heads=[].slice.call(document.querySelectorAll(".content h2, .content h3"));
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){
-        links.forEach(function(l){l.classList.remove("active");});
-        var a=map[e.target.id]; if(a){a.classList.add("active"); a.scrollIntoView({block:"nearest"});}
-      }
-    });
-  },{rootMargin:"0px 0px -75% 0px",threshold:0});
-  heads.forEach(function(h){io.observe(h);});
+  function setActive(id){
+    var a=byId[id]; if(!a) return;
+    links.forEach(function(l){ l.classList.remove("active"); });
+    a.classList.add("active");
+    var group=a.closest(".toc-group");
+    groups.forEach(function(g){ g.classList.toggle("current", g===group); });
+  }
+  // Pick the heading closest to (but not far below) the top of the viewport.
+  // Plain measurement on scroll — stable, and never auto-scrolls the sidebar.
+  function onScroll(){
+    var best=null, bestTop=-1e9;
+    for(var i=0;i<heads.length;i++){
+      var t=heads[i].getBoundingClientRect().top;
+      if(t<130 && t>bestTop){ bestTop=t; best=heads[i]; }
+    }
+    if(best) setActive(best.id);
+    top.classList.toggle("show", scrollY>500);
+  }
   var top=document.getElementById("totop");
-  top.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
-  addEventListener("scroll",function(){ top.classList.toggle("show", scrollY>500); });
+  top.addEventListener("click",function(){ window.scrollTo({top:0,behavior:"smooth"}); });
+  addEventListener("scroll",onScroll,{passive:true});
+  onScroll();
 </script>
 </body>
 </html>

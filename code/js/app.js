@@ -60,7 +60,7 @@
     app().innerHTML = `
       <div class="landing">
         <h1 class="app-title">Summer Camp</h1>
-        <p class="app-sub">Pick a land. Every land is a world to master.</p>
+        <p class="app-sub">Pick an airport. Every gate is a skill to clear.</p>
         ${SC.Maps.landingMap(SC.SUBJECTS)}
         <div id="toast" class="toast"></div>
       </div>`;

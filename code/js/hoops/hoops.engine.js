@@ -298,6 +298,7 @@ HOOPS.Engine = (function () {
     reader.appendChild(U.el("div", { class: "rkicker", text: sec.name + " · Lesson " + L.n }));
     reader.appendChild(U.el("h1", { class: "rtitle", text: L.title }));
     reader.appendChild(U.el("div", { class: "rbyline", text: "⏱ about " + L.minutes + " min · then a quick check" }));
+    reader.appendChild(U.el("div", { class: "rwordcount top", text: "📖 " + lessonWordCount(L).toLocaleString() + " words" }));
     if (L.hook) reader.appendChild(U.nodeFromHTML('<div class="beat in"><div class="rhook">' + L.hook + '</div></div>'));
     L.beats.forEach(function (b) { reader.appendChild(U.renderBeat(b)); });
 

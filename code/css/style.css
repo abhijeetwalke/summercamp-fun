@@ -76,12 +76,18 @@ button { font: inherit; cursor: pointer; }
 .land-shape { stroke: #0d2129; stroke-width: 2.5; }
 .land-0 { fill: #d98e3f; } .land-1 { fill: #5b8bb0; } .land-2 { fill: #b0524a; }
 .land-3 { fill: #6f9a5d; } .land-4 { fill: #8d7bb0; }
-.land-soon .land-shape { opacity: 0.55; }
 .land { cursor: pointer; transform-box: fill-box; transform-origin: center; }
-.land:hover .land-shape { filter: brightness(1.1); }
-.land-label { fill: #fff; font-weight: 700; font-size: 17px; paint-order: stroke; stroke: rgba(0,0,0,0.45); stroke-width: 3px; }
-.land-soon-label { fill: #ffe9c9; font-size: 12px; font-style: italic; }
-.fissure { stroke: #0a1b22; stroke-width: 3; fill: none; stroke-linecap: round; opacity: 0.8; }
+
+/* ---- airport route-map landing ---- */
+#landing-map .land:hover { filter: brightness(1.12); }
+#landing-map .land:focus-visible { outline: none; }
+#landing-map .land-soon { opacity: 0.66; }
+#landing-map .ap-code { font-family: Arial, Helvetica, sans-serif; font-weight: 800; font-size: 17px; letter-spacing: 1.5px; }
+#landing-map .ap-name { fill: #f2f7fb; font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: 17px; }
+#landing-map .ap-sub  { fill: #9bbdd6; font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; }
+#landing-map .ap-soon { fill: #7e98ac; }
+#landing-map .ap-compass { fill: #7fa8c6; font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: 13px; }
+.planedrift { fill: #bcd6e6; opacity: 0.6; transform: translate(-50px, var(--birdY, 120px)); animation: fly 17s linear forwards; }
 
 /* press: in-place (translate lives on the outer .land-pos wrapper, so no lurch) */
 @keyframes press { 0% { transform: scale(1); } 35% { transform: scale(0.95); } 70% { transform: scale(1.03); } 100% { transform: scale(1); } }
