@@ -43,9 +43,11 @@
 **Git workflow (locked): preview-first, two explicit gates.** The repo lives in this folder; `main` = approved state only, never committed to directly.
 
 1. **Discuss → finalize** the work with Abhi.
-2. **Gate 1:** ask for explicit approval → Abhi says "approved" → commit/push to **`preview`**.
-3. **Gate 2:** ask "ready to push to main?" / "does preview look good?" → Abhi says yes → merge `preview` → `main`.
-4. **Only then** move the finished items from `pending.md` to `completed.md` — landing on `main` is what "done" means. If preview has a mistake, roll it back; nothing random ever reaches `main`.
+2. **Gate 1:** ask for explicit approval → Abhi says "approved" → **Claude executes** `git commit` to the **local `preview`** branch only. **Nothing is pushed to GitHub.** Abhi reviews by opening the local `code/index.preview.html`.
+3. **Gate 2:** ask "ready to push to main?" / "does preview look good?" → Abhi says yes → **Claude executes** the `preview` → `main` merge **and `git push origin main`**. This is the **only** step that touches GitHub (and therefore the only step that triggers the live Netlify deploy).
+4. **Only then** move the finished items from `pending.md` to `completed.md` — landing on `main` is what "done" means. If preview has a mistake, roll it back locally; nothing random ever reaches GitHub or `main`.
+
+> **GitHub & who runs git (locked 2026-06-20):** `preview` is **local-only — never pushed to GitHub.** GitHub's only branch is `main`, and it changes **only** at Gate 2. Claude runs all git commands directly (Abhi no longer pushes via VS Code), but **both gates remain human checkpoints:** Claude commits to local `preview` only after Abhi's explicit "approved," and pushes to `main` only after an explicit "push to main." The verbal approval *is* the gate; execution is automatic once given. Net effect: nothing reaches GitHub or the live site until Abhi says "push to main."
 
 **Entry-file naming (locked):** on `preview` the app entry is **`code/index.preview.html`** (double-click it to review); at the Gate 2 merge it becomes **`code/index.html`** on `main`.
 
