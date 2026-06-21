@@ -129,7 +129,9 @@ HOOPS.UI = (function () {
         while (p && p !== rootNode) {
           var t = p.nodeName;
           if (t === "BUTTON" || t === "A" || t === "CODE" || t === "PRE" || t === "SCRIPT" || t === "STYLE" || t === "svg" ||
-              (p.classList && p.classList.contains("gloss"))) return NodeFilter.FILTER_REJECT;
+              (p.classList && (p.classList.contains("gloss") ||
+                p.classList.contains("statline") || p.classList.contains("trading-card") || p.classList.contains("card-row"))))
+            return NodeFilter.FILTER_REJECT;
           p = p.parentNode;
         }
         return NodeFilter.FILTER_ACCEPT;
