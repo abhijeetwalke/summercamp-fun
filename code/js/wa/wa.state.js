@@ -288,24 +288,14 @@ WA.State = (function () {
     return { score: b, lessonId: where };
   }
 
-  /* unlocking: a continent is open if it's the first, or the previous one has >=1 lesson done.
-     (Progressive unlocking per the vision — but never a hard wall: once you finish a continent
-      the next is fully open.) */
-  function continentUnlocked(continents, idx) {
-    if (idx === 0) return true;
-    var prev = continents[idx - 1];
-    return continentProgress(prev).done >= 1;
-  }
-  // a lesson within a continent unlocks when the previous lesson in that continent is done
-  function lessonUnlocked(cont, lessonIdx) {
-    if (lessonIdx === 0) return true;
-    var prevId = cont.lessons[lessonIdx - 1];
-    var s = load();
-    return !!(s.lessons[prevId] && s.lessons[prevId].done);
-  }
-  function sectionQuizUnlocked(cont) {
-    return continentProgress(cont).allDone;
-  }
+  /* Nothing is locked. Abhi (2026-06-20): no need to gate World Awareness — the learner
+     can do a single lesson, crisscross between continents, or jump around in any order.
+     Every continent, lesson, and section quiz is always open. (This matches the stated
+     principle above: never a hard wall, never lock a learner out of content.)
+     Signatures are kept so callers in wa.engine.js don't change. */
+  function continentUnlocked(continents, idx) { return true; }
+  function lessonUnlocked(cont, lessonIdx) { return true; }
+  function sectionQuizUnlocked(cont) { return true; }
 
   /* ---------- profile ---------- */
   function profile() { return load().profile; }

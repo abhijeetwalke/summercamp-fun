@@ -718,7 +718,7 @@ The greats and the moments every fan should know — capped by a debate card:
 <a id="the-sun-the-sword"></a>
 ## The Sun & the Sword
 
-> **Status: VISION ONLY (v1.0, added 2026-06-20).** A north star for tone, experience, and intent — *not* a build spec. Lives on the index map as the **SUN** airport (coming soon); not yet built. Arc list, cast, and lesson count are firm enough to build against and loose enough to improve. *Working name* — the "sun and sword" duality (Diogenes' inner light vs. everything Alexander conquered to get one) is the part to keep; swap the name freely.
+> **Status: BUILDING (v1.1 — added 2026-06-20; cast enriched 2026-06-20; Arcs 1–3 built on `main` 2026-06-22).** A north star for tone, experience, and intent. Lives on the index map as the **SUN** airport (`#/sunsword`). **Built so far: Arc 1 "The Men Who Asked Why" (Socrates, Diogenes, Plato, Aristotle), Arc 2 "The Boy Who Wanted the World" (Alexander), Arc 3 "The King Who Wept" (Ashoka) — 11 lessons at ~15-min depth + per-arc review quizzes + debate cards.** Remaining arcs below are still to build. Arc list, cast, and lesson count are firm enough to build against and loose enough to improve. *Working name* — the "sun and sword" duality (Diogenes' inner light vs. everything Alexander conquered to get one) is the part to keep; swap the name freely.
 
 **The North Star.** An island where a curious child travels back ~2,000 years and meets the most magnetic humans who ever lived — conquerors, philosophers, rebels, builders, and a few genuine villains — and comes away not with a list of dates but with a working sense of how power, ideas, and consequence actually move through the world. The promise to the learner: *you are about to meet someone unforgettable, and by the end you'll understand something you didn't before — about them, and quietly, about yourself.* The promise to the parent: this is the screen that makes the other screens look boring. We compete with the two-hour movie and the endless scroll, and win using their own weapons — narrative pull, stakes, beautiful images, cliffhangers — pointed at something that compounds.
 
@@ -753,29 +753,43 @@ Roughly **100 lessons**, grouped into thematic story arcs of **8–12 lessons** 
 2. **The Boy Who Wanted the World** — Philip's blueprint, Aristotle as tutor, Alexander's campaigns, the genius and the cost, the empire that dissolved the day he died.
 3. **The King Who Wept** — Ashoka: conquest, Kalinga, remorse, and a conqueror who chose dharma over more war.
 4. **Warrior Kingdoms** — Sparta, the Persian empires; discipline, glory, brutality, and what such systems cost the people inside them.
-5. **The Other Half of the World Was Thinking Too** — Confucius and Laozi in China, the Upanishadic sages in India. Good ideas were no one civilization's property.
+5. **The Other Half of the World Was Thinking Too** — Confucius and Laozi in China, the Buddha and the Upanishadic sages in India. Good ideas were no one civilization's property.
 6. **Roads, Silk, and Silver** — the Silk Road and ancient trade; how a road can change a world more than an army.
-7. **Ingenious Under Pressure** — a cross-cutting arc on invention: phalanx, siege engines, roads, writing, currency, navigation. Constraint as the mother of cleverness.
+7. **Ingenious Under Pressure** — a cross-cutting arc on invention: the phalanx and sarissa, Archimedes' war machines at Syracuse, Hannibal's elephants over the Alps, roads, writing, currency, navigation. Constraint as the mother of cleverness.
 8. **The Long Reach of Empire** (bridge toward World Awareness) — an age-appropriate, unromantic look at how later empires used firepower and organization to dominate, extract, and divide. Connects this ancient world to the modern one he already studies.
 
 Starting clusters, not a locked syllabus — builders should discover better groupings as the cast assembles.
 
 ### The cast
 
-Imagery is the hook; the cast is the heart. Every major figure gets a handsome, characterful portrait — art a kid is drawn to, like a hero on a movie poster. A non-final roster with the angle that makes each magnetic:
+Imagery is the hook; the cast is the heart. Every major figure gets a handsome, characterful portrait — art a kid is drawn to, like a hero on a movie poster. The roster spans the whole ancient world — Greece, Persia, India, China, Carthage, North Africa — and every name passes one test: *is this person magnetic, and does their story carry a consequence he can learn from?* A non-final roster, with the angle that makes each one matter:
 
-- **Diogenes** — the troublemaker philosopher in his barrel, mocking power to its face. His favorite; possibly the island's recurring "narrator's friend" who questions every conqueror's glory.
-- **Alexander the Great** — the dazzling, dangerous young genius. Admire him *and* count the cost.
+**The questioners**
 - **Socrates** — the questioner who would rather die than stop asking.
+- **Diogenes** — the troublemaker philosopher in his barrel, mocking power to its face. His favorite; possibly the island's recurring "narrator's friend" who questions every conqueror's glory.
 - **Plato & Aristotle** — student and student's student; ideas as inheritance.
-- **Ashoka** — the conqueror who looked at what he'd done and changed.
-- **Leonidas and the Spartans** — discipline and sacrifice, and the hard truth beneath the glory.
-- **Persian kings (Cyrus, Darius, Xerxes)** — empire as administration and ambition, seen from their side, not only the Greek one.
+- **The Buddha (Siddhartha Gautama)** — the prince who walked out of a palace to ask why we suffer; the other half of "how should a person live?", thinking half a world away while Socrates paced Athens.
 - **Confucius & Laozi** — order and flow; two answers to how to live, from the other side of the world.
 - **The Upanishadic sages** — the inward turn; wisdom as a different kind of conquest.
+
+**The conquerors and the cost**
+- **Alexander the Great** — the dazzling, dangerous young genius. Admire him *and* count the cost.
+- **Ashoka** — the conqueror who looked at what he'd done and changed.
+- **Chandragupta Maurya & Chanakya** — the founder and his ruthless strategist ("the Indian Machiavelli"); statecraft as a weapon, and the dynasty that would one day produce Ashoka.
+- **Qin Shi Huang** — China's first emperor: he unified a warring land and left the terracotta army — and he burned books and buried scholars. A genuine villain who built something that outlived him.
+- **Hannibal Barca** (Carthage) — elephants over the Alps; the outsider general who made Rome tremble. Brilliance seen from Rome's enemy, not from Rome.
+
+**Warriors, kings, and empire**
+- **Leonidas and the Spartans** — discipline and sacrifice, and the hard truth beneath the glory.
+- **Persian kings (Cyrus, Darius, Xerxes)** — empire as administration and ambition, seen from their side, not only the Greek one.
+- **Artemisia I of Caria** — the naval commander who fought *for* Xerxes and outwitted the Greeks at Salamis; the sharpest tactician at the war council, who happened to be a woman.
 - **Marcus Aurelius** (reaching forward) — the emperor who wrote himself reminders to stay humble; power that examines itself.
 
-And room, always, for the **not-so-great** — the cruel, the cynical, the counter-examples. He doesn't need every figure to be admirable; he needs them true, carrying a consequence he can learn from.
+**Minds that paid for their brilliance**
+- **Archimedes** (Syracuse) — "Eureka"; the mind that turned geometry into war machines, killed mid-proof by a soldier who never knew who he was.
+- **Hypatia of Alexandria** (reaching forward) — mathematician and philosopher, the keeper of reason in a darkening city; an honest lesson in what a mob can destroy.
+
+Plus supporting color inside arcs already in motion — **Olympias** (Alexander's formidable mother) and **Gorgo of Sparta** (the queen with the sharpest tongue in Greece) — and room, always, for the **not-so-great**: the cruel, the cynical, the counter-examples. He doesn't need every figure to be admirable; he needs them true, carrying a consequence he can learn from.
 
 ### Art, voice, and what he walks away with
 

@@ -51,6 +51,9 @@
     // Basketball ("Hardwood") plugs in here the same way: its own themed world
     // (hoops.* files), rendered into #app under #/hoops.
     if (p[0] === "hoops" && window.HOOPS && HOOPS.Engine) return HOOPS.Engine.handle(p.slice(1));
+    // The Sun & the Sword plugs in the same way: its own themed world (sunsword.* files),
+    // rendered into #app under #/sunsword.
+    if (p[0] === "sunsword" && window.SUNSWORD && SUNSWORD.Engine) return SUNSWORD.Engine.handle(p.slice(1));
     location.hash = "#/";
   }
   window.addEventListener("hashchange", route);
@@ -111,51 +114,58 @@
       if (m.kind === "retake") return ""; // shown under its parent, not as its own chapter
       const r = SC.Engine.computeRewards(m, BANK);
       const isDaily = m.kind === "daily";
+      const total = (m.qids && m.qids.length) || 0;
+      const pct = total ? Math.round((r.firstClicks / total) * 100) : 0;
       const label = m.kind === "redemption" ? "🔥 Redemption set" : (m.story && m.story.name ? m.story.name : `Mission ${i + 1}`);
       const chapter = isDaily ? `Chapter ${sub.missions.slice(0, i + 1).filter((x) => x.kind === "daily").length}` : "";
       const retakes = retakesByParent[i] || [];
       const doneRetakes = retakes.filter((x) => x.done).length;
       const retakeInProgress = retakes.some((x) => !x.done);
-      const retakeNote = (doneRetakes || retakeInProgress)
-        ? `<div class="ribbon-sub">↻ ${doneRetakes ? `retaken ${doneRetakes}×` : ""}${doneRetakes && retakeInProgress ? " · " : ""}${retakeInProgress ? "retake in progress" : ""}</div>`
-        : "";
+      // Done missions show a small first-try progress bar (replacing the "13/20" text);
+      // the retake status folds into the actions row, so each chapter is one line shorter.
       return `<div class="ribbon-item ${m.done ? "done" : "open"}">
         ${chapter ? `<div class="ribbon-chapter">${chapter}</div>` : ""}
         <div class="ribbon-name">${label}</div>
         ${m.story ? `<div class="ribbon-route">${linkify(m.story.title)}</div>` : ""}
-        <div class="ribbon-meta">${m.done ? `${r.firstClicks}/${m.qids.length} first-try · ⬡ ${r.tiles}` : "⚔ in progress"}</div>
-        ${retakeNote}
+        ${m.done
+          ? `<div class="ribbon-prog"><div class="ribbon-prog-bar"><div class="ribbon-prog-fill" style="width:${pct}%"></div></div><span class="ribbon-prog-label">${r.firstClicks}/${total} first-try · ⬡ ${r.tiles}</span></div>`
+          : `<div class="ribbon-meta">⚔ in progress</div>`}
         <div class="ribbon-actions">
           ${m.done ? `<a href="#/math/results/${i}">results</a>` : `<a href="#/math/mission">continue</a>`}
           ${m.done && isDaily && !live ? `<button class="linklike" data-retake="${i}">retake</button>` : ""}
-          ${retakeInProgress ? `<a href="#/math/mission">continue retake</a>` : ""}
+          ${retakeInProgress ? `<a href="#/math/mission">↻ continue retake</a>` : ""}
+          ${doneRetakes ? `<span class="ribbon-retag">retaken ${doneRetakes}×</span>` : ""}
         </div></div>`;
     }).join("");
     const dailiesSoFar = sub.missions.filter((m) => m.kind === "daily").length;
-    // TODAY'S JOURNEY — the next chapter to play, always shown as a startable entry.
-    // (Without this, a brand-new player saw only locked Chapter 2+ and no Chapter 1.)
-    if (!live) {
-      const nextN = dailiesSoFar + 1;
-      const tease = SC.Journey.teaserFor(nextN);
-      ribbon += `<div class="ribbon-item open today">
-        <div class="ribbon-chapter">Chapter ${nextN} · ▶ today</div>
+    // Keep THREE chapters open at all times (Abhi, 2026-06-20): the next three
+    // journeys are always startable, so he can do one a day, pick whichever appeals,
+    // or jump ahead. Each plays as his next Mission, just with that journey's route.
+    const OPEN_AHEAD = 3;
+    // Shown ALWAYS — even while a Mission or retake is in progress — so there are
+    // always three open chapters to see and choose from (never locked here).
+    for (let k = 0; k < OPEN_AHEAD; k++) {
+      const n = dailiesSoFar + 1 + k;
+      const tease = SC.Journey.teaserFor(n);
+      const today = k === 0 && !live;
+      ribbon += `<div class="ribbon-item open${today ? " today" : ""}">
+        <div class="ribbon-chapter">Chapter ${n} · ${today ? "▶ today" : "✦ open"}</div>
         <div class="ribbon-name">${tease.name}</div>
         <div class="ribbon-route">${linkify(tease.label)}</div>
-        <div class="ribbon-meta">ready when you are</div>
-        <div class="ribbon-actions"><button class="linklike strong" id="ribbon-start">▶ Start this journey</button></div>
+        <div class="ribbon-actions"><button class="linklike strong" data-start-chapter="${n}">▶ Start this journey</button>${live ? `<span class="ribbon-hint">finish current first</span>` : ""}</div>
       </div>`;
     }
     if (!ribbon) ribbon = `<div class="ribbon-empty">Your first journey awaits, Avatar.</div>`;
-    // the road ahead: locked teasers AFTER today's chapter (pull, don't push)
-    const firstLocked = dailiesSoFar + (live ? 1 : 2); // today's mission isn't locked
-    for (let k = 0; k < 5; k++) {
+    // the road ahead: a few locked teasers AFTER the three open chapters (pull, don't push)
+    const firstLocked = dailiesSoFar + 1 + OPEN_AHEAD;
+    for (let k = 0; k < 3; k++) {
       const n = firstLocked + k;
       const tease = SC.Journey.teaserFor(n);
       ribbon += `<div class="ribbon-item locked">
         <div class="ribbon-chapter">Chapter ${n} · 🔒</div>
         <div class="ribbon-name">${tease.name}</div>
         <div class="ribbon-route">${linkify(tease.label)}</div>
-        <div class="ribbon-meta">${k === 0 ? "opens when today's journey ends" : "the road continues…"}</div></div>`;
+        <div class="ribbon-meta">${k === 0 ? "opens as you travel on" : "the road continues…"}</div></div>`;
     }
 
     const guard = SC.PLATFORM.minAttemptsGuard;
@@ -219,8 +229,14 @@
       location.hash = "#/math/mission";
     };
     $("#start-btn").addEventListener("click", startToday);
-    const ribbonStart = $("#ribbon-start");
-    if (ribbonStart) ribbonStart.addEventListener("click", startToday);
+    // Each of the three open chapters starts the next Mission with that journey's route.
+    app().querySelectorAll("[data-start-chapter]").forEach((b) => b.addEventListener("click", () => {
+      const s = SC.State.subject("math");
+      if (!activeMission(s)) {
+        SC.Engine.buildMission(MATH, BANK, { kind: "daily", routeHint: SC.Journey.teaserFor(+b.dataset.startChapter) });
+      }
+      location.hash = "#/math/mission";
+    }));
     wireLocLinks();
     app().querySelectorAll("[data-retake]").forEach((b) => b.addEventListener("click", () => {
       const s = SC.State.subject("math");

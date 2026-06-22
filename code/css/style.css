@@ -66,6 +66,14 @@ button { font: inherit; cursor: pointer; }
   border-radius: 999px; padding: 3px 12px; font-size: 0.85rem; text-decoration: none; color: var(--ink);
 }
 
+/* ---- Per-chapter first-try progress bar (replaces the "13/20" text in each Mission) ---- */
+.ribbon-prog { display: flex; align-items: center; gap: 8px; margin: 2px 0 4px; }
+.ribbon-prog-bar { flex: 1; height: 8px; background: #e7dcc3; border-radius: 999px; overflow: hidden; }
+.ribbon-prog-fill { height: 100%; background: #52803f; border-radius: 999px; transition: width 0.5s ease; }
+.ribbon-prog-label { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.ribbon-retag, .ribbon-hint { font-size: 0.78rem; color: var(--muted); }
+.ribbon-hint { font-style: italic; }
+
 /* ---------------- landing (full-viewport scene) ---------------- */
 .landing { text-align: center; display: flex; flex-direction: column; min-height: calc(100vh - 40px); }
 .landing svg { flex: 1; min-height: 0; max-height: calc(100vh - 120px); }

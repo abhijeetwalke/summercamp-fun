@@ -17,6 +17,10 @@ Read everything below, apply the one-time setup, and from then on operate by the
 
 ## THE WORKFLOW — "preview-first, two verbal gates"
 
+ROLES (who is who in this document):
+- "YOU" = the AI assistant reading this prompt (Cowork / Claude Code). You run all the git commands.
+- "I" / "ME" = the human project owner who pasted this prompt. I give the verbal approvals; I never run git myself.
+
 Branch model:
 - `preview` — a LOCAL-ONLY branch for finished-but-unreviewed work. It is NEVER pushed to GitHub.
 - `main`    — the ONLY branch that exists on GitHub. It is the approved/published state.
