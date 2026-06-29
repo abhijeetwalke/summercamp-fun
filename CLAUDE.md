@@ -57,8 +57,9 @@
 
 ---
 
-## Current status (as of 2026-06-18)
+## Current status (as of 2026-06-29)
 
+- ✅ **Accounts + cloud sync: LIVE on `main` (2026-06-29).** The app boots behind a **login gate** (`code/js/cloud.js`). Kids log in by **username**; progress + daily time sync to a free **Supabase** backend (`accounts` + `activity` tables) with a device-wins merge. A pre-seeded **admin** login (`abhijeetwalke` / `admin`) opens a **Parent Admin dashboard** of every kid + day-by-day time/progress. Existing logins: `ayanshwalke` (kid), `abhijeetwalke`/`admin` (admin). ⚠️ This is the **plaintext `accounts`-table** version (Abhi's accepted risk — "it's trivia"); the secure Supabase-Auth+RLS rebuild was reverted (it would've broken login since `profiles` was never created). Optional hardening SQL sits in `docs/supabase-setup.sql`. Full log: `completed.md` + `decisions_open.md` (2026-06-25 / 2026-06-29).
 - ✅ **Math product vision: fully baked.** No open product decisions.
 - ✅ **Docs hardened + reorganized:** repo split into root `CLAUDE.md` + `docs/` (six docs) + `code/` (app); staleness swept (see decision log).
 - ✅ **Math: LIVE** at **summercamp-fun.netlify.app** (Netlify auto-deploys from `main`). Full diagnostic engine + the **800-question bank** (400 Book Five + 400 Book Six; all G5+G6 Common Core standards; tier mix 30/40/30 — Content Track complete, validated, pushed). **Recent Math updates (2026-06-18):** Four Nations map **rebuilt as clustered landmasses with thin ocean cracks + subtle inked labels** (replacing the cramped per-element "rocks" and heavy brown badges — Abhi feedback); painterly cel-shading + darker palette; **exotic-clay Bending-Levels panel** with per-row hover info; **runaway-clock cap**; **review-follow-through ("due diligence")** metric on missed problems; retakes fold under their chapter; and a **launch fix so new players get a startable Chapter 1** (was showing only locked Chapter 2+). Still pending: parameterized variants (P2.4) and **parent spot-check of the bank (C.4)**.
