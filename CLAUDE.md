@@ -71,8 +71,8 @@
 
 ## Hard constraints (don't violate)
 
-- **No login during the build** — single site, everything on one surface. Keep a `role` field in the data model for later.
-- **Stack: plain HTML/CSS/JS, no framework, no backend, 100% free.** Questions = static JSON; progress = browser storage; hosting = free static host. (Full setup + build order in `pending.md`.)
+- **Accounts + cloud sync — ADDED 2026-06-25 (supersedes the prior "no login during the build" rule; Abhi-approved).** Real per-kid accounts (name/sex/birthday/username/password) + a pre-seeded **admin** view of every kid's info + daily time, backed by a free **Supabase** project (`code/js/cloud.js`); login now gates the app, and the `role` field (kid/admin) is live. ⚠️ **Known security limitation Abhi knowingly accepted to ship:** the custom `accounts` table holds passwords in **plain text** and is **readable via the public key** (client-side login pattern) — full accepted-risk note + the recommended fix (move to **Supabase Auth + RLS**) is logged in `decisions_open.md` (2026-06-25). Don't treat this as secure until that fix lands.
+- **Stack: plain HTML/CSS/JS, no framework, 100% free.** Questions = static JSON; progress = browser `localStorage` — and, since 2026-06-25, also synced to a **free Supabase backend** for cross-device accounts (the original "no backend" rule was relaxed by Abhi for accounts/sync only). Hosting = free static host. (Full setup + build order in `pending.md`.)
 - **5 answer options** on every question; **clicks-to-correct** is the core diagnostic signal.
 - **Hints never carry the kid to the answer** (Miss 1 nudge → Miss 2 first step → Miss 3+ none).
 - **Effort-based language only** — never "you're smart"; reward what the work produced.

@@ -13,6 +13,9 @@
 <body>
   <div id="app"></div>
 
+  <!-- Supabase client (accounts + cloud progress sync) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
   <!-- Data ships as .js (not fetched .json) so the app works from file:// -->
   <script src="js/config.js"></script>
   <script src="data/math.bank.js"></script>
@@ -42,6 +45,8 @@
   <script src="js/sunsword/sunsword.components.js?v=4"></script>
   <script src="js/sunsword/sunsword.engine.js?v=4"></script>
 
+  <!-- Cloud accounts + progress sync (login gate runs before the app) -->
+  <script src="js/cloud.js?v=2"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

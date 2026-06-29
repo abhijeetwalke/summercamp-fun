@@ -97,6 +97,49 @@ button { font: inherit; cursor: pointer; }
 #landing-map .ap-compass { fill: #7fa8c6; font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: 13px; }
 .planedrift { fill: #bcd6e6; opacity: 0.6; transform: translate(-50px, var(--birdY, 120px)); animation: fly 17s linear forwards; }
 
+/* ---- accounts: login / signup / admin ---- */
+.auth-scope { min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 7vh 16px 40px; }
+.auth-card { width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px 24px 22px; box-shadow: 0 14px 40px rgba(60,40,15,0.14); }
+.auth-card h1 { font-family: Georgia, serif; text-align: center; margin: 0 0 4px; font-size: 1.9rem; }
+.auth-tabs { display: flex; gap: 6px; background: #efe6d2; border-radius: 12px; padding: 4px; margin: 16px 0; }
+.auth-tab { flex: 1; border: 0; background: none; padding: 9px; border-radius: 9px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.auth-tab.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.auth-form[hidden] { display: none; }   /* a display rule overrides the bare [hidden] attr, so restore it */
+.auth-form label { display: flex; flex-direction: column; gap: 5px; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.auth-form input, .auth-form select { font-size: 1rem; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-family: inherit; }
+.auth-form input:focus, .auth-form select:focus { outline: none; border-color: var(--amber); }
+.auth-go { margin-top: 6px; background: var(--amber); color: #fff; border: 0; border-radius: 11px; padding: 13px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.auth-go:disabled { opacity: 0.6; cursor: default; }
+.auth-err { background: #f7e3e0; border: 1px solid #e0b4ac; color: #8c3a2c; border-radius: 10px; padding: 9px 12px; font-size: 0.88rem; margin-bottom: 12px; }
+.auth-msg { color: var(--muted); text-align: center; }
+.auth-foot { margin: 14px 0 0; font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+.kid-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 0; }
+.kid-hi { font-weight: 700; color: var(--muted); }
+.kid-logout { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font-size: 0.8rem; cursor: pointer; }
+.kid-logout:hover { background: var(--card); }
+
+.auth-scope.admin { align-items: flex-start; }
+.admin-wrap { width: 100%; max-width: 760px; }
+.admin-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.admin-top h1 { font-family: Georgia, serif; margin: 0; }
+.admin-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin: 14px 0; box-shadow: 0 6px 18px rgba(60,40,15,0.08); }
+.placard .pl-name { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+.pl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.pl-row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line); padding: 4px 0; }
+.pl-k { color: var(--muted); font-size: 0.85rem; }
+.pl-v { font-weight: 700; word-break: break-all; }
+.pl-daily { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.pl-daily h3 { margin: 0 0 8px; font-size: 1rem; }
+.day-row { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.85rem; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+.day-row .d-date { font-weight: 700; min-width: 92px; }
+.day-row .d-time { color: var(--amber); font-weight: 700; }
+.day-row .d-sum { color: var(--ink); }
+.day-row .d-sum .muted { color: var(--muted); }
+.d-tot { color: var(--muted); font-size: 0.82em; }
+@media (max-width: 480px) { .pl-grid { grid-template-columns: 1fr; } }
+
 /* press: in-place (translate lives on the outer .land-pos wrapper, so no lurch) */
 @keyframes press { 0% { transform: scale(1); } 35% { transform: scale(0.95); } 70% { transform: scale(1.03); } 100% { transform: scale(1); } }
 .land-pressed { animation: press 0.35s ease-out; }

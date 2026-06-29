@@ -60,13 +60,18 @@
 
   /* ------------------------- landing ------------------------- */
   function viewLanding() {
+    const sess = (window.SC && SC.Cloud && SC.Cloud.session) ? SC.Cloud.session() : null;
+    const who = sess && sess.name ? String(sess.name).split(" ")[0] : "";
     app().innerHTML = `
       <div class="landing">
+        <div class="kid-bar">${who ? `<span class="kid-hi">Hi, ${who}!</span>` : "<span></span>"}<button id="kid-logout" class="kid-logout">Log out</button></div>
         <h1 class="app-title">Summer Camp</h1>
         <p class="app-sub">Pick an airport. Every gate is a skill to clear.</p>
         ${SC.Maps.landingMap(SC.SUBJECTS)}
         <div id="toast" class="toast"></div>
       </div>`;
+    const lo = document.getElementById("kid-logout");
+    if (lo) lo.addEventListener("click", () => { if (window.SC && SC.Cloud) SC.Cloud.logout(); });
     SC.Maps.wireLanding(app(), (id) => {
       const subj = SC.getSubject(id);
       location.hash = "#/" + ((subj && subj.route) || id); // some subjects route under a theme name (e.g. basketball → hoops)
@@ -775,6 +780,10 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { const mo = document.getElementById("loc-modal"); if (mo) mo.remove(); }
   });
-  document.addEventListener("DOMContentLoaded", route);
-  if (document.readyState !== "loading") route();
+  // Login gate: the app only boots once a kid is logged in. SC.Cloud.boot shows the
+  // login/signup screen if needed, renders the admin dashboard for the admin role, and
+  // otherwise syncs his progress and then calls route() to start the normal app.
+  function boot() { if (window.SC && SC.Cloud) SC.Cloud.boot(route); else route(); }
+  document.addEventListener("DOMContentLoaded", boot);
+  if (document.readyState !== "loading") boot();
 })();
