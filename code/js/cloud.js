@@ -240,6 +240,22 @@ SC.Cloud = (function () {
   }
 
   /* ---------- admin dashboard ---------- */
+  // Reconstruct the REAL day-by-day history from his saved progress: every lesson/mission
+  // records WHEN it was done (completedAt / startedAt, epoch ms), so we group by the true date
+  // rather than lumping everything onto the first sync.
+  function historyByDay(progress) {
+    var byDay = {};
+    function dayOf(ms) { if (typeof ms !== "number" || ms < 1e12) return null; var d = new Date(ms); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+    function add(day, subj) { if (!day) return; (byDay[day] = byDay[day] || { math: 0, world: 0, hoops: 0, sunsword: 0 })[subj]++; }
+    function parse(k) { try { return JSON.parse((progress && progress[k]) || "null"); } catch (e) { return null; } }
+    [["summer-camp-world-v1", "world"], ["summer-camp-hoops-v1", "hoops"], ["summer-camp-sunsword-v1", "sunsword"]].forEach(function (pair) {
+      var blob = parse(pair[0]), ls = blob && blob.lessons; if (!ls) return;
+      for (var id in ls) { var r = ls[id]; if (r && r.done && r.completedAt) add(dayOf(r.completedAt), pair[1]); }
+    });
+    var m = parse("summer-camp-state-v1"), mm = m && m.subjects && m.subjects.math;
+    if (mm && mm.missions) mm.missions.forEach(function (mi) { if (mi && mi.done && mi.kind === "daily") add(dayOf(mi.startedAt), "math"); });
+    return byDay;
+  }
   function showAdmin() {
     var root = document.getElementById("app");
     root.innerHTML = '<div class="auth-scope admin"><div class="admin-wrap">' +
@@ -269,29 +285,26 @@ SC.Cloud = (function () {
       el("admin-list").appendChild(card);
       var daysEl = card.querySelector(".pl-days");
       c.from("activity").select("*").eq("account_id", k.id).order("day", { ascending: false }).limit(30).then(function (r2) {
-        if (r2.error || !r2.data || !r2.data.length) { daysEl.innerHTML = '<p class="muted">No activity yet. Once he logs in and does lessons, each day shows up here.</p>'; return; }
-        // Show day-to-day MOVEMENT: each day = time + what actually changed that day (the
-        // delta of completed lessons/missions vs the previous recorded day) + his streak.
-        var rows = r2.data.slice().sort(function (a, b) { return a.day < b.day ? -1 : 1; }); // oldest first to diff
-        var view = rows.map(function (d, i) {
-          var s = d.summary || {}, p = (i > 0 ? (rows[i - 1].summary || {}) : {});
-          function dl(key) { var v = (s[key] || 0) - (p[key] || 0); return v > 0 ? v : 0; }
-          return { day: d.day, time: d.time_seconds, streak: s.streak || 0,
-            did: { math: dl("math"), world: dl("world"), hoops: dl("hoops"), sunsword: dl("sunsword") },
-            tot: { math: s.math || 0, world: s.world || 0, hoops: s.hoops || 0, sunsword: s.sunsword || 0 } };
-        }).reverse(); // newest first to display
-        daysEl.innerHTML = view.map(function (d) {
-          var parts = [];
-          if (d.did.math) parts.push("+" + d.did.math + " Math");
-          if (d.did.world) parts.push("+" + d.did.world + " World");
-          if (d.did.hoops) parts.push("+" + d.did.hoops + " Hoops");
-          if (d.did.sunsword) parts.push("+" + d.did.sunsword + " Sun&amp;Sword");
-          var did = parts.length ? '<b>' + parts.join(" · ") + '</b>' : '<span class="muted">explored — no new lessons finished</span>';
-          var streak = d.streak ? ' · 🔥 ' + d.streak + "-day streak" : "";
-          var tot = ' &nbsp;<span class="d-tot">(total: M' + d.tot.math + " W" + d.tot.world + " H" + d.tot.hoops + " S" + d.tot.sunsword + ")</span>";
-          return '<div class="day-row"><span class="d-date">' + esc(d.day) + '</span>' +
-            '<span class="d-time">⏱ ' + mmss(d.time) + '</span>' +
-            '<span class="d-sum">' + did + streak + tot + '</span></div>';
+        // What he completed on each REAL date (from his saved timestamps)...
+        var doneBy = historyByDay(k.progress || {});
+        // ...and the measured time per day (only exists from the day cloud tracking began).
+        var timeBy = {}; ((r2 && r2.data) || []).forEach(function (a) { timeBy[a.day] = a.time_seconds; });
+        var days = {};
+        Object.keys(doneBy).forEach(function (d) { days[d] = 1; });
+        Object.keys(timeBy).forEach(function (d) { days[d] = 1; });
+        var list = Object.keys(days).sort().reverse().slice(0, 90); // newest first
+        if (!list.length) { daysEl.innerHTML = '<p class="muted">No activity yet. As he does lessons, each day shows up here.</p>'; return; }
+        daysEl.innerHTML = list.map(function (day) {
+          var cc = doneBy[day] || {}, parts = [];
+          if (cc.math) parts.push("+" + cc.math + " Math");
+          if (cc.world) parts.push("+" + cc.world + " World");
+          if (cc.hoops) parts.push("+" + cc.hoops + " Hoops");
+          if (cc.sunsword) parts.push("+" + cc.sunsword + " Sun&amp;Sword");
+          var did = parts.length ? '<b>' + parts.join(" · ") + '</b>' : '<span class="muted">on the app — no lessons finished</span>';
+          var t = (timeBy[day] != null) ? ('⏱ ' + mmss(timeBy[day])) : '<span class="muted" title="time wasn\'t measured before cloud tracking began">⏱ —</span>';
+          return '<div class="day-row"><span class="d-date">' + esc(day) + '</span>' +
+            '<span class="d-time">' + t + '</span>' +
+            '<span class="d-sum">' + did + '</span></div>';
         }).join("");
       });
     }
