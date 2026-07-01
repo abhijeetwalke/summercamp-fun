@@ -265,8 +265,82 @@ WA.UI = (function () {
       '<ellipse cx="60" cy="60" rx="52" ry="52" fill="none" stroke="#fff" stroke-opacity=".25"/>' +
       '<ellipse cx="60" cy="60" rx="22" ry="52" fill="none" stroke="#fff" stroke-opacity=".18"/>' +
       '<line x1="8" y1="60" x2="112" y2="60" stroke="#fff" stroke-opacity=".18"/>'),
+    island: svg("0 0 400 200", sky +
+      '<rect width="400" height="200" fill="url(#g1)"/>' +
+      '<rect x="0" y="150" width="400" height="50" fill="#2e9fc0"/>' +
+      '<ellipse cx="200" cy="158" rx="132" ry="24" fill="#ece0b0"/>' +
+      '<ellipse cx="200" cy="156" rx="70" ry="10" fill="#cdb478" opacity=".5"/>' +
+      '<rect x="195" y="92" width="9" height="64" fill="#8a6334"/>' +
+      '<g stroke="#3f9a52" stroke-width="7" fill="none" stroke-linecap="round">' +
+        '<path d="M200,94 q-32,-6 -54,8"/><path d="M200,94 q32,-6 54,8"/>' +
+        '<path d="M200,92 q-20,-24 -42,-26"/><path d="M200,92 q20,-24 42,-26"/></g>' +
+      '<circle cx="200" cy="90" r="7" fill="#3f9a52"/>' +
+      '<circle cx="330" cy="52" r="20" fill="#e8b84a"/>'),
+    reef: svg("0 0 400 200",
+      '<rect width="400" height="200" fill="#1c84b0"/>' +
+      '<rect x="0" y="0" width="400" height="58" fill="#2e9fc0" opacity=".5"/>' +
+      '<ellipse cx="200" cy="188" rx="230" ry="32" fill="#caa86a"/>' +
+      '<g fill="#e86a8a"><circle cx="118" cy="162" r="18"/><circle cx="138" cy="152" r="14"/><circle cx="100" cy="153" r="13"/></g>' +
+      '<path d="M250,172 q10,-40 0,-52 q-10,10 -16,30 q-6,-14 -14,-20 q-2,26 6,42 Z" fill="#e8a23a"/>' +
+      '<g fill="#f3d35a"><polygon points="304,92 322,84 322,100"/><circle cx="310" cy="92" r="6"/></g>' +
+      '<g fill="#f3eee3"><polygon points="176,72 192,66 192,78"/><circle cx="182" cy="72" r="5"/></g>'),
+    kangaroo: svg("0 0 400 200", sky +
+      '<rect width="400" height="200" fill="url(#g1)"/>' +
+      '<rect x="0" y="160" width="400" height="40" fill="#d99a4a"/>' +
+      '<circle cx="332" cy="54" r="22" fill="#e8b84a"/>' +
+      '<g fill="#9c6b3f">' +
+        '<path d="M214,162 q-30,-2 -42,-38 q-8,-30 14,-48 q12,-8 20,2 q-8,12 0,28 q8,20 26,26 q22,8 10,32 q-14,10 -26,8 Z"/>' +
+        '<path d="M206,54 q-4,-20 3,-27 q7,8 5,25 Z"/><path d="M216,54 q2,-21 11,-25 q2,11 -4,25 Z"/>' +
+        '<path d="M172,150 q-20,6 -34,18 q16,6 38,1 Z"/>' +
+      '</g>' +
+      '<circle cx="208" cy="62" r="2.6" fill="#2a1a0a"/>'),
+    marae: svg("0 0 400 200", sky +
+      '<rect width="400" height="200" fill="url(#g1)"/>' +
+      '<rect x="0" y="172" width="400" height="28" fill="#6b8f4a"/>' +
+      '<rect x="120" y="112" width="160" height="62" fill="#8a3a2b"/>' +
+      '<polygon points="108,112 200,60 292,112" fill="#a8472f"/>' +
+      '<g stroke="#e8d9a8" stroke-width="3"><line x1="108" y1="112" x2="200" y2="64"/><line x1="292" y1="112" x2="200" y2="64"/></g>' +
+      '<polygon points="200,62 192,50 208,50" fill="#caa044"/>' +
+      '<rect x="190" y="132" width="20" height="42" fill="#5a2418"/>' +
+      '<g fill="#caa044">' + [138,168,228,258].map(function(x){return '<rect x="'+x+'" y="120" width="10" height="54"/>';}).join("") + '</g>'),
   };
   function art(key) { return ART[key] || ART.scroll; }
+
+  /* ============================================================
+     REAL PHOTO with graceful SVG fallback.
+     A scene/photo beat may carry { file, caption, credit, art }.
+     `file` is a Wikimedia Commons filename, loaded via the stable
+     Special:FilePath endpoint. If it fails to load (offline / 404),
+     we swap in the SVG art(b.art) fallback so the page never breaks.
+     Every photo shows a caption + a credit line.
+     ============================================================ */
+  var COMMONS = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+  function photoSrc(file, w) { return COMMONS + encodeURIComponent(file) + "?width=" + (w || 1100); }
+  function sceneFigure(b) {
+    var fig = el("figure", { class: "scene" + (b.file ? " has-photo" : "") });
+    var frame = el("div", { class: "scene-frame" });
+    if (b.file) {
+      var swapped = false;
+      var img = el("img", { class: "scene-img", loading: "lazy", decoding: "async",
+        alt: b.alt || b.caption || "", src: photoSrc(b.file, b.w),
+        onerror: function () {
+          if (swapped) return; swapped = true;
+          frame.innerHTML = ""; frame.classList.add("is-fallback");
+          frame.appendChild(nodeFromHTML(art(b.art)));
+        } });
+      frame.appendChild(img);
+    } else {
+      frame.appendChild(nodeFromHTML(art(b.art)));
+    }
+    fig.appendChild(frame);
+    if (b.caption || b.credit) {
+      var cap = el("figcaption", {});
+      if (b.caption) cap.appendChild(el("span", { class: "cap", html: b.caption }));
+      if (b.credit) cap.appendChild(el("span", { class: "cred", html: b.credit }));
+      fig.appendChild(cap);
+    }
+    return fig;
+  }
 
   /* continent banner (decorative gradient + motif) */
   function banner(color, emoji) {
@@ -415,7 +489,8 @@ WA.UI = (function () {
       case "hook":   return el("div", { class: "beat" }, el("div", { class: "hook", html: b.html }));
       case "fact":   return el("div", { class: "beat" }, el("div", { class: "fact" }, [el("span", { class: "bulb", text: "💡" }), el("div", {}, [el("b", { text: "Did you know?" }), el("span", { html: b.html })])]));
       case "guide":  return el("div", { class: "beat" }, el("div", { class: "guide" }, [el("span", { class: "face", text: "🦉" }), el("div", { class: "bubble", html: b.html })]));
-      case "scene":  return el("div", { class: "beat" }, el("figure", { class: "scene" }, [nodeFromHTML(art(b.art)), b.caption ? el("figcaption", { html: b.caption }) : null]));
+      case "scene":  return el("div", { class: "beat" }, sceneFigure(b));
+      case "photo":  return el("div", { class: "beat" }, sceneFigure(b));
       case "modern": return el("div", { class: "beat" }, el("div", { class: "modern" }, [el("div", { class: "tag", text: "Why it still matters" }), el("p", { style: "margin:.3em 0 0", html: b.html })]));
       case "order":  return wrapBeat(buildOrder(b));
       case "hotmap": return wrapBeat(buildHotmap(b));

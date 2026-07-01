@@ -66,7 +66,7 @@
       <div class="landing">
         <div class="kid-bar">${who ? `<span class="kid-hi">Hi, ${who}!</span>` : "<span></span>"}<button id="kid-logout" class="kid-logout">Log out</button></div>
         <h1 class="app-title">Summer Camp</h1>
-        <p class="app-sub">Pick an airport. Every gate is a skill to clear.</p>
+        <p class="app-sub">Pick a land to explore. Every trail unlocks a new skill.</p>
         ${SC.Maps.landingMap(SC.SUBJECTS)}
         <div id="toast" class="toast"></div>
       </div>`;

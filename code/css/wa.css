@@ -213,6 +213,12 @@
 
 .wa-scope .cont-card .meter-label { display:flex; justify-content:space-between; font-size:.78rem; color:var(--ink-faint); margin-top:7px; }
 
+/* Same meter + label styling OUTSIDE the cards too (e.g. the continent page), so the count
+   and the percentage sit at opposite ends instead of mashing into "complete0%". */
+.wa-scope .meter { height:8px; border-radius:99px; background:var(--paper-2); overflow:hidden; }
+.wa-scope .meter i { display:block; height:100%; border-radius:99px; transition:width .8s var(--ease); }
+.wa-scope .meter-label { display:flex; justify-content:space-between; gap:10px; font-size:.78rem; color:var(--ink-faint); margin-top:7px; }
+
 .wa-scope .cont-card.locked { filter:grayscale(.5); opacity:.78; }
 
 .wa-scope .cont-card .lock { position:absolute; top:12px; left:12px; background:rgba(0,0,0,.55); color:#fff; border-radius:99px; padding:4px 11px; font-size:.74rem; font-weight:700; backdrop-filter:blur(3px); }
@@ -308,7 +314,15 @@
 
 .wa-scope figure.scene svg { width:100%; height:auto; border-radius:14px; border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-sm); display:block; }
 
+.wa-scope figure.scene .scene-frame { border-radius:14px; border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-sm); overflow:hidden; display:block; position:relative; }
+.wa-scope figure.scene .scene-frame .scene-img { width:100%; height:auto; max-height:460px; object-fit:cover; display:block; background:var(--card); }
+.wa-scope figure.scene .scene-frame svg { width:100%; height:auto; display:block; border:0; border-radius:0; box-shadow:none; }
+
 .wa-scope figure.scene figcaption { text-align:center; color:var(--ink-faint); font-size:.86rem; margin-top:8px; font-style:italic; }
+.wa-scope figure.scene figcaption .cap { display:block; font-style:normal; font-weight:600; color:var(--ink-soft); }
+.wa-scope figure.scene figcaption .cred { display:block; font-size:.74rem; font-style:italic; color:var(--ink-faint); opacity:.85; margin-top:3px; }
+
+.wa-scope .lesson-meta { margin:34px auto 0; max-width:680px; text-align:center; font-size:.9rem; color:var(--ink-faint); border-top:1px dashed var(--line); padding-top:16px; }
 
 .wa-scope .modern {
   margin:30px 0; padding:18px 22px; border-radius:16px;

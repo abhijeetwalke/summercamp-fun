@@ -80,14 +80,15 @@ WA.State = (function () {
      ============================================================ */
 
   // Explorer level ladder (status, not a gate). Thresholds are tuned so a full
-  // pass of all 39 lessons + badges + drills comfortably reaches "World Master".
+  // pass of the whole ~60+ lesson app (10 per continent) + badges + drills
+  // comfortably reaches "World Master". Rescaled 2026-06-30 as lands grew past 39.
   var LEVELS = [
     { name: "Explorer",     min: 0,    emoji: "🧭" },
-    { name: "Scout",        min: 100,  emoji: "🔭" },
-    { name: "Navigator",    min: 250,  emoji: "⛵" },
-    { name: "Cartographer", min: 500,  emoji: "🗺️" },
-    { name: "Globetrotter", min: 850,  emoji: "🌍" },
-    { name: "World Master", min: 1300, emoji: "🌟" },
+    { name: "Scout",        min: 150,  emoji: "🔭" },
+    { name: "Navigator",    min: 400,  emoji: "⛵" },
+    { name: "Cartographer", min: 800,  emoji: "🗺️" },
+    { name: "Globetrotter", min: 1400, emoji: "🌍" },
+    { name: "World Master", min: 2100, emoji: "🌟" },
   ];
 
   function levelInfo(xp) {
@@ -120,8 +121,8 @@ WA.State = (function () {
       test: function (s) { return (s.streak && s.streak.best) >= 7; } },
     { id: "map_master",    name: "Map Master",    emoji: "🎯", desc: "Score 90%+ on a Geography Drill",
       test: function (s) { return (s.drill && s.drill.best) >= 90; } },
-    { id: "completionist", name: "Completionist", emoji: "🎓", desc: "Finish all 39 lessons",
-      test: function (s) { return lessonsDoneCount(s) >= 39; } },
+    { id: "completionist", name: "Completionist", emoji: "🎓", desc: "Finish every lesson",
+      test: function (s) { return lessonsDoneCount(s) >= totalLessonCount(); } },
     { id: "atlas_explorer",name: "Atlas Explorer",emoji: "🧳", desc: "Open every country card in the atlas",
       test: function (s) {
         var total = (window.WA && window.WA.COUNTRIES && window.WA.COUNTRIES.list) ? window.WA.COUNTRIES.list.length : 9999;
@@ -132,6 +133,9 @@ WA.State = (function () {
   ];
 
   function lessonsDoneCount(s) { var n = 0; for (var id in s.lessons) if (s.lessons[id] && s.lessons[id].done) n++; return n; }
+  // Total lessons currently defined in content (dynamic — adapts as lands grow).
+  // Falls back high so the Completionist trophy is never awarded before content loads.
+  function totalLessonCount() { var C = (window.WA && window.WA.CONTENT); return (C && C.lessons) ? Object.keys(C.lessons).length : 9999; }
   function continentsTouched(s) {
     var C = (window.WA && window.WA.CONTENT); if (!C) return 0; var n = 0;
     C.continents.forEach(function (co) {

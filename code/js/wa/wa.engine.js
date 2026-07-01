@@ -348,6 +348,20 @@ WA.Engine = (function () {
   }
 
   /* ---------------- LESSON PLAYER ---------------- */
+  // Reading length: count words across the lesson's prose + interactive text,
+  // stripping any HTML tags. Used for the "📖 ~N words" footer per lesson.
+  function _cw(s) { if (!s) return 0; var m = String(s).replace(/<[^>]+>/g, " ").trim().match(/\S+/g); return m ? m.length : 0; }
+  function lessonWordCount(L) {
+    var n = _cw(L.hook);
+    (L.beats || []).forEach(function (b) {
+      n += _cw(b.html) + _cw(b.caption) + _cw(b.title) + _cw(b.sub) + _cw(b.prompt);
+      (b.items || []).forEach(function (it) { n += _cw(it.label) + _cw(it.text); });
+      (b.spots || []).forEach(function (sp) { n += _cw(sp.label) + _cw(sp.text); });
+      (b.opts || []).forEach(function (o) { n += _cw(o.label) + _cw(o.outcome) + _cw(o.tag); });
+      [b.a, b.b].forEach(function (side) { if (side) { n += _cw(side.title); (side.items || []).forEach(function (x) { n += _cw(x); }); } });
+    });
+    return n;
+  }
   function renderLesson(id) {
     var L = C.lessons[id];
     if (!L) return renderHome();
@@ -363,6 +377,11 @@ WA.Engine = (function () {
     if (L.hook) reader.appendChild(U.nodeFromHTML('<div class="beat in"><div class="hook">' + L.hook + '</div></div>'));
 
     L.beats.forEach(function (b) { reader.appendChild(U.renderBeat(b)); });
+
+    // reading-length footer
+    var _wc = lessonWordCount(L);
+    reader.appendChild(U.el("div", { class: "lesson-meta beat",
+      html: "📖 ~" + _wc.toLocaleString() + " words · about a " + L.minutes + "-minute read" }));
 
     // end CTA
     var cta = U.el("div", { class: "beat", style: "text-align:center;margin-top:40px" });

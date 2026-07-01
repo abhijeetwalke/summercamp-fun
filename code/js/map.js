@@ -12,108 +12,171 @@ SC.Maps = (function () {
   const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const A = SC.Art;
 
+  /* Real scenic photo per land (Wikimedia Commons via Special:FilePath); the SVG
+     biome underneath shows automatically if a photo can't load (offline/404). */
+  const COMMONS = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+  function photoSrc(file, w) { return COMMONS + encodeURIComponent(file) + "?width=" + (w || 900); }
+  // Real scenic photos (Wikimedia Commons). Credits (CC/PD, best-effort):
+  //  world: Tiare Scott CC BY 2.0 · math: Nelson Minar CC BY-SA 2.0 · science: USAF/J. Strang PD
+  //  sunsword: Sharon Mollerus CC BY 2.0 · logic: Romain Guy CC0 · basketball: S. Guest-Smith CC0
+  const LAND_PHOTOS = {
+    world: "Bora Bora Landscape - Flickr - tiarescott.jpg",
+    math: "Zermatt with Matterhorn - Flickr - Nelson Minar.jpg",
+    science: "Aurora borealis over Eielson Air Force Base, Alaska.jpg",
+    sunsword: "Temple of Poseidon, 444 BC, Cape Sounion, Greece (3347933347).jpg",
+    logic: "Horseshoe Bend Sunset - Flickr - romainguy.jpg",
+    basketball: "Venice beach at sunset (Unsplash).jpg",
+  };
+
   /* ---- Click sound: short "ka-chunk" via WebAudio (no asset files) ---- */
   let actx = null;
   function kachunk() {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       const t = actx.currentTime;
-      [[180, 0, 0.06], [90, 0.05, 0.09]].forEach(([freq, dt, dur]) => {
-        const o = actx.createOscillator(), g = actx.createGain();
-        o.type = "square"; o.frequency.setValueAtTime(freq, t + dt);
-        g.gain.setValueAtTime(0.12, t + dt);
-        g.gain.exponentialRampToValueAtTime(0.001, t + dt + dur);
-        o.connect(g).connect(actx.destination);
-        o.start(t + dt); o.stop(t + dt + dur);
-      });
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "sine"; o.frequency.setValueAtTime(440, t);
+      g.gain.setValueAtTime(0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.0008, t + 0.07);
+      o.connect(g).connect(actx.destination);
+      o.start(t); o.stop(t + 0.08);
     } catch (e) { /* sound is decoration; never break the click */ }
   }
 
   /* ============================================================
-     LANDING MAP — airport route map (each subject = an airport)
-     Self-contained SVG (no Art deps). Every airport keeps the
-     .land-pos / .land + data-subject contract so wireLanding's
-     click → zoom → enter flow works unchanged.
+     LANDING MAP — six "lands", each its own nature biome.
+     Replaces the old airport/control-tower motif. Each subject is a
+     framed landscape postcard with layered depth. The .land-pos /
+     .land[data-subject] contract is preserved so wireLanding's
+     click -> zoom -> enter flow works unchanged.
      ============================================================ */
-  const AIRPORTS = {
-    math:       { code: "MTH", name: "Math",                accent: "#e6a23c", tower: "#f6c878", ink: "#3a2606", r: 78 },
-    world:      { code: "WLD", name: "World Awareness",     accent: "#4a9fd4", tower: "#a7d2ee", ink: "#08263b", r: 54 },
-    basketball: { code: "HWD", name: "Basketball",          accent: "#e07a3c", tower: "#f2b288", ink: "#3a1c08", r: 54 },
-    sunsword:   { code: "SUN", name: "The Sun & the Sword", accent: "#c2553f", tower: "#eaa478", ink: "#3a1410", r: 54 },
-    science:    { code: "SCI", name: "Science / Data",      accent: "#5b7488", tower: "#9fb4c4", ink: "#11212c", r: 50 },
-    logic:      { code: "LGC", name: "Logic / Puzzles",     accent: "#5b7488", tower: "#9fb4c4", ink: "#11212c", r: 50 },
+  const LANDS = {
+    world:      { name: "World Awareness",     accent: "#2f9e6a", biome: "tropical" },
+    math:       { name: "Math",                accent: "#5a93c4", biome: "alpine"   },
+    science:    { name: "Science / Data",      accent: "#6a78c0", biome: "aurora"   },
+    sunsword:   { name: "The Sun & the Sword", accent: "#d08a3a", biome: "mediter"  },
+    logic:      { name: "Logic / Puzzles",     accent: "#c06a34", biome: "canyon"   },
+    basketball: { name: "Basketball",          accent: "#e07a3c", biome: "coast"    },
   };
-  const AIRPORT_POS = {
-    math: [600, 235], world: [205, 300], science: [990, 250],
-    sunsword: [360, 515], logic: [700, 515], basketball: [965, 510],
+  const CARD = { w: 348, h: 236, sh: 176 };
+  const GRID = {
+    world: [40, 40],  math: [416, 40],  science: [792, 40],
+    sunsword: [40, 304], logic: [416, 304], basketball: [792, 304],
   };
 
-  /* a small control tower glyph, drawn around (0,0), scaled to the marker */
-  function tower(scale, fill) {
-    const s = scale.toFixed(2);
-    return `<g transform="scale(${s})" fill="${fill}">
-      <rect x="-13" y="-18" width="26" height="6" rx="2.5"></rect>
-      <polygon points="-11,-12 11,-12 14,16 -14,16"></polygon>
-      <line x1="0" y1="-18" x2="0" y2="-30" stroke="${fill}" stroke-width="2"></line>
-      <circle cx="0" cy="-32" r="2.4"></circle>
-      <rect x="-7" y="-4" width="5" height="8" fill="#0f2c44"></rect>
-      <rect x="2" y="-4" width="5" height="8" fill="#0f2c44"></rect>
-    </g>`;
-  }
+  // each biome paints into local coords 0..348 (w) x 0..176 (scene height)
+  const BIOME = {
+    tropical: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-trop)"></rect>
+      <circle cx="288" cy="40" r="40" fill="#fff3bf" opacity="0.18"></circle>
+      <circle cx="288" cy="40" r="24" fill="#fff3bf"></circle>
+      <rect y="108" width="348" height="68" fill="url(#lm-sea-trop)"></rect>
+      <path d="M104 108 q42 -64 92 0 Z" fill="#3c7a4c"></path>
+      <path d="M132 108 q30 -46 64 0 Z" fill="#34673f"></path>
+      <path d="M150 78 l 6 -10 l 6 10 Z" fill="#6b4a2a"></path>
+      <path d="M0 150 q174 -24 348 0 L348 176 L0 176 Z" fill="#ecd6a0"></path>
+      <g stroke="#cdeef2" stroke-width="2" fill="none" opacity="0.85" stroke-linecap="round">
+        <path d="M36 130 q7 -7 14 0 q7 -7 14 0"></path><path d="M214 136 q7 -7 14 0 q7 -7 14 0"></path></g>
+      ${A.palms(34, 168, 1)}${A.palms(300, 170, 1)}`,
+    alpine: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-alp)"></rect>
+      <circle cx="286" cy="38" r="18" fill="#fff7e4"></circle>
+      ${A.mountains(6, 122, 9, "#9fb1c6")}
+      ${A.mountains(34, 138, 7, "#c4d3e3")}
+      <g fill="#e7caa0" stroke="#4a3a26" stroke-width="1.1">
+        <path d="M163 116 h18 l-3 -6 h-12 Z"></path><path d="M165 110 h14 l-3 -6 h-8 Z"></path><path d="M167 104 h10 l-5 -7 Z"></path></g>
+      <path d="M0 150 q174 -14 348 0 L348 176 L0 176 Z" fill="#84b974"></path>
+      ${A.pines(26, 152, 3, "#3c6745")}${A.pines(250, 154, 3, "#3c6745")}`,
+    aurora: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-aur)"></rect>
+      <g fill="#eaf2ff">
+        <circle cx="40" cy="30" r="1.3"></circle><circle cx="92" cy="20" r="1"></circle><circle cx="148" cy="36" r="1.4"></circle>
+        <circle cx="208" cy="22" r="1"></circle><circle cx="250" cy="46" r="1.2"></circle><circle cx="120" cy="58" r="1"></circle><circle cx="322" cy="30" r="1.2"></circle></g>
+      <circle cx="300" cy="40" r="13" fill="#eef3ff"></circle><circle cx="295" cy="37" r="13" fill="url(#lm-sky-aur)"></circle>
+      <path d="M-20 64 Q120 22 200 52 T372 40" fill="none" stroke="#5ff0b4" stroke-width="11" opacity="0.30"></path>
+      <path d="M-20 84 Q140 48 240 74 T372 62" fill="none" stroke="#8aa6f2" stroke-width="9" opacity="0.26"></path>
+      <path d="M0 132 q174 -12 348 0 L348 176 L0 176 Z" fill="#dbe7f4"></path>
+      <path d="M0 152 q174 -10 348 6 L348 176 L0 176 Z" fill="#bccee2"></path>
+      ${A.pines(32, 150, 3, "#16273a")}${A.pines(250, 150, 3, "#16273a")}`,
+    mediter: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-med)"></rect>
+      <circle cx="174" cy="62" r="58" fill="#ffe39a" opacity="0.20"></circle>
+      <circle cx="174" cy="62" r="38" fill="#ffe6a0"></circle>
+      <rect y="116" width="348" height="14" fill="#2f86a8" opacity="0.6"></rect>
+      <path d="M0 128 q90 -26 180 -6 q90 22 168 -2 L348 176 L0 176 Z" fill="#c7a45a"></path>
+      <path d="M0 150 q120 -16 240 2 q60 8 108 -2 L348 176 L0 176 Z" fill="#b3914a"></path>
+      <g fill="#ece1c4" stroke="#b6a781" stroke-width="1">
+        <rect x="148" y="96" width="7" height="34"></rect><rect x="164" y="96" width="7" height="34"></rect><rect x="180" y="96" width="7" height="34"></rect>
+        <rect x="143" y="90" width="49" height="7"></rect></g>
+      <path d="M70 150 q-6 -30 0 -46 q6 16 0 46 Z" fill="#3f5e3a"></path>
+      <path d="M286 150 q-6 -28 0 -42 q6 14 0 42 Z" fill="#3f5e3a"></path>`,
+    canyon: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-can)"></rect>
+      <circle cx="286" cy="44" r="16" fill="#fff0cf" opacity="0.85"></circle>
+      <path d="M0 92 H118 L136 106 H348 V124 H0 Z" fill="#c2693a"></path>
+      <path d="M0 122 H78 L96 136 H250 L268 122 H348 V176 H0 Z" fill="#a4502b"></path>
+      <path d="M40 176 V142 a26 26 0 0 1 52 0 V176 H78 V148 a14 14 0 0 0 -28 0 V176 Z" fill="#8c4226"></path>
+      <g fill="#3f6b42" stroke="#2c4d30" stroke-width="1"><rect x="290" y="138" width="8" height="38" rx="4"></rect><rect x="282" y="150" width="6" height="14" rx="3"></rect><rect x="300" y="146" width="6" height="16" rx="3"></rect></g>
+      <rect y="170" width="348" height="6" fill="#caa06a"></rect>`,
+    coast: () => `
+      <rect width="348" height="176" fill="url(#lm-sky-coast)"></rect>
+      <circle cx="174" cy="116" r="46" fill="#ffd98a" opacity="0.25"></circle>
+      <circle cx="174" cy="118" r="28" fill="#ffe0a0"></circle>
+      <rect y="118" width="348" height="58" fill="url(#lm-sea-coast)"></rect>
+      <rect x="164" y="118" width="20" height="58" fill="#ffe7b4" opacity="0.45"></rect>
+      <path d="M0 158 q174 -12 348 0 L348 176 L0 176 Z" fill="#e6c489"></path>
+      ${A.palms(32, 172, 1)}
+      <line x1="300" y1="172" x2="300" y2="132" stroke="#3a3a3a" stroke-width="3"></line>
+      <rect x="288" y="120" width="24" height="16" rx="2" fill="#dadada" stroke="#3a3a3a" stroke-width="1.5"></rect>
+      <ellipse cx="300" cy="138" rx="7" ry="3" fill="none" stroke="#e07a3c" stroke-width="2"></ellipse>`,
+  };
 
-  function airport(s) {
-    const m = AIRPORTS[s.id]; if (!m) return "";
-    const [cx, cy] = AIRPORT_POS[s.id] || [0, 0];
+  function landCard(s) {
+    const m = LANDS[s.id]; if (!m) return "";
+    const [x, y] = GRID[s.id] || [0, 0];
     const soon = !!s.comingSoon || !s.active;
-    const r = m.r, ring = m.accent;
-    const dash = soon ? ` stroke-dasharray="6 7"` : "";
-    const glow = soon ? "" : `<circle r="${r + 16}" fill="${ring}" opacity="0.10"></circle>`;
-    const pillY = r + 18, pw = Math.max(54, m.code.length * 15 + 22), ph = 30;
-    const nameY = pillY + ph + 24, subY = nameY + 20;
-    const status = soon ? "OPENING SOON" : "OPEN";
-    // Outer group holds the position; inner .land scales in place on click (no lurch).
-    return `<g class="land-pos" transform="translate(${cx} ${cy})">
-      <g class="land ${soon ? "land-soon" : "land-active"}" data-subject="${s.id}" tabindex="0" role="button"
-         aria-label="${m.name}${soon ? " — opening soon" : " — open"}">
-        ${glow}
-        <circle r="${r}" fill="#163a57" stroke="${ring}" stroke-width="3.2"${dash}></circle>
-        <circle r="${r - 12}" fill="#0f2c44"></circle>
-        ${tower(r / 54, m.tower)}
-        <rect x="${-pw / 2}" y="${pillY}" width="${pw}" height="${ph}" rx="${ph / 2}" fill="${ring}"></rect>
-        <text x="0" y="${pillY + 20}" text-anchor="middle" class="ap-code" fill="${m.ink}">${m.code}</text>
-        <text x="0" y="${nameY}" text-anchor="middle" class="ap-name">${m.name}</text>
-        <text x="0" y="${subY}" text-anchor="middle" class="ap-sub ${soon ? "ap-soon" : ""}">${status}</text>
+    const W = CARD.w, H = CARD.h, SH = CARD.sh;
+    const clip = "lm-clip-" + s.id;
+    const scene = BIOME[m.biome] ? BIOME[m.biome]() : "";
+    const ph = LAND_PHOTOS[s.id];
+    const photoLayer = ph ? `<image href="${photoSrc(ph)}" x="0" y="0" width="${W}" height="${SH}" preserveAspectRatio="xMidYMid slice" onerror="this.style.display='none'"></image>` : "";
+    const statusTxt = soon ? "OPENING SOON" : "OPEN";
+    const pillFill = soon ? "#6b7785" : "#2f9e6a";
+    const pillW = soon ? 128 : 60;
+    const label = `
+      <rect y="${SH}" width="${W}" height="${H - SH}" fill="#12273d"></rect>
+      <rect y="${SH}" width="6" height="${H - SH}" fill="${m.accent}"></rect>
+      <text x="22" y="${SH + 38}" fill="#ffffff" font-size="21" font-weight="800">${m.name}</text>
+      <rect x="${W - pillW - 18}" y="${SH + 18}" width="${pillW}" height="24" rx="12" fill="${pillFill}"></rect>
+      <text x="${W - 18 - pillW / 2}" y="${SH + 34.5}" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700" letter-spacing="0.6">${statusTxt}</text>`;
+    const overlay = soon ? `<rect width="${W}" height="${SH}" fill="#0b1c2e" opacity="0.40"></rect>
+      <g transform="translate(${W / 2} ${SH / 2})" opacity="0.92"><rect x="-15" y="-7" width="30" height="22" rx="4" fill="#e9eef4"></rect><path d="M -9 -7 v -6 a 9 9 0 0 1 18 0 v 6" fill="none" stroke="#e9eef4" stroke-width="3"></path><circle cy="4" r="3.2" fill="#12273d"></circle></g>` : "";
+    const dash = soon ? ` stroke-dasharray="9 7"` : "";
+    return `<g class="land-pos" transform="translate(${x} ${y})">
+      <g class="land land-card ${soon ? "land-soon" : "land-active"}" data-subject="${s.id}" tabindex="0" role="button" aria-label="${m.name}${soon ? " — opening soon" : " — open"}">
+        <clipPath id="${clip}"><rect width="${W}" height="${H}" rx="18"></rect></clipPath>
+        <g clip-path="url(#${clip})">${scene}${photoLayer}${label}${overlay}</g>
+        <rect width="${W}" height="${H}" rx="18" fill="none" stroke="${m.accent}" stroke-width="3"${dash}></rect>
       </g>
     </g>`;
   }
 
   function landingMap(subjects) {
-    const W = 1180, H = 700;
-    const ports = subjects.map(airport).join("");
-    const grid = `<g stroke="#214663" stroke-width="1" opacity="0.4">
-      <line x1="28" y1="250" x2="1152" y2="250"></line><line x1="28" y1="450" x2="1152" y2="450"></line>
-      <line x1="320" y1="28" x2="320" y2="672"></line><line x1="600" y1="28" x2="600" y2="672"></line><line x1="880" y1="28" x2="880" y2="672"></line>
-    </g>`;
-    const routes = `<g fill="none" stroke="#5f93ba" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round" opacity="0.85">
-      <path d="M 258 280 Q 410 190 528 230"></path>
-      <path d="M 676 232 Q 815 195 942 244"></path>
-      <path d="M 668 280 Q 850 360 918 470"></path>
-      <path d="M 545 290 Q 430 400 392 470"></path>
-      <path d="M 412 525 Q 560 575 652 522"></path>
-      <path d="M 748 512 Q 860 540 915 505"></path>
-    </g>`;
-    const plane = `<g transform="translate(398 200) rotate(-20)"><path d="M 0 0 L 26 0 L 36 -7 L 27 3 L 38 10 L 21 6 L 13 15 L 14 5 L 0 3 Z" fill="#dfeaf2"></path></g>`;
-    const compass = `<g transform="translate(108 600)" opacity="0.7">
-      <circle r="36" fill="none" stroke="#2e577a" stroke-width="1.5"></circle>
-      <circle r="27" fill="none" stroke="#2e577a" stroke-width="0.8" opacity="0.6"></circle>
-      <path d="M 0 -34 L 6 -6 L 0 0 L -6 -6 Z" fill="#7fa8c6"></path>
-      <path d="M 0 34 L 6 6 L 0 0 L -6 6 Z" fill="#244a66"></path>
-      <text x="0" y="-40" text-anchor="middle" class="ap-compass">N</text>
-    </g>`;
-    return `<svg id="landing-map" viewBox="0 0 ${W} ${H}" width="100%" aria-label="Summer Camp airport route map" preserveAspectRatio="xMidYMid meet">
-      <rect x="6" y="6" width="1168" height="688" rx="20" fill="#0c1f30" stroke="#20405c" stroke-width="2"></rect>
-      <rect x="28" y="28" width="1124" height="644" rx="14" fill="#0f2840" stroke="#274866" stroke-width="1.5" opacity="0.85"></rect>
-      ${grid}${routes}${plane}${compass}${ports}
+    const W = 1180, H = 580;
+    const cards = subjects.map(landCard).join("");
+    const defs = `<defs>
+      <linearGradient id="lm-sky-trop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fcfe6"></stop><stop offset="1" stop-color="#d7f0ee"></stop></linearGradient>
+      <linearGradient id="lm-sea-trop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2ba0b8"></stop><stop offset="1" stop-color="#14627e"></stop></linearGradient>
+      <linearGradient id="lm-sky-alp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b6d6ef"></stop><stop offset="1" stop-color="#f1e9d8"></stop></linearGradient>
+      <linearGradient id="lm-sky-aur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#071a33"></stop><stop offset="1" stop-color="#10325a"></stop></linearGradient>
+      <linearGradient id="lm-sky-med" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd987"></stop><stop offset="1" stop-color="#ffc06a"></stop></linearGradient>
+      <linearGradient id="lm-sky-can" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7cda0"></stop><stop offset="1" stop-color="#e79a6f"></stop></linearGradient>
+      <linearGradient id="lm-sky-coast" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffbf73"></stop><stop offset="0.55" stop-color="#ff8a66"></stop><stop offset="1" stop-color="#7d5685"></stop></linearGradient>
+      <linearGradient id="lm-sea-coast" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4673c"></stop><stop offset="1" stop-color="#9a4f6e"></stop></linearGradient>
+    </defs>`;
+    return `<svg id="landing-map" viewBox="0 0 ${W} ${H}" width="100%" aria-label="Summer Camp — pick a land to explore" preserveAspectRatio="xMidYMid meet">
+      ${defs}
+      ${cards}
       <g id="bird-layer"></g>
     </svg>`;
   }
@@ -149,9 +212,9 @@ SC.Maps = (function () {
       if (document.hidden) return;
       const layer = rootEl.querySelector("#bird-layer");
       if (!layer) return stopAmbience();
-      const y = 70 + Math.random() * 110;
+      const y = 14 + Math.random() * 34;
       const plane = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      plane.setAttribute("d", "M 0 0 L 22 0 L 31 -6 L 23 2 L 33 8 L 18 5 L 11 13 L 12 4 L 0 3 Z");
+      plane.setAttribute("d", "M 0 0 q 6 -5 12 0 q -6 -5 -12 0 Z");
       plane.setAttribute("class", "planedrift");
       plane.style.setProperty("--birdY", y + "px");
       layer.appendChild(plane);

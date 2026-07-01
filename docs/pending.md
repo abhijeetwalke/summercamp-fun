@@ -8,6 +8,34 @@
 
 ---
 
+# ACTIVE CROSS-SUBJECT EPICS (added 2026-06-30, Abhi — live work, spans all lands)
+
+> These three epics are **current, cross-subject** work that sits above the Math-only phase backlog below. They were opened in the 2026-06-30 sessions. **More items expected — Abhi is still adding requests.** Each lands on `preview` first (two-gate workflow); move finished pieces to `completed.md`.
+
+## EPIC A — World Awareness: deepen every continent (IN FLIGHT)
+- [ ] **Bring every continent to 10 lessons.** Current: Europe 8, Asia 8, Africa 6, Americas 7, Middle East 6, Oceania 4 → target 10 each (**Americas 11** — keeps both *Equal Rights* and *Latin America*). ~22 new lessons. New lessons deliberately add dimensions the existing set lacks: **physical geography, the natural world/wildlife, science & invention, arts/music/daily-life culture, human origins, and present-day environmental challenges** (existing 39 are almost all political-history). Per-continent topic grid approved by Abhi 2026-06-30.
+- [ ] **Every lesson = ~10-min read with 10 quiz questions.** Expand the 39 existing lessons (were ~5-6 min / 5 Qs) AND write the new ones to this bar. *(Reading-length note: Oceania pilot landed ~810–985 words/lesson, avg ~888; revisit if Abhi wants ~1,200.)*
+- [ ] **Real-photo treatment on all scenes:** Wikimedia/Commons photo via `Special:FilePath` with graceful SVG fallback + caption + credit (mirrors Basketball's mechanism). Per-lesson **word-count footer** ("📖 ~N words · ~10-min read").
+- [ ] **Engine rebalance for the larger lesson count** (`wa.state.js`): rescale the XP `LEVELS` thresholds (currently tuned for 39 lessons → maxes out too early at 61); make the **Completionist** trophy dynamic (= total lesson count, currently hardcoded `>= 39`).
+- ✅ **Oceania pilot built on `preview`** (2026-06-30): 10 lessons, photos + SVG fallback + credits, word-count footer; jsdom-validated (45 lessons / 450 beats / 0 errors). Serves as the quality bar. **Remaining: Europe, Asia, Africa, Americas, Middle East** to the same spec, then the engine rebalance.
+
+## EPIC B — App-wide artwork enrichment (NEW 2026-06-30)
+- [ ] **Sprinkle rich, "exotic" imagery — art, sketches, photographs — with action and depth across EVERY land:** World Awareness, **Math (Avatar/Airbender)**, **Basketball (Hardwood)**, and **The Sun & the Sword**. The lands should feel visually alive, not barren.
+- [ ] **The Sun & the Sword is the most barren** (12 lessons, only sparse `scene` SVGs) → **highest priority.** Add imagery throughout (philosophers, Alexander's campaigns, Mauryan India/Ashoka, etc.).
+- [ ] **Broaden image sourcing beyond Wikimedia** — movie stills, sketches, concept/fan art, and other art found online are permitted because the app is **non-commercial / private family use** (Abhi, 2026-06-30). Keep the photo→SVG-fallback mechanism + captions/credits where known. *(This relaxes the CLAUDE.md Hard Constraint "themes use franchise-inspired styling, not copyrighted artwork" → Abhi-approved exception (2026-06-30); to be mirrored into `decisions_open.md`. ⚠️ Flag: the live Netlify URL is publicly reachable, so copyrighted images carry some exposure — keep private or prefer freely-licensed/credited where practical.)*
+
+## EPIC C — Quizzes to 10 questions per lesson (NEW 2026-06-30)
+- [ ] **Extend every lesson's quiz from 6 → 10 questions.** Confirmed for **The Sun & the Sword**; also applies to **Basketball (Hardwood)** (currently 6 per lesson). World Awareness already moves to 10 under Epic A. *(Math uses 20-question Missions, not per-lesson quizzes — likely N/A; confirm with Abhi.)*
+
+## EPIC D — Redesign the landing map (NEW 2026-06-30, HIGH PRIORITY — first thing seen)
+- [ ] The home **"airport / control-tower" landing map is flat and unengaging** ("pretty lame… needs depth… embarrassed" — Abhi). **Replace the airport motif** (drop "Pick an airport / Every gate is a skill" + the control-tower icons) with **distinct nature-themed lands**, each subject rendered as its own rich landscape WITH DEPTH — Abhi's examples: one tropical (Hawaii), one mountain (Colorado), one icy (Alaska), one "something else," etc. Each of the 6 lands gets its own biome/scene.
+- [ ] Keep it **SVG/CSS, performant, `file://`-safe**; preserve OPEN / OPENING-SOON states, click-routing into each land, and the 6 lands (World Awareness, Math, The Sun & the Sword, Basketball = OPEN; Science/Data, Logic/Puzzles = opening soon).
+
+
+
+
+---
+
 ## TECH & BUILD SETUP (read before coding)
 
 **Stack: plain HTML / CSS / JavaScript. No framework, no build step, no backend. 100% free.**
